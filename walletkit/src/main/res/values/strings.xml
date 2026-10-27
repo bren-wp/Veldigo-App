@@ -96,12 +96,12 @@
 
     <!--Intro-->
 
-    <string name="Intro_Wallet_Screen2Title">Unchain Assets</string>
-    <string name="Intro_Wallet_Screen2Description">Don\'t lock yourself in and don\'t let others do that to you.</string>
-    <string name="Intro_Wallet_Screen3Title">Go Borderless</string>
-    <string name="Intro_Wallet_Screen3Description">Bypass conditional barriers and access markets globally.</string>
-    <string name="Intro_Wallet_Screen4Title">Stay Private</string>
-    <string name="Intro_Wallet_Screen4Description">Do not leak your private and financial data to the world.</string>
+    <string name="Intro_Wallet_Screen2Title">Secure by design</string>
+    <string name="Intro_Wallet_Screen2Description">Your keys stay under your control. Protect your recovery phrase.</string>
+    <string name="Intro_Wallet_Screen3Title">All your crypto in one place</string>
+    <string name="Intro_Wallet_Screen3Description">Explore supported assets and networks in one wallet.</string>
+    <string name="Intro_Wallet_Screen4Title">Freedom without borders</string>
+    <string name="Intro_Wallet_Screen4Description">Send and receive securely with a clear view of each transaction.</string>
 
     <!--Rooted Device-->
 

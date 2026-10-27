@@ -1,6 +1,11 @@
 package io.horizontalsystems.walletkit.modules.createaccount
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -46,7 +51,21 @@ fun CreateAccountScreen(navigation: HSNavigation, input: ManageAccountsModule.In
         onBack = navigation::removeLastOrNull
     ) {
         Column {
-            VSpacer(16.dp)
+            VSpacer(22.dp)
+            Text(
+                text = "Your keys. Your control.",
+                modifier = Modifier.padding(horizontal = 20.dp),
+                color = Color(0xFF41E6C7),
+                fontSize = 20.sp
+            )
+            VSpacer(8.dp)
+            Text(
+                text = "Choose how to set up your Veldigo wallet.",
+                modifier = Modifier.padding(horizontal = 20.dp),
+                color = Color(0xFFB5C6D7),
+                fontSize = 14.sp
+            )
+            VSpacer(22.dp)
 
             Section {
                 WalletType(
