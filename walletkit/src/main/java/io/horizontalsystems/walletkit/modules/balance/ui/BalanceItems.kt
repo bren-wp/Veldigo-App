@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.managers.FaqManager
@@ -673,19 +675,40 @@ fun TotalBalanceRow(
     onClickSubtitle: () -> Unit,
     balanceHidden: Boolean
 ) {
-    if (balanceHidden) {
-        CardsElementAmountText(
-            title = "* * *".hs,
-            body = "".hs,
-            onClickTitle = onClickTitle,
-            onClickSubtitle = onClickSubtitle
+    // This panel uses real wallet state, never placeholder balance or fabricated chart data.
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .border(1.dp, Color(0xFF234254), RoundedCornerShape(20.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(Color(0xFF10283A), Color(0xFF0A1C2E))
+                )
+            )
+            .padding(vertical = 12.dp)
+    ) {
+        Text(
+            text = "Total balance",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            color = Color(0xFFB5C6D7),
+            fontSize = 13.sp
         )
-    } else {
-        CardsElementAmountText(
-            title = totalState.primaryAmountStr.hs,
-            body = totalState.secondaryAmountStr.hs,
-            onClickTitle = onClickTitle,
-            onClickSubtitle = onClickSubtitle,
-        )
+        if (balanceHidden) {
+            CardsElementAmountText(
+                title = "* * *".hs,
+                body = "".hs,
+                onClickTitle = onClickTitle,
+                onClickSubtitle = onClickSubtitle
+            )
+        } else {
+            CardsElementAmountText(
+                title = totalState.primaryAmountStr.hs,
+                body = totalState.secondaryAmountStr.hs,
+                onClickTitle = onClickTitle,
+                onClickSubtitle = onClickSubtitle
+            )
+        }
     }
 }
