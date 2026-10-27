@@ -25,8 +25,8 @@ android {
         applicationId = "com.brendigo.veldigo"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 2
-        versionName = "0.3.0-preview.1"
+        versionCode = 3
+        versionName = "0.4.0-preview.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resourceConfigurations += listOf("de", "es", "en", "fa", "fr", "ko", "pt", "pt-rBR", "ru", "tr", "zh")

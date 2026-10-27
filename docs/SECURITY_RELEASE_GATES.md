@@ -1,6 +1,6 @@
 # Veldigo release and security gates
 
-**Status: NOT production-ready (v0.3 preview; security release gates remain blocked).** This project handles irreversible cryptocurrency transfers. A passing compile is not an independent security assessment.
+**Status: NOT production-ready (v0.4 preview; security release gates remain blocked).** This project handles irreversible cryptocurrency transfers. A passing compile is not an independent security assessment.
 
 ## Release blocking items
 
