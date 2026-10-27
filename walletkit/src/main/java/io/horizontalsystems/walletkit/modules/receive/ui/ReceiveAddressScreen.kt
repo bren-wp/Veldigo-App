@@ -24,6 +24,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -290,34 +298,18 @@ fun ReceiveAddressScreen(
 
 @Composable
 private fun QrCodeImage(address: String) {
-    val logoPainter: Painter =
-        adaptiveIconPainterResource(
-            id = R.mipmap.launcher_main,
-            fallbackDrawable = R.drawable.launcher_main_preview
-        )
-    val qrcodePainter: Painter =
-        rememberQrCodePainter(address) {
-            errorCorrectionLevel = QrErrorCorrectionLevel.MediumHigh
-            logo {
-                painter = logoPainter
-                padding = QrLogoPadding.Natural(.3f)
-                shape = QrLogoShape.roundCorners(0.8f)
-                size = 0.2f
-            }
-
-            shapes {
-                ball = QrBallShape.roundCorners(.25f)
-                darkPixel = QrPixelShape.roundCorners()
-                frame = QrFrameShape.roundCorners(.25f)
-            }
-        }
+    // A large central logo can obscure encoded modules on low-quality cameras.
+    // A high-contrast, unobstructed QR is safer for irreversible wallet deposits.
+    val qrPainter = rememberQrCodePainter(address) {
+        errorCorrectionLevel = QrErrorCorrectionLevel.MediumHigh
+    }
     Image(
-        painter = qrcodePainter,
+        painter = qrPainter,
         modifier = Modifier
-            .padding(8.dp)
+            .padding(12.dp)
             .fillMaxSize(),
-        contentScale = ContentScale.FillWidth,
-        contentDescription = null
+        contentScale = ContentScale.Fit,
+        contentDescription = "QR code for the selected wallet receiving address"
     )
 }
 
@@ -343,50 +335,62 @@ private fun ActionButtonsRow(
 ) {
     val localView = LocalView.current
     val context = LocalContext.current
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp),
-        horizontalArrangement = if (watchAccount) Arrangement.Center else Arrangement.SpaceBetween,
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (!watchAccount) {
-            ReceiveActionButton(
-                icon = R.drawable.ic_edit_24px,
-                buttonText = stringResource(R.string.Button_SetAmount),
-                onClick = {
-                    openAmountDialog.value = true
-                },
-            )
-        }
-
-        ReceiveActionButton(
-            icon = R.drawable.ic_share_24px,
-            buttonText = stringResource(R.string.Button_Share),
-            onClick = {
-                context.startActivity(Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, uri)
-                    type = "text/plain"
-                })
-
-                stat(page = StatPage.Receive, event = StatEvent.Share(StatEntity.ReceiveAddress))
-            },
-        )
-
-        if (watchAccount) {
-            HSpacer(64.dp)
-        }
-
-        ReceiveActionButton(
-            icon = R.drawable.ic_copy_24px,
-            buttonText = stringResource(R.string.Button_Copy),
+        Button(
+            modifier = Modifier.fillMaxWidth().height(54.dp),
+            enabled = uri.isNotBlank(),
+            shape = RoundedCornerShape(18.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF41E6C7),
+                contentColor = Color(0xFF071421),
+            ),
             onClick = {
                 TextHelper.copyText(uri)
                 HudHelper.showSuccessMessage(localView, R.string.Hud_Text_Copied)
-
                 stat(page = StatPage.Receive, event = StatEvent.Copy(StatEntity.ReceiveAddress))
             },
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.Button_Copy),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+            )
+        }
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+            enabled = uri.isNotBlank(),
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, Color(0xFF34516A)),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+            onClick = {
+                val share = Intent(Intent.ACTION_SEND).apply {
+                    putExtra(Intent.EXTRA_TEXT, uri)
+                    type = "text/plain"
+                }
+                context.startActivity(Intent.createChooser(share, null))
+                stat(page = StatPage.Receive, event = StatEvent.Share(StatEntity.ReceiveAddress))
+            },
+        ) {
+            Text(text = stringResource(R.string.Button_Share), fontSize = 15.sp)
+        }
+        if (!watchAccount) {
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape = RoundedCornerShape(18.dp),
+                border = BorderStroke(0.dp, Color.Transparent),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFFB5C6D7)
+                ),
+                onClick = { openAmountDialog.value = true },
+            ) {
+                Text(text = stringResource(R.string.Button_SetAmount), fontSize = 14.sp)
+            }
+        }
     }
 }
 
@@ -459,27 +463,6 @@ private fun AdditionalDataSection(
 }
 
 
-@Composable
-private fun ReceiveActionButton(
-    icon: Int,
-    buttonText: String,
-    onClick: () -> Unit,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        HSIconButton(
-            variant = ButtonVariant.Secondary,
-            onClick = onClick,
-            icon = painterResource(icon),
-        )
-        caption_grey(
-            modifier = Modifier.padding(top = 8.dp),
-            text = buttonText,
-            textAlign = TextAlign.Center,
-        )
-    }
-}
 
 @Composable
 fun AmountInputDialog(
@@ -529,7 +512,7 @@ fun AmountInputDialog(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 cursorBrush = SolidColor(ComposeAppTheme.colors.leah),
             )
-            SideEffect {
+            LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
                 textState.value = textState.value.copy(
                     selection = TextRange(textState.value.text.length)
