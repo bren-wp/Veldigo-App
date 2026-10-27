@@ -1,14 +1,23 @@
-# Veldigo v0.2.0-preview.1 — engineering preview
+# Veldigo v0.3.0-preview.1 — Android engineering preview
 
-**TEST BUILD — NOT FOR REAL CRYPTO OR PRODUCTION USE**
+**TEST BUILD — NOT FOR REAL CRYPTO OR PRODUCTION.**
 
-- Veldigo dark-navy/mint branding, original icon and functional wallet foundation
-- Portfolio action tiles and live-total card presentation
-- Restyled receive address/QR and send forms
-- Create/import wallet entry flow and onboarding copy
-- Maintained upstream MIT attribution and security release checklist
-- Android test APK and Android test App Bundle (AAB) are included **only if CI successfully builds both**
+## UI improvements
+- Updated navy/mint settings and transaction activity cards.
+- Branded Veldigo About view and improved product typography.
+- Respect Android system font scaling for accessibility.
+- Existing functional wallet operations and live blockchain data are retained.
+- No sample seed, fake receiving address or artificial wallet balance is used in functional screens.
 
-**Caution:** These files are signed for development/testing, **not with a Veldigo production upload key**. All blockchain features, provider API keys, signing and recovery must be independently audited before production distribution. Never use a development build to store or transfer real funds. The AAB in this prerelease is not a production submission.
+## Contents
+- Android test APK, Android test AAB, SHA256SUMS.txt, BUILD_INFO.txt, published only after successful Gradle build and ZIP integrity checks.
+- Version code 2, version 0.3.0-preview.1, package com.brendigo.veldigo.
 
-Source provenance: Unstoppable Wallet Android at pinned commit `d6661c8d0dc02d259767f58b7cd73cabb877da18` with MIT attribution retained.
+## Pending before commercial or real-funds use
+- Full independent security review, recovery and transaction test vectors across enabled chains.
+- Licensed Veldigo-owned RPC, swap/buy, marketplace and WalletConnect integrations/credentials.
+- Full emulator/device screenshot comparisons against all 21 supplied references.
+- Proper production upload signing identity, crash/ANR/device testing and Google Play declarations.
+
+**Do not mistake a debug/test-signed APK or AAB for a production release.**
+Underlying wallet foundation: Unstoppable Wallet Android, pinned MIT-licensed upstream source.
