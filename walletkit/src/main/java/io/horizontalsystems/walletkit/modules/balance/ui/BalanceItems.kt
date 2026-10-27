@@ -579,14 +579,14 @@ fun BalanceActionButton(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    // A genuine click surface (minimum 60 dp); transaction handling stays
-    // in the caller and is never substituted with mock logic.
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
             modifier = Modifier
-                .size(62.dp)
+                .size(64.dp)
                 .clip(RoundedCornerShape(17.dp))
-                .background(Color(0xFF10283A))
+                .background(Color(0xFF112337))
                 .border(1.dp, Color(0xFF234556), RoundedCornerShape(17.dp))
                 .clickable(enabled = enabled, onClick = onClick),
             contentAlignment = Alignment.Center
