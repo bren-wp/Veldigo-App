@@ -1,0 +1,40 @@
+name: Android build verification
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veldigo-android-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect Android sources
+        id: source
+        run: |
+          if [ -f ./gradlew ] && [ -f app/build.gradle.kts ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-java@v4
+        if: steps.source.outputs.present == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Compile debug APK
+        if: steps.source.outputs.present == 'true'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:assembleBaseDebug --no-daemon --stacktrace
+      - name: Upload test APK
+        if: steps.source.outputs.present == 'true' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veldigo-debug-apk
+          path: app/build/outputs/apk/base/debug/*.apk
+          if-no-files-found: error
