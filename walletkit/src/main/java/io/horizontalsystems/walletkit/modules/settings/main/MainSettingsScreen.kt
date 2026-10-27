@@ -280,16 +280,6 @@ private fun SettingSections(
             )
         }, {
             HsSettingCell(
-                R.string.Settings_RateUs,
-                R.drawable.star_24,
-                onClick = {
-                    RateAppManager.openPlayMarket(context)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.RateUs))
-                }
-            )
-        }, {
-            HsSettingCell(
                 R.string.Settings_ShareThisWallet,
                 R.drawable.ic_share_24,
                 onClick = {
