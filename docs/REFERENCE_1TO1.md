@@ -47,4 +47,4 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 5. For money amounts, fees, recovery phrases and QR addresses, validate underlying **functional data** separately: a reference screenshot never authorizes fake values.
 6. Repeat comparisons for enabled/disabled/loading/error/confirmation and translated states.
 
-No automated screenshot comparisons or full 21-screen device pass have been completed yet.
+No full 21-screen pixel comparison or exhaustive device pass has been completed. v0.3 includes branded About/settings, live-data activity card restyling and system text-scale compliance. Only screenshots produced by an actual running Android build may be used to mark visual QA complete.

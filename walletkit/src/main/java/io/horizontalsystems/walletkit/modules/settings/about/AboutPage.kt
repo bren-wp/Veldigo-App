@@ -1,6 +1,18 @@
 package io.horizontalsystems.walletkit.modules.settings.about
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
@@ -65,8 +77,30 @@ private fun AboutScreen(
         title = stringResource(R.string.SettingsAboutApp_Title),
         onBack = onBackPress,
     ) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            VSpacer(12.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF071421))
+                .verticalScroll(rememberScrollState())
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_splash_logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(112.dp)
+                )
+                Text("VELDIGO", fontSize = 24.sp, fontWeight = FontWeight.Bold,
+                     letterSpacing = 3.sp, color = Color.White)
+                VSpacer(6.dp)
+                Text("Your crypto. Your control.", color = Color(0xFF41E6C7),
+                     fontSize = 14.sp, textAlign = TextAlign.Center)
+                VSpacer(12.dp)
+                Text("Built with purpose by Brendigo", color = Color(0xFFB5C6D7),
+                     fontSize = 12.sp, textAlign = TextAlign.Center)
+            }
             SettingSections(aboutViewModel, navigation)
             VSpacer(36.dp)
         }

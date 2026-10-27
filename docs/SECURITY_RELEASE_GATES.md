@@ -1,6 +1,6 @@
 # Veldigo release and security gates
 
-**Status: NOT production-ready.** This project handles irreversible cryptocurrency transfers. A passing compile is not an independent security assessment.
+**Status: NOT production-ready (v0.3 preview; security release gates remain blocked).** This project handles irreversible cryptocurrency transfers. A passing compile is not an independent security assessment.
 
 ## Release blocking items
 
@@ -20,7 +20,7 @@
 
 ## Preview builds
 
-GitHub prerelease **v0.2.0-preview.1** (if built) includes test-signed Android APK and AAB. Signing uses the upstream publicly available test keystore and is **not trusted** for production releases. Never submit this AAB to a production Play app or use these builds with real assets.
+GitHub engineering previews **v0.2.0-preview.1** and **v0.3.0-preview.1** (when built) include test-signed Android APK and AAB. Signing uses the upstream publicly available test keystore and is **not trusted** for production releases. Never submit this AAB to a production Play app or use these builds with real assets.
 
 ## Production signing
 

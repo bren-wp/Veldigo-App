@@ -17,6 +17,16 @@
 
 Veldigo combines a distinctive dark-navy design with mint accents and an open-source, multi-chain wallet foundation. Create your own wallet, import one you already control, and explore crypto assets from a single Android app.
 
+### Self-custody, designed with intention
+
+**See your portfolio clearly.** View assets, real wallet balances and chain-specific activity with a minimalist dashboard.
+
+**Send with confidence.** Enter the correct address and inspect the amount, asset, network and fee through the existing confirmation process.
+
+**Receive securely.** Generate a live receiving address and QR code for the selected chain. Never substitute illustrative reference addresses.
+
+**Stay in control.** Create or restore a wallet, configure PIN/biometric protection where available, and manage connected dApps with reviewable permissions.
+
 ### Designed around what matters
 
 | Experience | What you can do |
@@ -45,11 +55,21 @@ Veldigo combines a distinctive dark-navy design with mint accents and an open-so
 
 Veldigo is intended as a non-custodial wallet. Fiat purchases, swaps, WalletConnect and other third-party integrations depend on independent providers, their terms, supported jurisdictions and appropriate API credentials. A visible UI design does **not** mean a partner service is ready for commercial use.
 
+## Android UI/UX
+
+Veldigo adopts the dark navy + mint visual direction across the portfolio, settings, wallet creation and transaction flows. Supported device sizes, Android font scaling, visual states and accessibility must be checked before a real-money launch.
+
+Every token icon, amount, fee, receiving address and transaction history entry must reflect the **real wallet state**. Illustration values from design concepts are never authentic blockchain data.
+
 ## Downloads and current status
 
-The [Releases page](https://github.com/bren-wp/Veldigo-App/releases) distinguishes engineering previews from verified production releases. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
+The [Releases page](https://github.com/bren-wp/Veldigo-App/releases) provides preview builds, including v0.3.0-preview.1 when CI succeeds, with SHA-256 checksums and source revision. These are **not production-signed** and must not hold real funds. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
 
 **Production readiness is pending.** A successful Android compilation does not establish that a financial application is safe. Before publishing as a wallet for real assets, independent security review, transaction validation by chain, real-device QA, provider credential replacement, release signing, and regulatory/platform checks are required. See [release gates](docs/SECURITY_RELEASE_GATES.md).
+
+## Wallet safety
+
+Cryptocurrency transactions are generally irreversible. Always inspect the recipient and network, protect recovery words offline and do not share a seed phrase with anyone claiming to provide Veldigo support. Veldigo is not a custodian or an exchange, and external swaps/purchases depend on independent providers.
 
 ## Open source & attribution
 
