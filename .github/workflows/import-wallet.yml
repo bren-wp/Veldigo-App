@@ -1,0 +1,47 @@
+name: Bootstrap Veldigo wallet source
+on:
+  push:
+    branches: [feature/veldigo-wallet-foundation]
+    paths:
+      - "scripts/import_upstream.py"
+      - ".github/workflows/import-wallet.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.repository == 'bren-wp/Veldigo-App'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch audited public upstream revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none --no-checkout https://github.com/horizontalsystems/unstoppable-wallet-android.git /tmp/veldigo-upstream
+          git -C /tmp/veldigo-upstream fetch --depth=1 origin d6661c8d0dc02d259767f58b7cd73cabb877da18
+          git -C /tmp/veldigo-upstream checkout --detach d6661c8d0dc02d259767f58b7cd73cabb877da18
+          test "$(git -C /tmp/veldigo-upstream rev-parse HEAD)" = "d6661c8d0dc02d259767f58b7cd73cabb877da18"
+      - name: Preserve source and apply Veldigo branding
+        run: python3 scripts/import_upstream.py /tmp/veldigo-upstream .
+      - name: Verify basic project structure
+        run: |
+          test -f app/build.gradle.kts
+          test -f walletkit/src/main/res/values/strings.xml
+          grep -q 'applicationId = "com.brendigo.veldigo"' app/build.gradle.kts
+          grep -q '>Veldigo</string>' walletkit/src/main/res/values/strings.xml
+          test -f licenses/Unstoppable-Wallet-MIT.txt
+      - name: Commit imported sources to Veldigo feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "Import Unstoppable Wallet snapshot and apply Veldigo foundation branding"
+          git push origin HEAD:feature/veldigo-wallet-foundation
