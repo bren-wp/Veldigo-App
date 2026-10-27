@@ -3,6 +3,7 @@ package io.horizontalsystems.walletkit.modules.settings.security
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -86,8 +91,32 @@ private fun SecurityCenterScreen(
         onBack = navigation::removeLastOrNull,
     ) {
         Column(
-            Modifier.verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF071421))
+                .verticalScroll(rememberScrollState())
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFF112337))
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = "Protect your wallet",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 19.sp,
+                    color = Color.White
+                )
+                VSpacer(8.dp)
+                Text(
+                    text = "Keep your recovery phrase private, lock your device and verify each transaction before approval.",
+                    fontSize = 13.sp,
+                    color = Color(0xFFB5C6D7)
+                )
+            }
             PasscodeBlock(
                 securitySettingsViewModel,
                 navigation
@@ -150,58 +179,8 @@ private fun SecurityCenterScreen(
                 )
             }
 
-            VSpacer(height = 6.dp)
-
-            SectionHeader(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                title = stringResource(R.string.Premium_DefenseSystem),
-                icon = R.drawable.defense_gradient_filled_24
-            )
-
-            SectionPremiumUniversalLawrence {
-                uiState.defenseSystemActions.forEachIndexed { i, defenseAction ->
-                    val action = defenseAction.action
-                    BoxBordered(top = i != 0) {
-                        CellPrimary(
-                            middle = {
-                                CellMiddleInfo(
-                                    title = stringResource(action.titleStringRes).hs,
-                                    subtitle = stringResource(action.descriptionStringRes).hs
-                                )
-                            },
-                            right = {
-                                CellRightControlsSwitcher(
-                                    checked = defenseAction.enabled,
-                                    confirmChange = {
-                                        if (UserSubscriptionManager.isActionAllowed(action)) {
-                                            if (action == SecureSend) {
-                                                navigation.slideFromBottom(SecureSendConfigSheet)
-                                                false
-                                            } else {
-                                                true
-                                            }
-                                        } else {
-                                            navigation.slideFromBottom(BuySubscriptionHavHostPage)
-                                            false
-                                        }
-                                    }
-                                ) {
-                                    securitySettingsViewModel.setActionEnabled(action, it)
-                                }
-                            },
-                            onClick = if (action == SecureSend) {
-                                {
-                                    navigation.slideFromBottom(SecureSendConfigSheet)
-                                }
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }
-
-            }
-
+            // Upstream subscription/Defense System actions are deliberately hidden:
+            // Veldigo has no licensed paid-service entitlement configuration.
             VSpacer(height = 24.dp)
 
             Column(

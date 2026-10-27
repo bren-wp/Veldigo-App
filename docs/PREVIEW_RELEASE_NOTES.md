@@ -1,23 +1,24 @@
-# Veldigo v0.3.0-preview.1 — Android engineering preview
+# Veldigo v0.4.0-preview.1 — Android engineering preview
 
-**TEST BUILD — NOT FOR REAL CRYPTO OR PRODUCTION.**
+**TEST ONLY. NOT PRODUCTION-READY. DO NOT STORE OR TRANSFER REAL CRYPTO.**
 
-## UI improvements
-- Updated navy/mint settings and transaction activity cards.
-- Branded Veldigo About view and improved product typography.
-- Respect Android system font scaling for accessibility.
-- Existing functional wallet operations and live blockchain data are retained.
-- No sample seed, fake receiving address or artificial wallet balance is used in functional screens.
+### Updated Android experience
+- Midnight-navy portfolio action tiles with mint icons; existing Send/Receive/Swap handlers preserved.
+- Real receiving QR no longer obstructed by a central logo, improving compatibility with QR readers.
+- Veldigo copy/share buttons sized for touch and narrow Android screens; actions use live blockchain URI data.
+- Security center restyling and removal of upstream paywalled Defense System purchase prompts.
+- Continued dark/light/system selection and Android accessibility font scaling from v0.3.
+- More descriptive README and per-screen UI validation checklist.
 
-## Contents
-- Android test APK, Android test AAB, SHA256SUMS.txt, BUILD_INFO.txt, published only after successful Gradle build and ZIP integrity checks.
-- Version code 2, version 0.3.0-preview.1, package com.brendigo.veldigo.
+### Release artifacts
+- Android **debug/test-signed** APK and AAB for review only; no production Play signing.
+- SHA256SUMS and BUILD_INFO documenting exact source commit and signing type.
+- Package identifier of TEST debug builds has a development suffix and is not the production application ID.
 
-## Pending before commercial or real-funds use
-- Full independent security review, recovery and transaction test vectors across enabled chains.
-- Licensed Veldigo-owned RPC, swap/buy, marketplace and WalletConnect integrations/credentials.
-- Full emulator/device screenshot comparisons against all 21 supplied references.
-- Proper production upload signing identity, crash/ANR/device testing and Google Play declarations.
+### Mandatory pre-production gates
+- Independently audit key handling, seed phrase backup/recovery, per-network signing, address validation and transactions.
+- Replace upstream-owned credentials, wallet services, paywalled modules and configure approved Veldigo-controlled APIs.
+- Validate visual parity for all provided screens on emulator and physical Android devices.
+- Obtain protected production upload key; complete financial declarations, privacy, regional compliance and crash/ANR QA.
 
-**Do not mistake a debug/test-signed APK or AAB for a production release.**
-Underlying wallet foundation: Unstoppable Wallet Android, pinned MIT-licensed upstream source.
+Original Unstoppable Wallet Android MIT attribution retained. Passing CI demonstrates buildability, not financial security.

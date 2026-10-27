@@ -3,14 +3,14 @@ name: Veldigo preview APK and AAB release
 on:
   push:
     branches:
-      - feature/veldigo-ui-release-v03
+      - feature/veldigo-visual-safety-v04
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: veldigo-preview-v03
+  group: veldigo-preview-v04
   cancel-in-progress: true
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           test -f licenses/Unstoppable-Wallet-MIT.txt
           grep -q 'applicationId = "com.brendigo.veldigo"' app/build.gradle.kts
-          grep -q 'versionName = "0.3.0-preview.1"' app/build.gradle.kts
+          grep -q 'versionName = "0.4.0-preview.1"' app/build.gradle.kts
           if git ls-files | grep -E '\.(jks|p12|pfx)$'; then
             echo "Private release keystore may not be committed" >&2
             exit 1
@@ -54,8 +54,8 @@ jobs:
           test -n "$AAB" && test -s "$AAB"
           unzip -t "$APK" >/dev/null
           unzip -t "$AAB" >/dev/null
-          cp "$APK" dist/VELDIGO-v0.3.0-preview.1-TEST.apk
-          cp "$AAB" dist/VELDIGO-v0.3.0-preview.1-TEST.aab
+          cp "$APK" dist/VELDIGO-v0.4.0-preview.1-TEST.apk
+          cp "$AAB" dist/VELDIGO-v0.4.0-preview.1-TEST.aab
           (cd dist && sha256sum *.apk *.aab > SHA256SUMS.txt)
           printf 'Commit: %s\nSigning: development/test\nProduction ready: NO\n' "$GITHUB_SHA" > dist/BUILD_INFO.txt
       - name: Publish clearly labeled test-only prerelease
@@ -64,7 +64,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.3.0-preview.1
+          TAG=v0.4.0-preview.1
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
             gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --prerelease
@@ -73,6 +73,8 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
               --prerelease \
-              --title "VELDIGO v0.3.0-preview.1 (TEST ONLY)" \
+              --title "VELDIGO v0.4.0-preview.1 (TEST ONLY)" \
               --notes-file docs/PREVIEW_RELEASE_NOTES.md
           fi
+          # Ensure GitHub marks every TEST artifact as a prerelease.
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --prerelease
