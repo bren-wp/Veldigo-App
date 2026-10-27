@@ -5,6 +5,10 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -94,7 +98,7 @@ fun SettingsScreen(
 ) {
 
     Surface(
-        color = ComposeAppTheme.colors.tyler
+        color = Color(0xFF071421)
     ) {
         Column {
             AppBar(
@@ -106,7 +110,19 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState())
                     .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .background(Color(0xFF112337), RoundedCornerShape(20.dp))
+                        .padding(horizontal = 18.dp, vertical = 18.dp)
+                ) {
+                    Text("Your wallet. Your rules.", fontSize = 18.sp,
+                         fontWeight = FontWeight.Bold, color = Color.White)
+                    Spacer(Modifier.height(6.dp))
+                    Text("Manage security, your accounts and connected apps.",
+                         fontSize = 13.sp, color = Color(0xFFB5C6D7))
+                }
+                Spacer(modifier = Modifier.height(16.dp))
                 SettingSections(
                     viewModel = viewModel,
                     navigation = navigation,
