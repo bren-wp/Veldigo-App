@@ -332,7 +332,7 @@ class LocalStorageManager(
 
     override var currentTheme: ThemeType
         get() = preferences.getString(CURRENT_THEME, null)?.let { ThemeType.valueOf(it) }
-            ?: ThemeType.System
+            ?: ThemeType.Dark
         set(themeType) {
             preferences.edit().putString(CURRENT_THEME, themeType.value).apply()
         }

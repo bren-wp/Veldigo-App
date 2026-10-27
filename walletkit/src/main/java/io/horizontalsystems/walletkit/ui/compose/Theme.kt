@@ -42,7 +42,7 @@ val darkPalette = Colors(
 
 @Composable
 fun ComposeAppTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
 
