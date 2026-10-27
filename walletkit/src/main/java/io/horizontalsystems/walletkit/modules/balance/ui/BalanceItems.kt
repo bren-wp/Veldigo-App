@@ -3,6 +3,7 @@ package io.horizontalsystems.walletkit.modules.balance.ui
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -578,21 +579,27 @@ fun BalanceActionButton(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        HSIconButton(
-            variant = variant,
-            icon = painterResource(icon),
-            contentDescription = title,
-            enabled = enabled,
-            onClick = onClick
-        )
+    // A genuine click surface (minimum 60 dp); transaction handling stays
+    // in the caller and is never substituted with mock logic.
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .size(62.dp)
+                .clip(RoundedCornerShape(17.dp))
+                .background(Color(0xFF10283A))
+                .border(1.dp, Color(0xFF234556), RoundedCornerShape(17.dp))
+                .clickable(enabled = enabled, onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = title,
+                tint = if (enabled) Color(0xFF41E6C7) else Color(0xFF536C82),
+                modifier = Modifier.size(26.dp)
+            )
+        }
         VSpacer(8.dp)
-        caption_grey(
-            text = title,
-            maxLines = 1
-        )
+        caption_grey(text = title, maxLines = 1)
     }
 }
 

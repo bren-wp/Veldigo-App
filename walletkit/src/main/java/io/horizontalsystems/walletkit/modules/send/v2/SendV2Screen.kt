@@ -1,6 +1,8 @@
 package io.horizontalsystems.walletkit.modules.send.v2
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -144,7 +146,11 @@ fun SendV2Screen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .background(ComposeAppTheme.colors.lawrence)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF071421), Color(0xFF10283A), Color(0xFF071421))
+                        )
+                    )
                     .imePadding()
             ) {
                 if (formViewModel == null) {
