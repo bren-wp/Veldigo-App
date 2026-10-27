@@ -6,26 +6,8 @@ class DonationShowManager(
     private val localStorage: ILocalStorage,
 ) {
 
-    fun shouldShow(): Boolean {
-        //show only for FDroid builds
-        val isFDroidBuild = io.horizontalsystems.walletkit.core.App.appConfigProvider.fdroidBuild
-        if (!isFDroidBuild) {
-            return false
-        }
-
-        val donateUsLastShown = localStorage.donateUsLastShownDate
-
-        //check last shown date is null or more than 30 days ago
-        //else return false
-        val oneMonthPeriod = 30 * 24 * 60 * 60 * 1000L
-        val currentTimeMillis = System.currentTimeMillis()
-        if (donateUsLastShown == null || (currentTimeMillis - donateUsLastShown) > oneMonthPeriod) {
-            localStorage.donateUsLastShownDate = currentTimeMillis
-            return true
-        }
-
-        return false
-    }
+    // Branded distribution has no donation program configured.
+    fun shouldShow(): Boolean = false
 
     fun updateDonatePageShownDate() {
         localStorage.donateUsLastShownDate = System.currentTimeMillis()

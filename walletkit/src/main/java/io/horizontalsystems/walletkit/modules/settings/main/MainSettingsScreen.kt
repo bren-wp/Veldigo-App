@@ -127,48 +127,6 @@ private fun SettingSections(
     val context = LocalContext.current
     val isFDroidBuild = io.horizontalsystems.walletkit.core.App.appConfigProvider.fdroidBuild
 
-    val banners = buildList<@Composable () -> Unit> {
-        if (uiState.showPremiumBanner) {
-            add {
-                SubscriptionBanner(
-                    onClick = {
-                        navigation.slideFromBottom(BuySubscriptionHavHostPage)
-                        stat(
-                            page = StatPage.Settings,
-                            event = StatEvent.OpenPremium(StatPremiumTrigger.Banner)
-                        )
-                    }
-                )
-            }
-        }
-        if (isFDroidBuild) {
-            add {
-                DonateBanner(
-                    onClick = {
-                        navigation.slideFromBottom(WhyDonatePage)
-                    }
-                )
-            }
-        }
-    }
-
-    BannerCarousel(banners = banners)
-
-    CellUniversalLawrenceSection(
-        listOf {
-            HsSettingCell(
-                R.string.UnstoppableLabs_Title,
-                R.drawable.flask_24,
-                iconTint = ComposeAppTheme.colors.jacob,
-                onClick = {
-                    navigation.slideFromRight(UnstoppableLabsPage)
-                }
-            )
-        }
-    )
-
-    VSpacer(24.dp)
-
     CellUniversalLawrenceSection(
         listOfNotNull({
             HsSettingCell(
@@ -289,19 +247,6 @@ private fun SettingSections(
                     }
                 )
             }
-            if (!io.horizontalsystems.walletkit.core.App.appConfigProvider.fdroidBuild) {
-                add {
-                    HsSettingCell(
-                        R.string.Settings_Subscription,
-                        R.drawable.premium_24,
-                        value = if (uiState.hasSubscription) stringResource(R.string.SettingsSubscription_Active) else null,
-                        onClick = {
-                            navigation.slideFromRight(SubscriptionPage)
-                        }
-                    )
-                }
-            }
-
             add {
                 HsSettingCell(
                     R.string.BackupManager_Title,
@@ -318,37 +263,6 @@ private fun SettingSections(
             }
         }
     )
-
-    VSpacer(4.dp)
-
-    if (isFDroidBuild) {
-        PremiumHeader(R.string.Premium_TitleForDroid)
-    } else {
-        PremiumHeader()
-    }
-
-    SectionPremiumUniversalLawrence {
-        HsSettingCell(
-            title = if(isFDroidBuild) R.string.Settings_Support else R.string.Settings_VipSupport,
-            icon = R.drawable.ic_support_yellow_24,
-            iconTint = ComposeAppTheme.colors.jacob,
-            onClick = {
-                if (isFDroidBuild) {
-                    LinkHelper.openLinkInAppBrowser(context, viewModel.fdroidSupportLink)
-                } else {
-                    navigation.paidAction(PrioritySupport) {
-                        LinkHelper.openLinkInAppBrowser(context, viewModel.vipSupportLink)
-                    }
-                }
-
-                stat(
-                    page = StatPage.Settings,
-                    event = StatEvent.OpenPremium(StatPremiumTrigger.VipSupport)
-                )
-            }
-        )
-    }
-
 
     VSpacer(24.dp)
 
@@ -402,53 +316,6 @@ private fun SettingSections(
             )
         })
     )
-
-    VSpacer(24.dp)
-
-    CellUniversalLawrenceSection(
-        listOf({
-            HsSettingCell(
-                R.string.Settings_Telegram,
-                R.drawable.ic_telegram_24,
-                onClick = {
-                    LinkHelper.openLinkInAppBrowser(context, App.appConfigProvider.appTelegramLink)
-
-                    stat(
-                        page = StatPage.Settings,
-                        event = StatEvent.Open(StatPage.ExternalTelegram)
-                    )
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_Twitter,
-                R.drawable.x_logo_24,
-                onClick = {
-                    LinkHelper.openLinkInAppBrowser(context, App.appConfigProvider.appTwitterLink)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.ExternalTwitter))
-                }
-            )
-        })
-    )
-
-    if (uiState.donateEnabled) {
-        VSpacer(24.dp)
-
-        CellUniversalLawrenceSection(
-            listOf {
-                HsSettingCell(
-                    R.string.Settings_Donate,
-                    R.drawable.ic_heart_24,
-                    onClick = {
-                        navigation.slideFromRight(DonateTokenSelectPage)
-
-                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Donate))
-                    }
-                )
-            }
-        )
-    }
 
     if (BuildConfig.DEBUG) {
         VSpacer(24.dp)
