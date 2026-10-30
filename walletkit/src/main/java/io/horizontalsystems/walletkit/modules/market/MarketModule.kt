@@ -77,7 +77,10 @@ data class MarketItem(
     val rate: CurrencyValue,
     val diff: BigDecimal?,
     val marketCap: CurrencyValue,
-    val rank: Int?
+    val rank: Int?,
+    // MarketKit can return null before a token has a valid quote.
+    // Do not present null as a fabricated 0.00 market price.
+    val priceAvailable: Boolean = true,
 ) {
     companion object {
         fun createFromCoinMarket(
@@ -91,7 +94,8 @@ data class MarketItem(
                 rate = CurrencyValue(currency, marketInfo.price ?: BigDecimal.ZERO),
                 diff = marketInfo.priceChangeValue(period),
                 marketCap = CurrencyValue(currency, marketInfo.marketCap ?: BigDecimal.ZERO),
-                rank = marketInfo.marketCapRank
+                rank = marketInfo.marketCapRank,
+                priceAvailable = marketInfo.price != null,
             )
         }
     }
