@@ -39,6 +39,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryWordVerifierTest' --no-daemon --stacktrace
+      - name: Verify security setup route and PIN contract
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SecuritySetupRouteTest' --no-daemon --stacktrace
       - name: Upload test APK
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
