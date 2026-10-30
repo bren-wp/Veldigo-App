@@ -7,7 +7,7 @@
 
 ![Veldigo brand icon](branding/veldigo-icon.png)
 
-[Android](https://github.com/bren-wp/Veldigo-App) · [Source code](https://github.com/bren-wp/Veldigo-App/tree/main) · [Releases](https://github.com/bren-wp/Veldigo-App/releases) · [Security & release status](docs/SECURITY_RELEASE_GATES.md)
+[Android](https://github.com/bren-wp/Veldigo-Wallet) · [Source code](https://github.com/bren-wp/Veldigo-Wallet/tree/main) · [Releases](https://github.com/bren-wp/Veldigo-Wallet/releases) · [Security & release status](docs/SECURITY_RELEASE_GATES.md)
 
 </div>
 
@@ -77,7 +77,7 @@ This preview improves receive QR readability, wallet action buttons, and removes
 
 ## Downloads and current status
 
-The [Releases page](https://github.com/bren-wp/Veldigo-App/releases) provides preview builds, including v0.4.0-preview.1 when CI succeeds, with SHA-256 checksums and source revision. These are **not production-signed** and must not hold real funds. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
+The [Releases page](https://github.com/bren-wp/Veldigo-Wallet/releases) provides preview builds, including v0.4.0-preview.1 when CI succeeds, with SHA-256 checksums and source revision. These are **not production-signed** and must not hold real funds. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
 
 **Production readiness is pending.** A successful Android compilation does not establish that a financial application is safe. Before publishing as a wallet for real assets, independent security review, transaction validation by chain, real-device QA, provider credential replacement, release signing, and regulatory/platform checks are required. See [release gates](docs/SECURITY_RELEASE_GATES.md).
 
