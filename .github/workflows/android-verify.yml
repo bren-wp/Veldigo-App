@@ -55,6 +55,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SecuritySetupRouteTest' --no-daemon --stacktrace
+      - name: Verify 6-digit PIN setup input bounds
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.pin.set.PinSetInputRulesTest' --no-daemon --stacktrace
       - name: Verify Send Continue never bypasses form validation
         if: steps.source.outputs.present == 'true'
         run: |
