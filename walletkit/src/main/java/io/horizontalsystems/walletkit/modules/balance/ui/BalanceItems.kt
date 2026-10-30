@@ -59,11 +59,8 @@ import io.horizontalsystems.walletkit.modules.balance.BalanceViewItem2
 import io.horizontalsystems.walletkit.modules.balance.BalanceViewModel
 import io.horizontalsystems.walletkit.modules.balance.TotalUIState
 import io.horizontalsystems.walletkit.modules.balance.token.TokenBalancePage
-import io.horizontalsystems.walletkit.modules.buy.BuyCryptoPage
-import io.horizontalsystems.walletkit.modules.nft.NftGalleryPage
 import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
-import io.horizontalsystems.walletkit.modules.multiswap.SwapPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsPage
 import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsModule
@@ -251,7 +248,6 @@ fun BalanceItems(
                 )
                 VeldigoHomeActions(
                     sendEnabled = !accountViewItem.isWatchAccount,
-                    swapEnabled = viewModel.isSwapEnabled && !accountViewItem.isWatchAccount,
                     onSend = {
                         navigation.slideFromRight(SendTokenSelectPage())
                         stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.SendTokenList))
@@ -259,13 +255,6 @@ fun BalanceItems(
                     onReceive = {
                         navigation.slideFromRight(ReceiveChooseCoinPage)
                         stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.ReceiveTokenList))
-                    },
-                    onSwap = {
-                        navigation.slideFromRight(SwapPage())
-                        stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Swap))
-                    },
-                    onBuy = {
-                        navigation.slideFromRight(BuyCryptoPage)
                     },
                 )
             }
@@ -326,11 +315,8 @@ fun BalanceItems(
             }
 
             item {
-                VeldigoAssetTabs(
-                    selectedNfts = false,
-                    onSelectNfts = { selected ->
-                        if (selected) navigation.slideFromRight(NftGalleryPage)
-                    },
+                VeldigoAssetHeader(
+                    onManageAssets = { navigation.slideFromRight(ManageWalletsPage) },
                 )
             }
 
@@ -439,16 +425,8 @@ private fun handleContextMenuClick(
 
         BalanceContextMenuItem.CopyAddress -> { onAddressCopyClick.invoke(balanceViewItem.wallet) }
 
-        BalanceContextMenuItem.Swap -> {
-            navigation.slideFromRight(
-                SwapPage(SwapPage.Input(tokenIn = balanceViewItem.wallet.token))
-            )
-
-            stat(
-                page = StatPage.Balance,
-                event = StatEvent.Open(StatPage.Swap)
-            )
-        }
+        // Kept as a no-op for compatibility with legacy context menu state.
+        BalanceContextMenuItem.Swap -> Unit
 
         BalanceContextMenuItem.CoinInfo -> {
             val coinUid = balanceViewItem.wallet.coin.uid
