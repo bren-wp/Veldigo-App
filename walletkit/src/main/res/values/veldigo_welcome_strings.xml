@@ -200,4 +200,23 @@
     <string name="Veldigo_Settings_Networks">Connected Networks</string>
     <string name="Veldigo_Settings_Appearance">Appearance</string>
     <string name="Veldigo_Settings_Version">Veldigo · v%1$s</string>
+    <string name="Veldigo_SecurityCenter_Access">App access</string>
+    <string name="Veldigo_SecurityCenter_Privacy">Privacy protection</string>
+    <string name="Veldigo_SecurityCenter_Advanced">Advanced security</string>
+    <string name="Veldigo_SecurityCenter_Critical">Access management</string>
+    <string name="Veldigo_SecurityCenter_Protected">App PIN configured</string>
+    <string name="Veldigo_SecurityCenter_NeedsPin">Set up your app PIN</string>
+    <string name="Veldigo_SecurityCenter_ActiveWithBiometrics">PIN and biometric unlock are enabled</string>
+    <string name="Veldigo_SecurityCenter_PinOnly">PIN protection is enabled</string>
+    <string name="Veldigo_SecurityCenter_PromptPin">Protect your wallet access with a six-digit PIN</string>
+    <string name="Veldigo_SecurityCenter_PinSet">Manage your six-digit app PIN</string>
+    <string name="Veldigo_SecurityCenter_PinRequired">A six-digit app PIN is not configured</string>
+    <string name="Veldigo_SecurityCenter_BiometricHint">Requires app PIN and Android authentication</string>
+    <string name="Veldigo_SecurityCenter_DuressPin">Duress PIN</string>
+    <string name="Veldigo_SecurityCenter_DuressActive">A separate emergency PIN is configured</string>
+    <string name="Veldigo_SecurityCenter_DuressHint">Set a separate emergency PIN for the supported protection flow</string>
+    <string name="Veldigo_SecurityCenter_RemoveDuress">Remove Duress PIN</string>
+    <string name="Veldigo_SecurityCenter_RemoveDuressHint">Authenticate before removing the emergency PIN</string>
+    <string name="Veldigo_SecurityCenter_DisablePinHint">Requires authentication; disables biometric wallet unlock too</string>
+    <string name="Veldigo_SecurityCenter_Safety">Protect your recovery phrase offline. Review addresses and network details before sending crypto. These controls protect access to this app, not your blockchain transactions from every possible risk.</string>
 </resources>
