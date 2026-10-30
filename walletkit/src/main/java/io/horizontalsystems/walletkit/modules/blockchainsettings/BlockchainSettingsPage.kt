@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -111,7 +113,7 @@ private fun BlockchainSettingsScreen(
                 IconButton(onClick = { searchQuery = "" }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_close),
-                        contentDescription = stringResource(R.string.Button_Close),
+                        contentDescription = stringResource(R.string.Veldigo_Networks_Clear),
                         tint = VeldigoHomePalette.Muted,
                     )
                 }
@@ -137,6 +139,7 @@ private fun BlockchainSettingsScreen(
                 modifier = Modifier.size(20.dp),
                 tint = VeldigoHomePalette.Muted,
             )
+            val searchDescription = stringResource(R.string.Veldigo_Networks_Search)
             Box(modifier = Modifier.weight(1f)) {
                 if (searchQuery.isEmpty()) {
                     Text(
@@ -148,7 +151,11 @@ private fun BlockchainSettingsScreen(
                 BasicTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = NetworkSettingsListRules.normalizeQuery(it) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            contentDescription = searchDescription
+                        },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     textStyle = TextStyle(color = VeldigoHomePalette.White, fontSize = 14.sp),
@@ -191,7 +198,19 @@ private fun BlockchainSettingsScreen(
                 }
             }
 
-            if (bitcoinLike.isEmpty() && other.isEmpty()) {
+            if (!viewModel.loaded) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(top = 70.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            color = VeldigoHomePalette.Mint,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
+                }
+            } else if (bitcoinLike.isEmpty() && other.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier
