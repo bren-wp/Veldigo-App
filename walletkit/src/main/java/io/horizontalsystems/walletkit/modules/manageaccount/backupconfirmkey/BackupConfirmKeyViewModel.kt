@@ -8,16 +8,24 @@ import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.entities.AccountType
 
+/**
+ * Verifies the full phrase in its original order.
+ *
+ * Selecting words never marks the account backed up. Only the separate,
+ * explicitly enabled Confirm action can persist backup verification.
+ * A stable source index distinguishes duplicate BIP39 words.
+ */
 class BackupConfirmKeyViewModel(
     private val account: Account,
     private val accountManager: IAccountManager,
-    private val randomProvider: IRandomProvider
+    @Suppress("UNUSED_PARAMETER") randomProvider: IRandomProvider,
 ) : ViewModelUiState<BackupConfirmUiState>() {
 
     private val wordsIndexed: List<Pair<Int, String>>
     private var hiddenWordItems = listOf<HiddenWordItem>()
     private var wordOptions = listOf<WordOption>()
-    private var currentHiddenWordItemIndex = -1
+    private var currentHiddenWordItemIndex = 0
+    private var readyToConfirm = false
     private var confirmed = false
     private var error: Throwable? = null
 
@@ -25,77 +33,76 @@ class BackupConfirmKeyViewModel(
         val words = when (val type = account.type) {
             is AccountType.Mnemonic -> type.words
             is AccountType.MoneroMnemonic -> type.words
-            else -> null
+            else -> emptyList()
         }
-
-        if (words != null) {
-            wordsIndexed = words.mapIndexed { index, s ->
-                Pair(index, s)
-            }
-
-            reset()
-            emitState()
-        } else {
-            wordsIndexed = listOf()
-        }
+        wordsIndexed = words.mapIndexed { index, word -> index to word }
+        resetSelection()
+        emitState()
     }
 
     override fun createState() = BackupConfirmUiState(
         hiddenWordItems = hiddenWordItems,
         wordOptions = wordOptions,
         currentHiddenWordItemIndex = currentHiddenWordItemIndex,
+        readyToConfirm = readyToConfirm,
         confirmed = confirmed,
-        error = error
+        error = error,
     )
 
-    private fun reset() {
-        val wordsCountToGuess = when (wordsIndexed.size) {
-            12 -> 2
-            15, 18, 21 -> 3
-            24, 25 -> 4
-            else -> 2
+    private fun resetSelection() {
+        // All source words are required, even with repeated words or 15–25-word
+        // accounts. A shuffled option never changes the saved phrase.
+        hiddenWordItems = wordsIndexed.map { (index, word) ->
+            HiddenWordItem(index, word, isRevealed = false)
         }
-
-        val shuffled = wordsIndexed.shuffled().take(12)
-        val randomNumbers = randomProvider.getRandomNumbers(wordsCountToGuess, shuffled.size)
-
-        hiddenWordItems = randomNumbers.map { number ->
-            val wordIndexed = shuffled[number]
-            HiddenWordItem(
-                index = wordIndexed.first,
-                word = wordIndexed.second,
-                isRevealed = false
-            )
-        }
-        wordOptions = shuffled.map {
-            WordOption(it.second, true)
+        wordOptions = wordsIndexed.shuffled().map { (index, word) ->
+            WordOption(word, enabled = true, sourceIndex = index)
         }
         currentHiddenWordItemIndex = 0
+        readyToConfirm = false
     }
 
-    fun onSelectWord(wordOption: WordOption) {
-        val hiddenWordItem = hiddenWordItems[currentHiddenWordItemIndex]
-        if (hiddenWordItem.word != wordOption.word) {
-            reset()
+    fun onSelectWord(option: WordOption) {
+        if (confirmed || readyToConfirm || currentHiddenWordItemIndex !in hiddenWordItems.indices) {
+            return
+        }
+        // Identical words can occur several times in a valid mnemonic.
+        // Match each chip by its unique source index to disable only that chip.
+        val optionIndex = wordOptions.indexOfFirst {
+            it.sourceIndex == option.sourceIndex && it.enabled && it.word == option.word
+        }
+        if (optionIndex == -1) return
+
+        val expected = hiddenWordItems[currentHiddenWordItemIndex]
+        if (expected.word != option.word) {
+            resetSelection()
             error = Exception(Translator.getString(R.string.BackupConfirmKey_Error_InvalidWord))
         } else {
             hiddenWordItems = hiddenWordItems.toMutableList().apply {
-                set(currentHiddenWordItemIndex, hiddenWordItem.copy(isRevealed = true))
+                set(currentHiddenWordItemIndex, expected.copy(isRevealed = true))
             }
-
-            val indexOfWordOption = wordOptions.indexOf(wordOption)
             wordOptions = wordOptions.toMutableList().apply {
-                set(indexOfWordOption, wordOption.copy(enabled = false))
+                set(optionIndex, option.copy(enabled = false))
             }
-
-            if (currentHiddenWordItemIndex != hiddenWordItems.lastIndex) {
-                currentHiddenWordItemIndex++
-            } else {
-                accountManager.update(account.copy(isBackedUp = true))
-                confirmed = true
-            }
+            currentHiddenWordItemIndex += 1
+            readyToConfirm = currentHiddenWordItemIndex == hiddenWordItems.size
         }
+        emitState()
+    }
 
+    fun confirmBackup() {
+        if (confirmed || !readyToConfirm || hiddenWordItems.isEmpty()) return
+        // Explicitly verify the whole original phrase once more before storage.
+        if (hiddenWordItems.any { !it.isRevealed }) return
+        accountManager.update(account.copy(isBackedUp = true))
+        confirmed = true
+        emitState()
+    }
+
+    fun clearSelectionOnBackground() {
+        if (confirmed) return
+        resetSelection()
+        error = null
         emitState()
     }
 
@@ -109,19 +116,17 @@ data class BackupConfirmUiState(
     val hiddenWordItems: List<HiddenWordItem>,
     val wordOptions: List<WordOption>,
     val currentHiddenWordItemIndex: Int,
+    val readyToConfirm: Boolean,
     val confirmed: Boolean,
-    val error: Throwable?
+    val error: Throwable?,
 )
 
-data class WordOption(val word: String, val enabled: Boolean)
+data class WordOption(val word: String, val enabled: Boolean, val sourceIndex: Int = -1)
 
 data class HiddenWordItem(
     val index: Int,
     val word: String,
-    val isRevealed: Boolean
+    val isRevealed: Boolean,
 ) {
-    override fun toString() = when {
-        isRevealed -> "${index + 1}. $word"
-        else -> "${index + 1}."
-    }
+    override fun toString() = if (isRevealed) "${index + 1}. $word" else "${index + 1}."
 }
