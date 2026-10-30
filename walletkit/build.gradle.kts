@@ -204,6 +204,8 @@ dependencies {
     api(project(":dapp-core"))
 
     testImplementation(libs.junit)
+    // Route serialization tests exercise JSON round-trips; core alone has no Json runtime.
+    testImplementation(libs.kotlinx.serialization.json)
 }
 
 // Forward -PupdateParityFixture=true to the test JVM so ChainBehaviorParityTest can
