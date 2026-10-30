@@ -13,4 +13,8 @@
     <string name="Veldigo_Welcome_CreateWallet">Create a new wallet</string>
     <string name="Veldigo_Welcome_ImportWallet">Import existing wallet</string>
     <string name="Veldigo_Welcome_Legal">By continuing you agree to our Terms of Service and Privacy Policy.</string>
+    <string name="Veldigo_Onboarding02_Title">Secure</string>
+    <string name="Veldigo_Onboarding02_Description">Your assets, protected with industry-leading security.</string>
+    <string name="Veldigo_Onboarding02_Next">Next</string>
+    <string name="Veldigo_Onboarding02_Skip">Skip</string>
 </resources>
