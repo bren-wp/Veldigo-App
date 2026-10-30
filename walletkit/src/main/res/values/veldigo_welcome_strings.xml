@@ -103,4 +103,14 @@
     <string name="Veldigo_Receive_ShareRequest">Share Payment Request</string>
     <string name="Veldigo_Receive_RequestAmount">Requested amount: %1$s</string>
     <string name="Veldigo_Receive_ClearAmount">Remove requested amount</string>
+    <string name="Veldigo_Swap_From">From</string>
+    <string name="Veldigo_Swap_To">To</string>
+    <string name="Veldigo_Swap_Switch">Reverse swap pair</string>
+    <string name="Veldigo_Swap_NoQuote">—</string>
+    <string name="Veldigo_Swap_NoFiatPrice">Conversion unavailable</string>
+    <string name="Veldigo_Swap_NoRate">Waiting for a live exchange quote</string>
+    <string name="Veldigo_Swap_Slippage">Slippage Tolerance</string>
+    <string name="Veldigo_Swap_SlippageOnReview">Set on review</string>
+    <string name="Veldigo_Swap_SlippageExplanation">You can review and adjust the supported slippage tolerance on the transaction confirmation screen, after a live provider quote has been calculated. No slippage percentage is assumed here.</string>
+    <string name="Veldigo_Swap_Action">Swap</string>
 </resources>
