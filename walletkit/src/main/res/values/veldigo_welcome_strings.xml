@@ -85,4 +85,13 @@
     <string name="Veldigo_Asset_About">About %1$s</string>
     <string name="Veldigo_Asset_NoAbout">Verified market description is not available for this asset.</string>
     <string name="Veldigo_Asset_LearnMore">More market information</string>
+    <string name="Veldigo_Send_To">To</string>
+    <string name="Veldigo_Send_SelectRecipient">Choose recipient address</string>
+    <string name="Veldigo_Send_ScanOrSelect">Scan or select recipient QR address</string>
+    <string name="Veldigo_Send_RecipientRisk">Verify this address carefully before continuing.</string>
+    <string name="Veldigo_Send_Amount">Amount</string>
+    <string name="Veldigo_Send_NetworkFee">Network Fee</string>
+    <string name="Veldigo_Send_FeeOnReview">Calculated on the confirmation screen</string>
+    <string name="Veldigo_Send_FeeSettings">Fee settings</string>
+    <string name="Veldigo_Send_Continue">Continue</string>
 </resources>
