@@ -165,4 +165,15 @@
     <string name="Veldigo_AddWallet_CreateDetail">Create a wallet with a new recovery phrase</string>
     <string name="Veldigo_AddWallet_ImportDetail">Recover using your phrase, key or backup file</string>
     <string name="Veldigo_AddWallet_WatchDetail">Track a wallet address without signing keys</string>
+    <string name="Veldigo_CreateForm_Title">Create Wallet</string>
+    <string name="Veldigo_CreateForm_Heading">Set up your new wallet</string>
+    <string name="Veldigo_CreateForm_Description">Give your wallet a name, then securely create your recovery phrase.</string>
+    <string name="Veldigo_CreateForm_RandomName">Generate another wallet name</string>
+    <string name="Veldigo_CreateForm_NameMax">Maximum %1$d characters</string>
+    <string name="Veldigo_CreateForm_AdvancedHint">Choose the recovery phrase length or add an optional BIP39 passphrase</string>
+    <string name="Veldigo_CreateForm_PassphraseWarning">An optional BIP39 passphrase changes the wallet keys. Keep it with your backup: losing it may permanently prevent recovery.</string>
+    <string name="Veldigo_CreateForm_Safety">Your recovery phrase is shown after the wallet is created. Write it down offline, verify it, and never share it with anyone.</string>
+    <string name="Veldigo_CreateForm_Show">Show</string>
+    <string name="Veldigo_CreateForm_Hide">Hide</string>
+    <string name="Veldigo_CreateForm_Create">Create Wallet</string>
 </resources>
