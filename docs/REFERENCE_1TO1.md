@@ -60,6 +60,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Bitcoin-family synchronization source (screen 33) — **native emulator/physical screenshot overlay, source switch/full rescan, BTC/BCH/LTC/DASH/eCash network regression and exact pixel parity NOT verified**
 - [x] Bitcoin-family synchronization status (screen 34) — **live active-account adapters, real progress/blocks, Tor-aware waiting, selected-chain counters, Refresh and post-source-change navigation implemented**, source QA recorded
 - [ ] Bitcoin-family synchronization status (screen 34) — **Android CI, emulator pixel overlay, physical sync/rescan, offline/Tor/reorg validation and full 1:1 parity NOT verified**
+- [x] Monero Network / Node Settings (screen 35) — **real default/custom Monero nodes, measured latency, auto-selection, trust confirmation, local icons and protected removal implemented**, QA documented
+- [ ] Monero Network / Node Settings (screen 35) — **Android build/device verification, Monero auto-select + Tor reconnection, screenshot overlay and exact pixel parity NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
