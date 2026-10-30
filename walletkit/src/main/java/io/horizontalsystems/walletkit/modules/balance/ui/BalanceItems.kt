@@ -60,6 +60,7 @@ import io.horizontalsystems.walletkit.modules.balance.BalanceViewModel
 import io.horizontalsystems.walletkit.modules.balance.TotalUIState
 import io.horizontalsystems.walletkit.modules.balance.token.TokenBalancePage
 import io.horizontalsystems.walletkit.modules.buy.BuyCryptoPage
+import io.horizontalsystems.walletkit.modules.nft.NftGalleryPage
 import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
 import io.horizontalsystems.walletkit.modules.multiswap.SwapPage
@@ -180,7 +181,6 @@ fun BalanceItems(
     val context = LocalContext.current
     val view = LocalView.current
     var revealedCardId by remember { mutableStateOf<Int?>(null) }
-    var showNfts by rememberSaveable(accountViewItem.id) { mutableStateOf(false) }
     val listState = rememberSaveable(
         accountViewItem.id,
         uiState.sortType,
@@ -326,12 +326,15 @@ fun BalanceItems(
             }
 
             item {
-                VeldigoAssetTabs(selectedNfts = showNfts, onSelectNfts = { showNfts = it })
+                VeldigoAssetTabs(
+                    selectedNfts = false,
+                    onSelectNfts = { selected ->
+                        if (selected) navigation.slideFromRight(NftGalleryPage)
+                    },
+                )
             }
 
-            if (showNfts) {
-                item { VeldigoNftUnavailable() }
-            } else if (balanceViewItems.isEmpty()) {
+            if (balanceViewItems.isEmpty()) {
                 item {
                     NoCoinsBlock(
                         onAddClick = {
