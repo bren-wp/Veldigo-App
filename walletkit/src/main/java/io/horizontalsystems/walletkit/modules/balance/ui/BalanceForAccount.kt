@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -133,62 +134,22 @@ fun BalanceForAccount(
 
     BackupRequiredAlert(navigation)
 
-    HSScaffold(
-        title = accountViewItem.name,
-        menuItems = buildList {
-            if (!viewModel.uiState.balanceTabButtonsEnabled && !accountViewItem.isWatchAccount) {
-                add(
-                    MenuItem(
-                        title = TranslatableString.ResString(R.string.WalletConnect_NewConnect),
-                        icon = R.drawable.ic_scan_24,
-                        onClick = {
-                            onScanClick(qrScannerLauncher, context)
-                        }
-                    )
-                )
-            }
-            add(
-                MenuItem(
-                    title = TranslatableString.ResString(R.string.Transactions_Title),
-                    icon = R.drawable.ic_circle_clock_24,
-                    onClick = {
-                        navigation.slideFromRight(TransactionsPage)
-
-                        stat(
-                            page = StatPage.Balance,
-                            event = StatEvent.Open(StatPage.Transactions)
-                        )
-                    }
-                )
-            )
-            add(
-                MenuItem(
-                    title = TranslatableString.ResString(R.string.ManageAccounts_Title),
-                    icon = R.drawable.ic_wallet_switch_24,
-                    onClick = {
-                        navigation.slideFromRight(
-                            ManageAccountsPage(ManageAccountsModule.Mode.Switcher)
-                        )
-
-                        stat(
-                            page = StatPage.Balance,
-                            event = StatEvent.Open(StatPage.ManageWallets)
-                        )
-                    }
-                )
-            )
-        }
+    // The Veldigo brand/header and token controls now belong to the actual
+    // balance list (screen 10), rather than a duplicate generic toolbar.
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette.Background),
     ) {
         Crossfade(
             targetState = uiState.viewState,
             modifier = Modifier.fillMaxSize(),
-            label = ""
+            label = "wallet-balance-state",
         ) { viewState ->
             when (viewState) {
                 ViewState.Success -> {
-                    val balanceViewItems = uiState.balanceViewItems
                     BalanceItems(
-                        balanceViewItems,
+                        uiState.balanceViewItems,
                         viewModel,
                         accountViewItem,
                         navigation,
@@ -197,11 +158,7 @@ fun BalanceForAccount(
                         onScanClick(qrScannerLauncher, context)
                     }
                 }
-
-                ViewState.Loading,
-                is ViewState.Error,
-                null -> {
-                }
+                ViewState.Loading, is ViewState.Error, null -> Unit
             }
         }
     }
