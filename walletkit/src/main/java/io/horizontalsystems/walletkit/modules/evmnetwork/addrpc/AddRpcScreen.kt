@@ -1,7 +1,8 @@
 package io.horizontalsystems.walletkit.modules.evmnetwork.addrpc
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -293,14 +294,16 @@ fun AddRpcScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 9.dp)
-                            .clickable {
-                                viewModel.onAcknowledgeUnverified(!viewModel.riskAcknowledged)
-                            },
+                            .toggleable(
+                                value = viewModel.riskAcknowledged,
+                                role = Role.Checkbox,
+                                onValueChange = viewModel::onAcknowledgeUnverified,
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Checkbox(
                             checked = viewModel.riskAcknowledged,
-                            onCheckedChange = viewModel::onAcknowledgeUnverified,
+                            onCheckedChange = null,
                             colors = CheckboxDefaults.colors(
                                 checkedColor = VeldigoHomePalette.Mint,
                                 uncheckedColor = VeldigoHomePalette.Muted,
