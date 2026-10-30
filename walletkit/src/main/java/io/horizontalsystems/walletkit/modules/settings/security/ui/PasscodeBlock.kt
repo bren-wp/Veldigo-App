@@ -17,6 +17,7 @@ import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.pin.EditPinPage
 import io.horizontalsystems.walletkit.modules.pin.SetPinPage
 import io.horizontalsystems.walletkit.modules.settings.security.passcode.SecuritySettingsViewModel
+import io.horizontalsystems.walletkit.modules.settings.security.setup.EnableFingerprintPage
 import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
 import io.horizontalsystems.walletkit.ui.compose.components.HsDivider
 import io.horizontalsystems.walletkit.ui.compose.components.HsSwitch
@@ -92,7 +93,8 @@ fun PasscodeBlock(
                 },
                 right = {
                     val enableBiometricsFlow = navigation.ensurePinSet(R.string.PinSet_ForBiometrics) {
-                        viewModel.enableBiometrics()
+                        // User must pass Android BiometricPrompt before the setting is enabled.
+                        navigation.slideFromRight(EnableFingerprintPage())
                     }
 
                     HsSwitch(
