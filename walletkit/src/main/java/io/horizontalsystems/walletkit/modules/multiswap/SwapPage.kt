@@ -3,6 +3,11 @@ package io.horizontalsystems.walletkit.modules.multiswap
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -125,7 +130,8 @@ data class SwapPage(val input: Input? = null) : HSPage() {
             parentScreenContentKey = contentKey(),
             tokenIn = input?.tokenIn,
             tokenOut = input?.tokenOut,
-            onClickClose = navigation::removeLastOrNull
+            onClickClose = navigation::removeLastOrNull,
+            autofocus = false
         )
     }
 
@@ -468,9 +474,9 @@ private fun SwapScreenInner(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ComposeAppTheme.colors.lawrence)
+                    .background(Color(0xFF030E0D))
             ) {
-                SwapInput(
+                VeldigoSwapForm(
                     amountIn = uiState.amountIn,
                     fiatAmountIn = uiState.fiatAmountIn,
                     fiatAmountInputEnabled = uiState.fiatAmountInputEnabled,
@@ -479,8 +485,6 @@ private fun SwapScreenInner(
                     amountOut = quote?.amountOut,
                     fiatAmountOut = uiState.fiatAmountOut,
                     hasRateOut = uiState.hasRateOut,
-                    fiatPriceImpact = uiState.fiatPriceImpact,
-                    fiatPriceImpactLevel = uiState.fiatPriceImpactLevel,
                     onValueChange = onEnterAmount,
                     onFiatValueChange = onEnterFiatAmount,
                     onClickCoinFrom = {
@@ -510,7 +514,8 @@ private fun SwapScreenInner(
                     },
                     onClearClick = {
                         onEnterAmount(null)
-                    }
+                    },
+                    quote = quote,
                 )
                 Column(
                     modifier = Modifier
@@ -706,12 +711,24 @@ private fun SwapActionButton(
             }
 
             SwapStep.Proceed -> {
-                HSButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(R.string.Swap_Proceed),
-                    enabled = proceedEnabled,
-                    onClick = onClickNext
-                )
+                Button(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).size(height = 54.dp, width = 420.dp),
+                    enabled = VeldigoSwapReferenceRules.canProceed(currentStep, !proceedEnabled),
+                    onClick = onClickNext,
+                    shape = RoundedCornerShape(11.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF41E6C7),
+                        contentColor = Color(0xFF041411),
+                        disabledContainerColor = Color(0xFF193A34),
+                        disabledContentColor = Color(0xFF92B8B0),
+                    ),
+                ) {
+                    androidx.compose.material3.Text(
+                        text = stringResource(R.string.Veldigo_Swap_Action),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
             }
         }
     }
