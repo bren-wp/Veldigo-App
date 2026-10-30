@@ -25,7 +25,7 @@ Visible reference composition:
   - Share Address uses the true address. If a requested amount exists, shows Share Payment Request and passes the original chain-native URI made by AddressUriService rather than an invented payment link.
   - Missing address or URI means no QR image and disabled copy/share; never display/sample a replacement address.
   - Preserve watch-only account alert, critical receive warnings, network and testnet labels, address format/type info, requested amount and extra bitcoin used-address navigation.
-  - The optional "Set Amount" functionality remains accessible and uses the existing AmountInputDialog and AddressUriService; no new transfer/signing path.
+  - The optional "Set Amount" functionality remains accessible and uses the existing AmountInputDialog and AddressUriService; **Remove requested amount** resets it through setAmount(null), restoring the normal address-only QR and share flow. No new transfer/signing path.
 - ReceiveAddressScreen.kt: reuse existing loading/error retry states and replaces only ViewState.Success content with the reference design. Existing setup, view state and error routes remain unchanged.
 - ReceivePage.kt: standard receiving title uses "Receive BTC" / real token coin code and explicitly passes the coin identity into UI.
 - veldigo_welcome_strings.xml: localized address, Copy, Share and missing-data labels.
