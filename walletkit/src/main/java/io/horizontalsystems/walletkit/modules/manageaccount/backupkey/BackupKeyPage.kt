@@ -5,15 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +25,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,6 +41,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.BackupConfirmKeyPage
 import io.horizontalsystems.walletkit.modules.manageaccount.recoveryphrase.RecoveryPhraseModule
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
@@ -74,11 +81,11 @@ data class BackupKeyPage(val accountId: String) : HSPage(screenshotEnabled = fal
     }
 }
 
-private val seedNavy = Color(0xFF030E0F)
-private val seedPanel = Color(0xFF121E20)
-private val seedMint = Color(0xFF41E6C7)
-private val seedMuted = Color(0xFF9EB3B7)
-private val seedBorder = Color(0xFF26383A)
+private val seedNavy = VeldigoHomePalette.Background
+private val seedPanel = VeldigoHomePalette.Surface
+private val seedMint = VeldigoHomePalette.Mint
+private val seedMuted = VeldigoHomePalette.Muted
+private val seedBorder = VeldigoHomePalette.Border
 
 @Composable
 fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
@@ -95,27 +102,21 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(seedNavy, Color(0xFF061717), seedNavy)))
+            .background(seedNavy)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 22.dp),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(64.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 60.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(
-                onClick = navigation::removeLastOrNull,
-                modifier = Modifier.semantics { contentDescription = "Back" },
-            ) {
-                Canvas(Modifier.size(24.dp)) {
-                    val w = size.width
-                    val h = size.height
-                    val stroke = 2.dp.toPx()
-                    drawLine(Color.White, Offset(w * .75f, h * .5f), Offset(w * .24f, h * .5f), stroke, cap = StrokeCap.Round)
-                    drawLine(Color.White, Offset(w * .24f, h * .5f), Offset(w * .46f, h * .27f), stroke, cap = StrokeCap.Round)
-                    drawLine(Color.White, Offset(w * .24f, h * .5f), Offset(w * .46f, h * .73f), stroke, cap = StrokeCap.Round)
-                }
+            IconButton(onClick = navigation::removeLastOrNull) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_m_left_24),
+                    contentDescription = stringResource(R.string.Button_Back),
+                    tint = Color.White,
+                )
             }
         }
 
@@ -124,20 +125,20 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
                 .weight(1f)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(12.dp))
             Text(
                 text = stringResource(R.string.Veldigo_Backup_Title),
                 color = Color.White,
-                fontSize = 27.sp,
-                lineHeight = 34.sp,
+                fontSize = 25.sp,
+                lineHeight = 32.sp,
                 fontWeight = FontWeight.SemiBold,
             )
             Spacer(Modifier.height(15.dp))
             Text(
                 text = stringResource(R.string.Veldigo_Backup_Description, model.wordsNumbered.size),
                 color = seedMuted,
-                fontSize = 15.sp,
-                lineHeight = 22.sp,
+                fontSize = 14.sp,
+                lineHeight = 21.sp,
             )
             Spacer(Modifier.height(22.dp))
 
@@ -179,7 +180,7 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
                 Button(
                     onClick = { revealed = true },
                     modifier = Modifier.fillMaxWidth().height(54.dp),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = seedMint, contentColor = seedNavy),
                 ) {
                     Text(
@@ -197,7 +198,7 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
                         navigation.slideFromRight(BackupConfirmKeyPage(model.account))
                     },
                     modifier = Modifier.fillMaxWidth().height(54.dp),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = seedMint, contentColor = seedNavy),
                 ) {
                     Text(
@@ -244,47 +245,58 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
     }
 }
 
+/**
+ * Words have their own full-width, non-clipped cells rather than being packed
+ * into a three-column row on narrow phones. Real mnemonic words remain masked
+ * until explicit reveal and FLAG_SECURE is active on the page.
+ */
 @Composable
 private fun SeedWordsGrid(
     words: List<RecoveryPhraseModule.WordNumbered>,
     revealed: Boolean,
 ) {
-    // 3 columns x 4 rows for 12-word mnemonics, expanding naturally for 15–25 words.
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(seedPanel, RoundedCornerShape(14.dp))
-            .border(1.dp, seedBorder, RoundedCornerShape(14.dp))
-            .padding(horizontal = 12.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        words.chunked(3).forEach { rowWords ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                rowWords.forEach { numbered ->
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        Text(
-                            text = numbered.number.toString(),
-                            color = seedMuted,
-                            fontSize = 11.sp,
-                        )
-                        Text(
-                            text = if (revealed) numbered.word else "••••",
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            maxLines = 1,
-                            modifier = Modifier.weight(1f),
-                        )
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val columns = RecoveryPhraseGridRules.columns(maxWidth.value)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            words.chunked(columns).forEach { rowWords ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(9.dp),
+                ) {
+                    rowWords.forEach { numbered ->
+                        val shape = RoundedCornerShape(10.dp)
+                        Row(
+                            modifier = Modifier
+                                .weight(1f)
+                                .heightIn(min = 48.dp)
+                                .background(seedPanel, shape)
+                                .border(1.dp, seedBorder, shape)
+                                .padding(horizontal = 10.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = numbered.number.toString(),
+                                color = seedMuted,
+                                fontSize = 11.sp,
+                            )
+                            Text(
+                                text = if (revealed) numbered.word else "••••",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                    repeat(columns - rowWords.size) {
+                        Spacer(Modifier.weight(1f))
                     }
                 }
-                repeat(3 - rowWords.size) { Spacer(Modifier.weight(1f)) }
             }
         }
     }
