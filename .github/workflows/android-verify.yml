@@ -55,6 +55,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.send.v2.VeldigoSendUiRulesTest' --no-daemon --stacktrace
+      - name: Verify receiving never copies or shares an absent address
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.receive.ui.VeldigoReceivePayloadRulesTest' --no-daemon --stacktrace
       - name: Upload test APK
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
