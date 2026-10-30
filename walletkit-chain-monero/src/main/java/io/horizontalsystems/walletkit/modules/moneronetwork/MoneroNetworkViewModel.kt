@@ -55,6 +55,9 @@ class MoneroNetworkViewModel(
         }
 
     fun onSelectNode(node: MoneroNode) {
+        // A selection dialog could outlive a switch back to Auto Select.
+        // Never override automatic selection from a stale manual action.
+        if (moneroNodeManager.autoSelectEnabled) return
         if (moneroNodeManager.currentNode == node) return
         moneroNodeManager.save(node)
         emitState()
