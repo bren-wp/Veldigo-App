@@ -280,4 +280,18 @@
     <string name="Veldigo_RpcProbe_Auth">To test Basic Auth, enter credentials in username:password form. The provider is not verified.</string>
     <string name="Veldigo_RpcProbe_ReportedId">Reported chain ID: %1$s</string>
     <string name="Veldigo_RpcProbe_ProceedUnverified">I understand this RPC could connect to the wrong or an untrusted network. Save without verification.</string>
+    <string name="Veldigo_BtcSync_Title">Synchronization Source</string>
+    <string name="Veldigo_BtcSync_ChainSubtitle">Bitcoin-family network settings</string>
+    <string name="Veldigo_BtcSync_Description">Choose a supported restore and synchronization method for this network. Available choices come from the wallet’s network manager.</string>
+    <string name="Veldigo_BtcSync_AvailableModes">Available synchronization modes</string>
+    <string name="Veldigo_BtcSync_NoSources">No synchronization modes are available for this blockchain.</string>
+    <string name="Veldigo_BtcSync_Selected">Selected synchronization mode</string>
+    <string name="Veldigo_BtcSync_Unsaved">Unsaved selection — confirm to apply</string>
+    <string name="Veldigo_BtcSync_PrivacyNotice">Synchronization sources can process public wallet addresses and transaction requests. A source choice does not guarantee private or anonymous access, and this screen does not configure custom nodes.</string>
+    <string name="Veldigo_BtcSync_ConfirmTitle">Change synchronization source?</string>
+    <string name="Veldigo_BtcSync_ConfirmBody">Changing the restore source can trigger a new scan or synchronization and may temporarily delay balances or transaction history. Continue with this supported source?</string>
+    <string name="Veldigo_BtcSync_DiscardTitle">Discard unsaved source?</string>
+    <string name="Veldigo_BtcSync_DiscardBody">Your selected synchronization source has not been saved. Leave this screen without applying the change?</string>
+    <string name="Veldigo_BtcSync_Discard">Discard changes</string>
+    <string name="Veldigo_BtcSync_SaveError">The synchronization source could not be saved. The selection has not been confirmed. Please retry.</string>
 </resources>
