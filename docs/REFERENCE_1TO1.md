@@ -50,6 +50,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Security Center (screen 28) — **native screenshot overlays, OS biometric/PIN device checks, authorization regression and 1:1 pixel parity NOT verified**
 - [x] Privacy Settings (screen 29) — **real usage-data opt-in, actual Tor status, confirmed restart, no lock bypass, security entry and wallet-only navy/mint layout**, source QA recorded
 - [ ] Privacy Settings (screen 29) — **native screenshot/pixel overlay, Tor DNS/proxy leak and on-device relock/accessibility checks NOT performed**
+- [x] Network / Blockchain Settings (screen 30) — **real configured chain groups, source-backed RPC labels, search, local icons and EVM/chain navigation implemented**, QA documented
+- [ ] Network / Blockchain Settings (screen 30) — **native screenshot/pixel diff, real provider switch/reconnect, offline error and RPC/Tor leak audit NOT performed**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
