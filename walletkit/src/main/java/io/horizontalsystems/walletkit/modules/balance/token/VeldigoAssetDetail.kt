@@ -98,7 +98,7 @@ internal fun VeldigoAssetDetail(
             val about by overview.overviewLiveData.observeAsState()
             val chartState = chart.uiState
             val graph = chartState.chartInfoData?.chartData
-            val change = graph?.takeIf { it.items.size > 1 }?.diff()?.toFloat()
+            val change = VeldigoAssetChartRules.changePercent(graph?.items.orEmpty())
             VeldigoMarketPanel(
                 price = chartState.chartHeaderView?.value ?: item.exchangeValue?.value,
                 points = graph?.items.orEmpty(),
@@ -171,7 +171,7 @@ private fun VeldigoMarketPanel(
 
 @Composable
 private fun VeldigoRealPriceChart(points: List<ChartPoint>) {
-    val plotPoints = remember(points) { points.filter { it.value.isFinite() } }
+    val plotPoints = remember(points) { VeldigoAssetChartRules.normalizedPoints(points) }
     Box(Modifier.fillMaxWidth().height(180.dp)) {
         if (plotPoints.size < 2) {
             Text(
@@ -339,5 +339,25 @@ internal fun VeldigoAssetTopBar(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+/**
+ * Pure live-series guard. No reference artwork or sample price data ever enter
+ * the real wallet chart. Stable timestamp ordering prevents a backward graph.
+ */
+internal object VeldigoAssetChartRules {
+    fun normalizedPoints(points: List<ChartPoint>): List<ChartPoint> =
+        points.filter { it.value.isFinite() && it.value >= 0f }
+            .sortedBy { it.timestamp }
+            .distinctBy { it.timestamp }
+
+    fun changePercent(points: List<ChartPoint>): Float? {
+        val valid = normalizedPoints(points)
+        if (valid.size < 2) return null
+        val start = valid.first().value
+        if (start <= 0f) return null
+        val change = (valid.last().value - start) / start * 100f
+        return change.takeIf { it.isFinite() }
     }
 }
