@@ -181,4 +181,23 @@
     <string name="Veldigo_CreateForm_Show">Show</string>
     <string name="Veldigo_CreateForm_Hide">Hide</string>
     <string name="Veldigo_CreateForm_Create">Create Wallet</string>
+    <string name="Veldigo_Settings_Security">Security</string>
+    <string name="Veldigo_Settings_Wallet">Wallet</string>
+    <string name="Veldigo_Settings_Preferences">Preferences</string>
+    <string name="Veldigo_Settings_Information">Information</string>
+    <string name="Veldigo_Settings_PinActive">Protected</string>
+    <string name="Veldigo_Settings_PinMissing">Set PIN</string>
+    <string name="Veldigo_Settings_Biometric">Biometric Lock</string>
+    <string name="Veldigo_Settings_Enabled">Enabled</string>
+    <string name="Veldigo_Settings_Disabled">Off</string>
+    <string name="Veldigo_Settings_ChangePin">Change App PIN</string>
+    <string name="Veldigo_Settings_ChangePinHint">Manage your current PIN</string>
+    <string name="Veldigo_Settings_SetPinHint">Create a six-digit PIN</string>
+    <string name="Veldigo_Settings_RecoveryPhrase">Recovery Phrase</string>
+    <string name="Veldigo_Settings_RecoveryHint">Choose a wallet to manage its backup</string>
+    <string name="Veldigo_Settings_WalletManagement">Wallet Management</string>
+    <string name="Veldigo_Settings_BackupRestore">Backup &amp; Restore</string>
+    <string name="Veldigo_Settings_Networks">Connected Networks</string>
+    <string name="Veldigo_Settings_Appearance">Appearance</string>
+    <string name="Veldigo_Settings_Version">Veldigo · v%1$s</string>
 </resources>
