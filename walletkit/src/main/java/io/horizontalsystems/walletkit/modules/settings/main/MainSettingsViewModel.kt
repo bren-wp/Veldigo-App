@@ -9,158 +9,71 @@ import io.horizontalsystems.walletkit.core.ITermsManager
 import io.horizontalsystems.walletkit.core.ViewModelUiState
 import io.horizontalsystems.walletkit.core.collectSafely
 import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
-import io.horizontalsystems.walletkit.modules.settings.main.MainSettingsModule.CounterType
-import io.horizontalsystems.walletkit.modules.walletconnect.WCManager
-import io.horizontalsystems.walletkit.modules.walletconnect.WCSessionManager
-import io.horizontalsystems.subscriptions.core.AdvancedSearch
-import io.horizontalsystems.subscriptions.core.UserSubscriptionManager
 import kotlinx.coroutines.launch
 
+/**
+ * Only real wallet/security signals are required to present Settings.
+ * Do not initialize WalletConnect sessions, pending dApp requests, markets,
+ * paywall/subscription state or swap-debug settings for the wallet-only UI.
+ */
 class MainSettingsViewModel(
     private val backupManager: IBackupManager,
     private val systemInfoManager: ISystemInfoManager,
     private val termsManager: ITermsManager,
     private val pinComponent: IPinComponent,
-    private val wcSessionManager: WCSessionManager,
-    private val wcManager: WCManager,
     private val accountManager: IAccountManager,
     private val appConfigProvider: IAppConfigProvider,
 ) : ViewModelUiState<MainSettingUiState>() {
 
-    val fdroidSupportLink by lazy {
-        appConfigProvider.simplexSupportChat
-    }
-    val vipSupportLink by lazy {
-        appConfigProvider.telegramSupportChat
-    }
-
     val appVersion: String
         get() {
-            var appVersion = systemInfoManager.appVersion
+            var version = systemInfoManager.appVersion
             if (io.horizontalsystems.walletkit.BuildConfig.DEBUG) {
-                appVersion += " (${appConfigProvider.appBuild})"
+                version += " (${appConfigProvider.appBuild})"
             }
-
-            return appVersion
+            return version
         }
-
-    val companyWebPage = appConfigProvider.companyWebPageLink
-
-    val walletConnectSupportState: WCManager.SupportState
-        get() = wcManager.getWalletConnectSupportState()
-
-    // Donating means sending, so a watch account is not offered it. Only a known watch
-    // account hides the cell; while accounts are still loading there is nothing to hide.
-    private val donateEnabled: Boolean
-        get() = accountManager.activeAccount?.isWatchAccount != true
-
-    private val appWebPageLink = appConfigProvider.appWebPageLink
-    private val hasNonStandardAccount: Boolean
-        get() = accountManager.hasNonStandardAccount
-
-    private val allBackedUp: Boolean
-        get() = backupManager.allBackedUp
-
-    private val walletConnectSessionCount: Int
-        get() = wcSessionManager.sessions.count()
-
-    private val isPinSet: Boolean
-        get() = pinComponent.isPinSet
-
-
-    private var wcCounterType: CounterType? = null
-    private var wcSessionsCount = walletConnectSessionCount
-    private var wcPendingRequestCount = 0
-    private var showPremiumBanner = !UserSubscriptionManager.isActionAllowed(AdvancedSearch)
-    private var hasSubscription = false
 
     init {
         viewModelScope.launch {
-            backupManager.allBackedUpFlow.collectSafely {
-                emitState()
-            }
+            backupManager.allBackedUpFlow.collectSafely { emitState() }
         }
         viewModelScope.launch {
-            wcSessionManager.sessionsFlow.collect {
-                wcSessionsCount = walletConnectSessionCount
-                syncCounter()
-            }
+            pinComponent.pinSetFlow.collect { emitState() }
         }
         viewModelScope.launch {
-            pinComponent.pinSetFlow.collect {
-                emitState()
-            }
+            accountManager.activeAccountStateFlow.collect { emitState() }
         }
+        viewModelScope.launch {
+            termsManager.termsAcceptedSharedFlow.collect { emitState() }
+        }
+    }
 
-        viewModelScope.launch {
-            accountManager.activeAccountStateFlow.collect {
-                emitState()
-            }
-        }
-
-        viewModelScope.launch {
-            termsManager.termsAcceptedSharedFlow.collect {
-                emitState()
-            }
-        }
-
-        viewModelScope.launch {
-            wcSessionManager.pendingRequestCountFlow.collect {
-                wcPendingRequestCount = it
-                syncCounter()
-            }
-        }
-
-        viewModelScope.launch {
-            UserSubscriptionManager.activeSubscriptionStateFlow.collect {
-                showPremiumBanner = !UserSubscriptionManager.isActionAllowed(AdvancedSearch)
-                hasSubscription = it != null
-                emitState()
-            }
-        }
-        syncCounter()
+    /** Refresh after returning from device settings, PIN or biometric enrollment. */
+    fun refresh() {
+        emitState()
     }
 
     override fun createState(): MainSettingUiState {
+        val pinSet = pinComponent.isPinSet
+        val allBackedUp = backupManager.allBackedUp
+        val hasNonStandardAccount = accountManager.hasNonStandardAccount
         return MainSettingUiState(
-            appWebPageLink = appWebPageLink,
-            hasNonStandardAccount = hasNonStandardAccount,
-            allBackedUp = allBackedUp,
-            pendingRequestCount = wcPendingRequestCount,
-            walletConnectSessionCount = wcSessionsCount,
-            manageWalletShowAlert = !allBackedUp || hasNonStandardAccount,
-            securityCenterShowAlert = !isPinSet,
+            manageWalletShowAlert = VeldigoSettingsStatusRules.walletAttention(
+                allBackedUp, hasNonStandardAccount,
+            ),
+            securityCenterShowAlert = VeldigoSettingsStatusRules.securityAttention(pinSet),
             aboutAppShowAlert = !termsManager.allTermsAccepted,
-            wcCounterType = wcCounterType,
-            showPremiumBanner = showPremiumBanner,
-            hasSubscription = hasSubscription,
-            donateEnabled = donateEnabled,
+            pinEnabled = pinSet,
+            biometricEnabled = pinSet && pinComponent.isBiometricAuthEnabled,
         )
-    }
-
-    private fun syncCounter() {
-        if (wcPendingRequestCount > 0) {
-            wcCounterType = CounterType.PendingRequestCounter(wcPendingRequestCount)
-        } else if (wcSessionsCount > 0) {
-            wcCounterType = CounterType.SessionCounter(wcSessionsCount)
-        } else {
-            wcCounterType = null
-        }
-        emitState()
     }
 }
 
 data class MainSettingUiState(
-    val appWebPageLink: String,
-    val hasNonStandardAccount: Boolean,
-    val allBackedUp: Boolean,
-    val pendingRequestCount: Int,
-    val walletConnectSessionCount: Int,
     val manageWalletShowAlert: Boolean,
     val securityCenterShowAlert: Boolean,
     val aboutAppShowAlert: Boolean,
-    val wcCounterType: CounterType?,
-    val showPremiumBanner: Boolean,
-    val hasSubscription: Boolean,
-    val donateEnabled: Boolean,
+    val pinEnabled: Boolean,
+    val biometricEnabled: Boolean,
 )
