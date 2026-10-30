@@ -1,5 +1,5 @@
-# Creates a standard wallet using the existing key-generation pipeline.
-# Fresh install -> Veldigo welcome -> terms -> Create New Wallet chooser.
+# Creates a real standard wallet and stops on its secure backup screen.
+# Seed words must NEVER be logged, asserted verbatim or copied to test reports.
 appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
 - assertVisible: "Create a new wallet"
@@ -8,3 +8,4 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - assertVisible: "Create New Wallet"
 - tapOn: "Create a new wallet"
 - tapOn: "Create"
+- assertVisible: "Reveal recovery phrase"
