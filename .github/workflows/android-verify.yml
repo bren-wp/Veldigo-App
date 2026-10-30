@@ -99,6 +99,21 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.SecurityCenterRouteTest' --no-daemon --stacktrace
+      - name: Verify Tor preference changes require confirmation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.privacy.tor.TorPreferenceChangeRulesTest' --no-daemon --stacktrace
+      - name: Verify Privacy Settings navigation contains no credentials
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.privacy.PrivacySettingsRouteTest' --no-daemon --stacktrace
+      - name: Verify Tor restart does not skip wallet PIN protection
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'keepUnlocked\(' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/privacy/tor/SecurityTorSettingsViewModel.kt; then
+            echo 'Tor restart must not bypass wallet lock'
+            exit 1
+          fi
       - name: Verify Security Center has no unused paid defense actions
         if: steps.source.outputs.present == 'true'
         run: |
