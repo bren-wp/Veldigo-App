@@ -39,6 +39,14 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryWordVerifierTest' --no-daemon --stacktrace
+      - name: Verify stale accounts cannot be marked backed up
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryBackupAccountGuardTest' --no-daemon --stacktrace
+      - name: Verify narrow-screen recovery grid rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupkey.RecoveryPhraseGridRulesTest' --no-daemon --stacktrace
       - name: Verify biometric enrollment requires OS authentication
         if: steps.source.outputs.present == 'true'
         run: |
