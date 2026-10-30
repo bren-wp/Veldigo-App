@@ -141,7 +141,8 @@ internal fun VeldigoStandardSendFields(
                 focusRequester = focusRequester,
                 onValueChange = onEnterAmount,
                 onFiatValueChange = onEnterFiatAmount,
-                amountExceedsBalance = state.step is SendStep.Error,
+                amountExceedsBalance = state.step is SendStep.Error &&
+                    state.step.error == io.horizontalsystems.walletkit.modules.multiswap.SwapError.InsufficientBalanceFrom,
                 onTokenClick = null,
             )
         }
@@ -195,4 +196,9 @@ internal fun VeldigoStandardSendFields(
         }
         Spacer(Modifier.height(26.dp))
     }
+}
+
+/** UI-only readiness. The original ViewModel, fee estimator and signer retain authority. */
+internal object VeldigoSendUiRules {
+    fun canContinue(step: SendStep): Boolean = step is SendStep.Proceed
 }
