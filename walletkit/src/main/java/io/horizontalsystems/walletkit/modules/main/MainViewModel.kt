@@ -78,18 +78,12 @@ class MainViewModel(
             localStorage.relaunchBySettingChange = value
         }
 
-    private val items: List<MainNavigation>
-        get() = buildList {
-            if (marketsTabEnabled) {
-                add(MainNavigation.Market)
-            }
-            add(MainNavigation.Balance)
-            if (swapTabEnabled) {
-                add(MainNavigation.Swap)
-            }
-//            add(MainNavigation.Transactions)
-            add(MainNavigation.Settings)
-        }
+    // The legacy Market/Swap enum members remain for persisted-value compatibility.
+    // Neither is a wallet navigation destination.
+    private val items: List<MainNavigation> = listOf(
+        MainNavigation.Balance,
+        MainNavigation.Settings,
+    )
     private val selectedTabItem: MainNavigation
         get() = mainNavItems.firstOrNull { it.selected }?.mainNavItem
             ?: MainNavigation.Balance
@@ -106,13 +100,8 @@ class MainViewModel(
     private var snapTabSwitch = false
     private var showChangeWalletWarning = false
 
-    // App locked while a public screen was showing: fall back to the Market tab so the user
-    // keeps browsing instead of getting the keypad. The stored launch tab is left untouched.
-    private val restrictedLockListener: () -> Unit = {
-        if (items.contains(MainNavigation.Market)) {
-            selectTab(MainNavigation.Market)
-        }
-    }
+    // No public Markets tab remains: a locked wallet must stay behind the PIN overlay.
+    private val restrictedLockListener: () -> Unit = {}
 
     init {
         reportSelectedTab()
@@ -379,7 +368,7 @@ class MainViewModel(
 
     private fun getLaunchTab(): MainNavigation = when (launchPage) {
         LaunchPage.Market,
-        LaunchPage.Watchlist -> MainNavigation.Market
+        LaunchPage.Watchlist -> MainNavigation.Balance
 
         LaunchPage.Balance -> MainNavigation.Balance
         LaunchPage.Auto -> currentMainTab
