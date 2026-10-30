@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.horizontalsystems.walletkit.R
-import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Currency
 import io.horizontalsystems.walletkit.uiv3.components.controls.AvailableBalanceRow
 import io.horizontalsystems.walletkit.uiv3.components.controls.TokenAmountInput
@@ -189,10 +188,10 @@ internal fun VeldigoSwapForm(
 
         Spacer(Modifier.height(20.dp))
         Text(
-            text = if (quote != null)
+            text = if (VeldigoSwapReferenceRules.quotedRateAvailable(quote))
                 SwapPriceUIHelper(quote.tokenIn, quote.tokenOut, quote.amountIn, quote.amountOut).priceStr
             else stringResource(R.string.Veldigo_Swap_NoRate),
-            color = if (quote != null) Color.White else muted,
+            color = if (VeldigoSwapReferenceRules.quotedRateAvailable(quote)) Color.White else muted,
             fontSize = 13.sp,
             lineHeight = 19.sp,
             textAlign = TextAlign.Center,
@@ -256,6 +255,6 @@ internal object VeldigoSwapReferenceRules {
     fun quotedRateAvailable(quote: SwapProviderQuote?): Boolean =
         quote != null && quote.amountIn > BigDecimal.ZERO && quote.amountOut >= BigDecimal.ZERO
 
-    fun canProceed(step: SwapStep, isAlreadyProceeding: Boolean): Boolean =
-        step == SwapStep.Proceed && !isAlreadyProceeding
+    fun canProceed(step: SwapStep, isAlreadyProceeding: Boolean, hasQuote: Boolean): Boolean =
+        step == SwapStep.Proceed && !isAlreadyProceeding && hasQuote
 }
