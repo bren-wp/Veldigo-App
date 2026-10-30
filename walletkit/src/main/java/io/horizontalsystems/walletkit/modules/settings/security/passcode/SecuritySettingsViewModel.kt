@@ -91,11 +91,6 @@ class SecuritySettingsViewModel(
         defenseSystemActions = defenseSystemActions,
     )
 
-    fun enableBiometrics() {
-        pinComponent.isBiometricAuthEnabled = true
-        emitState()
-    }
-
     fun disableBiometrics() {
         pinComponent.isBiometricAuthEnabled = false
         emitState()
