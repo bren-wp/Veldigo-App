@@ -48,6 +48,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Settings / Security Overview (screen 27) — **Android screenshots, font/density overlay and on-device navigation/accessibility verification NOT performed**
 - [x] Security Center (screen 28) — **real PIN/biometric/duress/auth controls, auto-lock, privacy toggles and source-backed status implemented**, QA documentation committed
 - [ ] Security Center (screen 28) — **native screenshot overlays, OS biometric/PIN device checks, authorization regression and 1:1 pixel parity NOT verified**
+- [x] Privacy Settings (screen 29) — **real usage-data opt-in, actual Tor status, confirmed restart, no lock bypass, security entry and wallet-only navy/mint layout**, source QA recorded
+- [ ] Privacy Settings (screen 29) — **native screenshot/pixel overlay, Tor DNS/proxy leak and on-device relock/accessibility checks NOT performed**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
