@@ -115,6 +115,29 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcEndpointValidationTest' --no-daemon --stacktrace
+      - name: Verify RPC mainnet chain identity rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcChainIdentityRulesTest' --no-daemon --stacktrace
+      - name: Verify JSON-RPC chain identity response parsing
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcChainIdResponseTest' --no-daemon --stacktrace
+      - name: Verify RPC save blocks wrong chain and requires unverified consent
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcConnectionUiRulesTest' --no-daemon --stacktrace
+      - name: Verify RPC probe does not bypass Tor or transport safeguards
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcConnectionPrivacyTest' --no-daemon --stacktrace
+      - name: Verify RPC probe doesn't persist before validation or log secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'logger.*(url|auth)|println\(.*(url|auth)|followRedirects\(true\)|followSslRedirects\(true\)' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/evmnetwork/addrpc/{RpcConnectionProbe,AddRpcViewModel}.kt; then
+            echo 'Custom RPC probe may expose secrets or follow unsafe redirects'
+            exit 1
+          fi
       - name: Verify EVM provider UI never exposes URL paths or upstream connection features
         if: steps.source.outputs.present == 'true'
         run: |
