@@ -1,0 +1,29 @@
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
+---
+# The chooser is reference panel 5; sensitive wallet operations are never mocked.
+- launchApp:
+    clearState: true
+- assertVisible: "Create a new wallet"
+- tapOn: "Create a new wallet"
+- runFlow: ../subflows/accept_terms.yaml
+
+- assertVisible: "Create New Wallet"
+- assertVisible: "Set up your wallet in a few simple steps."
+- assertVisible: "Create a new wallet"
+- assertVisible: "Import existing wallet"
+- assertVisible: "Connect hardware wallet"
+
+# Hardware wallet must explicitly disclose lack of actual support.
+- tapOn: "Connect hardware wallet"
+- assertVisible: "Hardware wallets unavailable"
+- assertVisible: "This build does not support connecting Ledger, Trezor or other hardware wallets.*"
+- tapOn: "OK"
+
+# Passkey method remains accessible without replacing it with a fake hardware flow.
+- tapOn: "More wallet creation methods"
+- assertVisible: "Passkey"
+- back
+
+# Ensure the real standard creation screen is reached.
+- tapOn: "Create a new wallet"
+- assertVisible: "Create"
