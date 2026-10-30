@@ -22,8 +22,7 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - assertVisible: "Skip"
 - tapOn: "Next"
 
-# Fourth screen remains in the pager until its own reference-led UI pass.
-- assertVisible: "Get Started"
+# Fourth reference screen: globe and single Get Started action.
 - assertVisible: "Get Started"
 - assertNotVisible: "Skip"
 - tapOn: "Get Started"
