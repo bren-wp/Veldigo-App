@@ -219,4 +219,8 @@
     <string name="Veldigo_SecurityCenter_RemoveDuressHint">Authenticate before removing the emergency PIN</string>
     <string name="Veldigo_SecurityCenter_DisablePinHint">Requires authentication; disables biometric wallet unlock too</string>
     <string name="Veldigo_SecurityCenter_Safety">Protect your recovery phrase offline. Review addresses and network details before sending crypto. These controls protect access to this app, not your blockchain transactions from every possible risk.</string>
+    <string name="Veldigo_SecurityCenter_ConfirmDisablePin">Disable app PIN?</string>
+    <string name="Veldigo_SecurityCenter_ConfirmDisablePinHint">Disabling your app PIN also disables biometric wallet unlock. Authenticate to confirm this security change.</string>
+    <string name="Veldigo_SecurityCenter_ConfirmRemoveDuress">Remove Duress PIN?</string>
+    <string name="Veldigo_SecurityCenter_ConfirmRemoveDuressHint">This removes the separate emergency PIN. Authenticate to confirm this change.</string>
 </resources>
