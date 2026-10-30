@@ -30,12 +30,11 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [x] Create-wallet choice description — **restyled**, key flows retained
 - [ ] Recovery phrase backup / verification — **visual parity and secure test pending**
 - [ ] PIN, biometric unlock — **visual parity and device QA pending**
-- [ ] Asset details / market charts — **visual parity pending**
-- [ ] Swap and route confirmation — **visual parity/provider QA pending**
-- [ ] Buy via fiat partner — **unavailable pending contract, jurisdiction and API**
-- [ ] Activity / transaction details — **visual parity pending**
-- [ ] NFT collection and market pages — **visual parity pending**
-- [ ] WalletConnect session manager — **visual parity/security QA pending**
+- [x] Asset details — **balance/Send/Receive retained; market charts removed**, native visual QA pending
+- [x] Activity / transaction history — **real history and mint/navy style implemented**, visual QA pending
+- [x] Transaction Details — **live single-asset summary, account isolation and chain-specific rows**, screenshot/pixel diff pending
+- [ ] Transaction Details — **native screenshots, full error/state coverage and pixel parity are NOT verified**
+- [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
 ## Screenshot validation protocol
@@ -47,4 +46,4 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 5. For money amounts, fees, recovery phrases and QR addresses, validate underlying **functional data** separately: a reference screenshot never authorizes fake values.
 6. Repeat comparisons for enabled/disabled/loading/error/confirmation and translated states.
 
-No full 21-screen pixel comparison or exhaustive device pass has been completed. v0.4 additionally styles the wallet action tile row, replaces receiving actions with full-width CTA buttons and removes the QR center overlay for scan reliability. Security center now hides unconfigured upstream premium actions. These are source-code changes, **not screenshot-based evidence of 1:1 completion**. v0.3 includes branded About/settings, live-data activity card restyling and system text-scale compliance. Only screenshots produced by an actual running Android build may be used to mark visual QA complete.
+No full wallet-only screen pixel comparison or exhaustive device pass has been completed. Transaction Details now follows the original `Veldigo Crypto Wallet UI Showcase.png` mockup (legacy panel 20, functional screen 21), but the flattened board is not calibrated native-resolution screenshot evidence. v0.4 additionally styles the wallet action tile row, replaces receiving actions with full-width CTA buttons and removes the QR center overlay for scan reliability. Security center now hides unconfigured upstream premium actions. These are source-code changes, **not screenshot-based evidence of 1:1 completion**. v0.3 includes branded About/settings, live-data activity card restyling and system text-scale compliance. Only screenshots produced by an actual running Android build may be used to mark visual QA complete.
