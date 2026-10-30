@@ -106,7 +106,7 @@ fun AddWalletScreen(navigation: HSNavigation, input: ManageAccountsModule.Input?
         ) {
             VeldigoAddWalletChoice(
                 icon = R.drawable.wallet_add_24,
-                title = stringResource(R.string.ManageAccounts_CreateNewWallet),
+                title = stringResource(R.string.Veldigo_AddWallet_CreateTitle),
                 subtitle = stringResource(R.string.Veldigo_AddWallet_CreateDetail),
                 onClick = {
                     // Go straight to the secure, existing wallet-creation form.
@@ -121,7 +121,7 @@ fun AddWalletScreen(navigation: HSNavigation, input: ManageAccountsModule.Input?
             )
             VeldigoAddWalletChoice(
                 icon = R.drawable.ic_download_24,
-                title = stringResource(R.string.ManageAccounts_ExistingWallet),
+                title = stringResource(R.string.Veldigo_AddWallet_ImportTitle),
                 subtitle = stringResource(R.string.Veldigo_AddWallet_ImportDetail),
                 onClick = {
                     navigation.navigateWithTermsAccepted(
@@ -133,8 +133,8 @@ fun AddWalletScreen(navigation: HSNavigation, input: ManageAccountsModule.Input?
                 },
             )
             VeldigoAddWalletChoice(
-                icon = R.drawable.binocular_24,
-                title = stringResource(R.string.ManageAccounts_ViewOnlyWallet),
+                icon = R.drawable.user_24,
+                title = stringResource(R.string.Veldigo_AddWallet_WatchTitle),
                 subtitle = stringResource(R.string.Veldigo_AddWallet_WatchDetail),
                 onClick = {
                     navigation.slideFromRight(WatchAddressPage(continuation))
