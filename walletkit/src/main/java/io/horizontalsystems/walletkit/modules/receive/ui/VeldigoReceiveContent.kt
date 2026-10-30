@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.shorten
 import io.horizontalsystems.walletkit.core.stats.StatEntity
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
@@ -83,7 +84,7 @@ internal object VeldigoReceivePayloadRules {
 @Composable
 internal fun VeldigoReceiveContent(
     uiState: ReceiveModule.AbstractUiState,
-    title: String,
+    coinCode: String,
     slot1: @Composable () -> Unit,
     onSetAmount: () -> Unit,
 ) {
@@ -93,7 +94,7 @@ internal fun VeldigoReceiveContent(
     val paymentUri = uiState.uri
     val safeToDisplay = VeldigoReceivePayloadRules.hasValidPayload(realAddress, paymentUri)
     val share = VeldigoReceivePayloadRules.sharePayload(realAddress, paymentUri, uiState.amount)
-    val isPaymentRequest = uiState.amount != null && uiState.amount!! > BigDecimal.ZERO
+    val isPaymentRequest = uiState.amount?.let { it > BigDecimal.ZERO } == true
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().background(receiveNavy),
@@ -137,7 +138,7 @@ internal fun VeldigoReceiveContent(
                 ) {
                     Image(
                         painter = qrPainter,
-                        contentDescription = stringResource(R.string.Veldigo_Receive_QrDescription, title),
+                        contentDescription = stringResource(R.string.Veldigo_Receive_QrDescription, coinCode),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxSize().padding(10.dp),
                     )
@@ -159,7 +160,7 @@ internal fun VeldigoReceiveContent(
             }
             Spacer(Modifier.height(if (compact) 34.dp else 61.dp))
             Text(
-                text = stringResource(R.string.Veldigo_Receive_YourAddress, title),
+                text = stringResource(R.string.Veldigo_Receive_YourAddress, coinCode),
                 color = receiveMuted,
                 fontSize = 13.sp,
                 lineHeight = 18.sp,
@@ -187,11 +188,11 @@ internal fun VeldigoReceiveContent(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = realAddress.ifBlank { "—" },
+                    text = realAddress.takeIf { it.isNotBlank() }?.shorten() ?: "—",
                     color = Color.White,
                     fontSize = 13.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.MiddleEllipsis,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
                 )
                 Spacer(Modifier.width(10.dp))
@@ -244,7 +245,7 @@ internal fun VeldigoReceiveContent(
                 Spacer(Modifier.height(15.dp))
                 Text(
                     text = buildString {
-                        append(network ?: title)
+                        append(network ?: coinCode)
                         if (!uiState.mainNet) append(" · TestNet")
                     },
                     color = receiveMuted,
