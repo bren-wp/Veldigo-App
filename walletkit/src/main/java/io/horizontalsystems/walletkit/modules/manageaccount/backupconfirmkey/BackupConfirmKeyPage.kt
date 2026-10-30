@@ -6,12 +6,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
@@ -50,6 +54,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
+import io.horizontalsystems.walletkit.modules.manageaccount.backupkey.RecoveryPhraseGridRules
 import io.horizontalsystems.walletkit.helpers.HudHelper
 import io.horizontalsystems.walletkit.modules.manageaccount.backupkey.BackupKeyPage
 import io.horizontalsystems.walletkit.modules.settings.security.setup.SecuritySetupPage
@@ -77,11 +83,11 @@ data class BackupConfirmKeyPage(val accountId: String) : HSPage(screenshotEnable
     }
 }
 
-private val verifyBackground = Color(0xFF030E0F)
-private val verifyPanel = Color(0xFF091516)
-private val verifyBorder = Color(0xFF26393A)
-private val verifyMint = Color(0xFF41E6C7)
-private val verifyMuted = Color(0xFF9FB3B5)
+private val verifyBackground = VeldigoHomePalette.Background
+private val verifyPanel = VeldigoHomePalette.Surface
+private val verifyBorder = VeldigoHomePalette.Border
+private val verifyMint = VeldigoHomePalette.Mint
+private val verifyMuted = VeldigoHomePalette.Muted
 
 @Composable
 fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
@@ -128,22 +134,21 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(verifyBackground, Color(0xFF051516), verifyBackground)))
+            .background(verifyBackground)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 16.dp),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(55.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 60.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = navigation::removeLastOrNull) {
-                Canvas(Modifier.size(23.dp)) {
-                    val sw = 1.8.dp.toPx()
-                    drawLine(Color.White, Offset(size.width * .76f, size.height * .5f), Offset(size.width * .26f, size.height * .5f), sw, cap = StrokeCap.Round)
-                    drawLine(Color.White, Offset(size.width * .26f, size.height * .5f), Offset(size.width * .47f, size.height * .29f), sw, cap = StrokeCap.Round)
-                    drawLine(Color.White, Offset(size.width * .26f, size.height * .5f), Offset(size.width * .47f, size.height * .71f), sw, cap = StrokeCap.Round)
-                }
+                Icon(
+                    painter = painterResource(R.drawable.arrow_m_left_24),
+                    contentDescription = stringResource(R.string.Button_Back),
+                    tint = Color.White,
+                )
             }
         }
 
@@ -168,12 +173,32 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
                 lineHeight = 21.sp,
                 color = verifyMuted,
             )
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(12.dp))
+            if (state.hiddenWordItems.isNotEmpty()) {
+                Text(
+                    text = if (state.readyToConfirm) {
+                        stringResource(R.string.Veldigo_Verify_Ready)
+                    } else {
+                        stringResource(
+                            R.string.Veldigo_Verify_NextWord,
+                            state.currentHiddenWordItemIndex + 1,
+                            state.hiddenWordItems.size,
+                        )
+                    },
+                    color = verifyMint,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            Spacer(Modifier.height(20.dp))
 
             // Every chip corresponds to one word from the real saved mnemonic;
             // the words are shuffled and can never be copied or logged here.
             val items = state.wordOptions
-            items.chunked(3).forEachIndexed { rowIndex, rowItems ->
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                val columns = RecoveryPhraseGridRules.columns(maxWidth.value)
+                Column(modifier = Modifier.fillMaxWidth()) {
+            items.chunked(columns).forEachIndexed { rowIndex, rowItems ->
                 if (rowIndex > 0) Spacer(Modifier.height(9.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -181,25 +206,27 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
                 ) {
                     rowItems.forEach { option ->
                         val selected = !option.enabled
-                        val shape = RoundedCornerShape(8.dp)
+                        val selectedDescription = stringResource(R.string.Veldigo_Verify_Selected)
+                        val notSelectedDescription = stringResource(R.string.Veldigo_Verify_NotSelected)
+                        val shape = RoundedCornerShape(10.dp)
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(41.dp)
+                                .heightIn(min = 46.dp)
                                 .background(
-                                    if (selected) Color(0xFF103E36) else verifyPanel,
+                                    if (selected) Color(0xFF123E39) else verifyPanel,
                                     shape,
                                 )
                                 .border(
                                     1.dp,
-                                    if (selected) Color(0xFF369985) else verifyBorder,
+                                    if (selected) verifyMint else verifyBorder,
                                     shape,
                                 )
                                 .clickable(enabled = option.enabled && inForeground && !state.readyToConfirm, role = Role.Button) {
                                     viewModel.onSelectWord(option)
                                 }
                                 .semantics {
-                                    stateDescription = if (selected) "Selected" else "Not selected"
+                                    stateDescription = if (selected) selectedDescription else notSelectedDescription
                                 }
                                 .padding(horizontal = 4.dp),
                             contentAlignment = Alignment.Center,
@@ -214,7 +241,8 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
                             )
                         }
                     }
-                    repeat(3 - rowItems.size) { Spacer(Modifier.weight(1f)) }
+                    repeat(columns - rowItems.size) { Spacer(Modifier.weight(1f)) }
+                }
                 }
             }
             if (state.hiddenWordItems.isNotEmpty()) {
@@ -236,7 +264,7 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
             onClick = viewModel::confirmBackup,
             enabled = inForeground && state.readyToConfirm && !state.confirmed,
             modifier = Modifier.fillMaxWidth().height(54.dp),
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = verifyMint,
                 contentColor = verifyBackground,
