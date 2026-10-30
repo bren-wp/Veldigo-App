@@ -42,6 +42,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Create Wallet Form (screen 24) — **no exact-size standalone reference, emulator/physical pixel diff and recovery regression pending**
 - [x] Recovery Phrase Backup / Verification (screen 25) — **real saved words, responsive 2-column phone grid, Mint navigation and full ordered check retained**
 - [ ] Recovery Phrase Backup / Verification (screen 25) — **native pixel diff, phrase restoration vectors, screenshot blocking and device accessibility remain unverified**
+- [x] Security Setup / PIN / Biometrics (screen 26) — **navy/mint chooser, native PIN keypad, real security routes and OS biometric prompt preserved**, device QA pending
+- [ ] Security Setup / PIN / Biometrics (screen 26) — **unverified native screenshot diff, biometric device paths, lockout/privacy QA and cryptographic security review**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
