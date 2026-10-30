@@ -61,6 +61,7 @@
     <string name="Veldigo_SecuritySetup_PasswordDetails">Custom password (not supported)</string>
     <string name="Veldigo_SecuritySetup_NoticeTitle">Security option unavailable</string>
     <string name="Veldigo_SecuritySetup_NoPassword">A custom password is not implemented in this wallet. Use the existing six-digit PIN or device-supported biometric authentication. Do not enter wallet secrets into a simulated password form.</string>
+    <string name="Veldigo_SecuritySetup_SafetyNote">Set a six-digit PIN before enabling biometric unlock. Fingerprint or face authentication requires a secure device and confirmation through Android. Never share your PIN or recovery phrase.</string>
     <string name="Veldigo_SecuritySetup_NoBiometrics">This device does not support the biometric authentication required by Veldigo. You can protect your wallet with the existing PIN setup.</string>
     <string name="Veldigo_Fingerprint_Title">Enable Fingerprint</string>
     <string name="Veldigo_Fingerprint_Description">Use your fingerprint to quickly and securely access Veldigo.</string>
