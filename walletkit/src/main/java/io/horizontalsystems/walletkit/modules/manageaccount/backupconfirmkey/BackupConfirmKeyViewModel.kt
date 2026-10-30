@@ -68,13 +68,11 @@ class BackupConfirmKeyViewModel(
         }
         // Identical words can occur several times in a valid mnemonic.
         // Match each chip by its unique source index to disable only that chip.
-        val optionIndex = wordOptions.indexOfFirst {
-            it.sourceIndex == option.sourceIndex && it.enabled && it.word == option.word
-        }
+        val optionIndex = RecoveryWordVerifier.availableOptionIndex(wordOptions, option)
         if (optionIndex == -1) return
 
         val expected = hiddenWordItems[currentHiddenWordItemIndex]
-        if (expected.word != option.word) {
+        if (!RecoveryWordVerifier.matches(expected, option)) {
             resetSelection()
             error = Exception(Translator.getString(R.string.BackupConfirmKey_Error_InvalidWord))
         } else {
@@ -85,7 +83,8 @@ class BackupConfirmKeyViewModel(
                 set(optionIndex, option.copy(enabled = false))
             }
             currentHiddenWordItemIndex += 1
-            readyToConfirm = currentHiddenWordItemIndex == hiddenWordItems.size
+            readyToConfirm = currentHiddenWordItemIndex == hiddenWordItems.size &&
+                RecoveryWordVerifier.canConfirm(hiddenWordItems)
         }
         emitState()
     }
@@ -93,7 +92,7 @@ class BackupConfirmKeyViewModel(
     fun confirmBackup() {
         if (confirmed || !readyToConfirm || hiddenWordItems.isEmpty()) return
         // Explicitly verify the whole original phrase once more before storage.
-        if (hiddenWordItems.any { !it.isRevealed }) return
+        if (!RecoveryWordVerifier.canConfirm(hiddenWordItems)) return
         accountManager.update(account.copy(isBackedUp = true))
         confirmed = true
         emitState()
@@ -129,4 +128,18 @@ data class HiddenWordItem(
     val isRevealed: Boolean,
 ) {
     override fun toString() = if (isRevealed) "${index + 1}. $word" else "${index + 1}."
+}
+
+/** Pure security-critical predicates, independently unit-tested without UI or Android state. */
+internal object RecoveryWordVerifier {
+    fun availableOptionIndex(options: List<WordOption>, selected: WordOption): Int =
+        options.indexOfFirst {
+            it.sourceIndex == selected.sourceIndex && it.word == selected.word && it.enabled
+        }
+
+    fun matches(expected: HiddenWordItem, selected: WordOption): Boolean =
+        expected.word == selected.word
+
+    fun canConfirm(words: List<HiddenWordItem>): Boolean =
+        words.isNotEmpty() && words.all { it.isRevealed }
 }
