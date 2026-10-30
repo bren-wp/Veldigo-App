@@ -427,6 +427,30 @@ private fun ColumnScope.SendFormTab(
                     keyboardController?.hide()
                     executor()
                 }
+            } else if (!isPrivateSend) {
+                Button(
+                    modifier = Modifier.fillMaxWidth().height(54.dp),
+                    enabled = step is SendStep.Proceed,
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF41E6C7),
+                        contentColor = Color(0xFF031210),
+                        disabledContainerColor = Color(0xFF1C3935),
+                        disabledContentColor = Color(0xFF9AB7B1),
+                    ),
+                    onClick = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        if (uiState.riskyAddress) confirmRiskyAddress()
+                        else proceed()
+                    },
+                ) {
+                    Text(
+                        text = if (step is SendStep.Proceed)
+                            stringResource(R.string.Veldigo_Send_Continue) else buttonTitle,
+                        fontSize = 15.sp,
+                    )
+                }
             } else {
                 HSButton(
                     modifier = Modifier.fillMaxWidth(),
