@@ -87,6 +87,7 @@ internal fun VeldigoReceiveContent(
     coinCode: String,
     slot1: @Composable () -> Unit,
     onSetAmount: () -> Unit,
+    onClearAmount: () -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -271,6 +272,13 @@ internal fun VeldigoReceiveContent(
                     color = receiveMint,
                     fontSize = 12.sp,
                 )
+                TextButton(onClick = onClearAmount) {
+                    Text(
+                        text = stringResource(R.string.Veldigo_Receive_ClearAmount),
+                        color = receiveMuted,
+                        fontSize = 12.sp,
+                    )
+                }
             }
             // BTC address rotation/history and chain-specific warning/actions stay functional.
             slot1()
