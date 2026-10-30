@@ -17,7 +17,7 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 
 # Third screen: cryptocurrencies (reference panel 3), not premature onboarding exit.
 - assertVisible: "All Your Crypto"
-- assertVisible: "Manage, send, receive and swap thousands of tokens."
+- assertVisible: "Manage, send and receive crypto on supported networks."
 - assertVisible: "Next"
 - assertVisible: "Skip"
 - tapOn: "Next"
@@ -28,8 +28,8 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - tapOn: "Get Started"
 
 # Intro completion persists after relaunch.
-- assertVisible: "Markets"
+- assertVisible: "Wallet"
 - assertNotVisible: "Create a new wallet"
 - launchApp
-- assertVisible: "Markets"
+- assertVisible: "Wallet"
 - assertNotVisible: "Secure"
