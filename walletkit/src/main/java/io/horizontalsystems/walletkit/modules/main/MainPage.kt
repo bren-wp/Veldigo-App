@@ -47,6 +47,7 @@ import io.horizontalsystems.walletkit.modules.balance.ui.BalanceScreen
 import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.transactions.TransactionsPage
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
+import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
 import io.horizontalsystems.walletkit.modules.market.MarketScreen
 import io.horizontalsystems.walletkit.modules.multiswap.SwapScreen
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
@@ -138,6 +139,26 @@ private fun MainScreen(
                         }
                     }.forEach { destination ->
                         if (destination.mainNavItem == MainNavigation.Settings) {
+                            // The balance list is the Wallet tab; Assets opens real token
+                            // management. Both navigation actions remain behind the PIN gate.
+                            HsNavigationBarItem(
+                                selected = false,
+                                onClick = { navigation.slideFromRight(ManageWalletsPage) },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_manage_2_24),
+                                        contentDescription = stringResource(R.string.Veldigo_Tab_Assets),
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.Veldigo_Tab_Assets)) },
+                                colors = HsNavigationBarItemDefaults.colors(
+                                    selectedIconColor = VeldigoHomePalette.Mint,
+                                    unselectedIconColor = VeldigoHomePalette.Muted,
+                                    selectedTextColor = VeldigoHomePalette.Mint,
+                                    unselectedTextColor = VeldigoHomePalette.Muted,
+                                    indicatorColor = VeldigoHomePalette.Background,
+                                ),
+                            )
                             HsNavigationBarItem(
                                 selected = false,
                                 onClick = {
@@ -147,10 +168,10 @@ private fun MainScreen(
                                 icon = {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_circle_clock_24),
-                                        contentDescription = stringResource(R.string.Veldigo_Home_History),
+                                        contentDescription = stringResource(R.string.Veldigo_Tab_Activity),
                                     )
                                 },
-                                label = { Text(stringResource(R.string.Veldigo_Home_History)) },
+                                label = { Text(stringResource(R.string.Veldigo_Tab_Activity)) },
                                 colors = HsNavigationBarItemDefaults.colors(
                                     selectedIconColor = VeldigoHomePalette.Mint,
                                     unselectedIconColor = VeldigoHomePalette.Muted,
@@ -189,7 +210,7 @@ private fun MainScreen(
                             label = {
                                 Text(
                                     text = when (destination.mainNavItem) {
-                                        MainNavigation.Balance -> stringResource(R.string.Veldigo_Home_Home)
+                                        MainNavigation.Balance -> stringResource(R.string.Veldigo_Tab_Wallet)
                                         MainNavigation.Market -> stringResource(R.string.Veldigo_Home_Markets)
                                         MainNavigation.Swap -> stringResource(R.string.Swap)
                                         MainNavigation.Settings -> stringResource(R.string.Settings_Title)
