@@ -38,6 +38,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Wallet Management — **device screenshots, screen-density calibration, accessibility and account-switch regression NOT verified**
 - [x] Add Wallet (screen 23) — **three real Create / Import / Watch-only routes and branded cards implemented**, screen QA documented
 - [ ] Add Wallet (screen 23) — **native screenshot/density parity, hardware and recovery flow tests NOT verified**
+- [x] Create Wallet Form (screen 24) — **real account creation, title/name, advanced BIP39 option, passphrase confirmation and existing backup route retained**, native visual QA pending
+- [ ] Create Wallet Form (screen 24) — **no exact-size standalone reference, emulator/physical pixel diff and recovery regression pending**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
