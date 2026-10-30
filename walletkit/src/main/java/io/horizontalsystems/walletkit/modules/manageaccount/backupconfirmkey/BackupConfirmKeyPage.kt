@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.helpers.HudHelper
 import io.horizontalsystems.walletkit.modules.manageaccount.backupkey.BackupKeyPage
@@ -39,13 +40,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 // The word options are drawn from the user's own recovery phrase, so this screen shows real seed
 // words and needs the same screenshot protection as the screen that displays the phrase itself.
-data class BackupConfirmKeyPage(val input: Account) : HSPage(screenshotEnabled = false) {
+data class BackupConfirmKeyPage(val accountId: String) : HSPage(screenshotEnabled = false) {
+    // The phrase is loaded only inside the protected screen, not persisted in nav state.
+    constructor(account: Account) : this(account.id)
 
     @Composable
     override fun GetContent(navigation: HSNavigation) {
-        RecoveryPhraseVerifyScreen(navigation, input)
+        val account = App.accountManager.account(accountId)
+        if (account != null) {
+            RecoveryPhraseVerifyScreen(navigation, account)
+        } else {
+            LaunchedEffect(accountId) { navigation.removeLastOrNull() }
+        }
     }
-
 }
 
 @OptIn(ExperimentalLayoutApi::class)
