@@ -115,6 +115,17 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcSyncStatusRulesTest' --no-daemon --stacktrace
+      - name: Verify Monero node display redacts URL credentials and protects active nodes
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit-chain-monero:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.moneronetwork.MoneroNodeDisplayRulesTest' --no-daemon --stacktrace
+      - name: Verify Monero node screen excludes connection secrets and discontinued UI
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'PingBadge|urlForDisplay|\.password|\.username|\.serialized|WalletConnect_Unnamed|HSSwipeToReveal|rememberAsyncImagePainter|BuySubscription' walletkit-chain-monero/src/main/java/io/horizontalsystems/walletkit/modules/moneronetwork/MoneroNetworkPage.kt; then
+            echo 'Monero settings must use real ping and redacted node labels'
+            exit 1
+          fi
       - name: Verify Bitcoin sync status is adapter-backed, never invented
         if: steps.source.outputs.present == 'true'
         run: |
