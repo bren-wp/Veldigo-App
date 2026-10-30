@@ -9,7 +9,7 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - tapOn: "Next"
 - assertVisible: "All Your Crypto"
 - tapOn: "Skip"
-- assertVisible: "Markets"
+- assertVisible: "Wallet"
 - launchApp
-- assertVisible: "Markets"
+- assertVisible: "Wallet"
 - assertNotVisible: "All Your Crypto"
