@@ -75,6 +75,7 @@ data object BuyCryptoPage : HSPage() {
         BuyCryptoScreen(
             tokens = tokens,
             fiatCode = App.currencyManager.baseCurrency.code,
+            fiatDecimals = App.currencyManager.baseCurrency.decimal,
             onBack = navigation::removeLastOrNull,
         )
     }
@@ -84,7 +85,7 @@ internal object VeldigoFiatPurchaseGate {
     const val providerConnected = false
 
     fun validAmount(value: String, decimals: Int): Boolean {
-        if (value.isBlank() || decimals < 0) return false
+        if (value.isBlank() || decimals < 0 || !value.all { it.isDigit() || it == '.' } || value.count { it == '.' } > 1) return false
         val number = value.toBigDecimalOrNull() ?: return false
         return number > BigDecimal.ZERO && number.scale().coerceAtLeast(0) <= decimals
     }
@@ -107,6 +108,7 @@ private val muted = Color(0xFF9FB4B6)
 internal fun BuyCryptoScreen(
     tokens: List<Token>,
     fiatCode: String,
+    fiatDecimals: Int,
     onBack: () -> Unit,
 ) {
     var selling by rememberSaveable { mutableStateOf(false) }
@@ -260,7 +262,7 @@ internal fun BuyCryptoScreen(
                             if (normal.length <= 14 &&
                                 normal.all { it.isDigit() || it == '.' } &&
                                 normal.count { it == '.' } <= 1 &&
-                                normal.substringAfter('.', "").length <= 2
+                                normal.substringAfter('.', "").length <= fiatDecimals.coerceAtLeast(0)
                             ) amount = normal
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -339,7 +341,7 @@ internal fun BuyCryptoScreen(
             onClick = {
                 focus.clearFocus()
                 notice = if (selected == null) R.string.Veldigo_Buy_NoAsset
-                else if (!VeldigoFiatPurchaseGate.validAmount(amount, 2)) R.string.Veldigo_Buy_InvalidAmount
+                else if (!VeldigoFiatPurchaseGate.validAmount(amount, fiatDecimals)) R.string.Veldigo_Buy_InvalidAmount
                 else R.string.Veldigo_Buy_NoPaymentProvider
             },
             modifier = Modifier.fillMaxWidth().height(54.dp),
