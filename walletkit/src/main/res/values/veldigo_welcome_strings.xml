@@ -159,4 +159,7 @@
     <string name="Veldigo_Wallets_Search">Search wallets</string>
     <string name="Veldigo_Wallets_Active">Active wallet</string>
     <string name="Veldigo_Wallets_Warning">Review wallet security</string>
+    <string name="Veldigo_AddWallet_CreateDetail">Create a wallet with a new recovery phrase</string>
+    <string name="Veldigo_AddWallet_ImportDetail">Recover using your phrase, key or backup file</string>
+    <string name="Veldigo_AddWallet_WatchDetail">Track a wallet address without signing keys</string>
 </resources>
