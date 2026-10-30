@@ -1,4 +1,4 @@
-appId: ${APP_ID || 'com.brendigo.veldigo'}
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
 # First page is the Veldigo reference welcome (no legacy Next button).
 - assertVisible: "Create a new wallet"
