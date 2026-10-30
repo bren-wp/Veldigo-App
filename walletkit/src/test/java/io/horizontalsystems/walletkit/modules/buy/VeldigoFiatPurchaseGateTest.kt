@@ -25,6 +25,9 @@ class VeldigoFiatPurchaseGateTest {
         assertFalse(VeldigoFiatPurchaseGate.validAmount("-10", 2))
         assertFalse(VeldigoFiatPurchaseGate.validAmount("xyz", 2))
         assertFalse(VeldigoFiatPurchaseGate.validAmount("1.234", 2))
+        assertFalse(VeldigoFiatPurchaseGate.validAmount("1e3", 2))
+        assertFalse(VeldigoFiatPurchaseGate.validAmount("10.50", 0))
+        assertTrue(VeldigoFiatPurchaseGate.validAmount("10", 0))
     }
 
     @Test
