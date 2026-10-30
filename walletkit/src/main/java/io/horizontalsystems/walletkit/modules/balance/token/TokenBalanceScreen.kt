@@ -6,8 +6,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -138,31 +142,17 @@ fun TokenBalanceScreen(
         }
     }
 
-    HSScaffold(
-        title = uiState.title,
-        onBack = navigation::removeLastOrNull,
-        menuItems = buildList {
-            if (uiState.balanceViewItem?.isWatchAccount == true) {
-                add(
-                    MenuItem(
-                        icon = R.drawable.ic_balance_chart_24,
-                        title = TranslatableString.ResString(R.string.Coin_Info),
-                        onClick = {
-                            val coinUid = uiState.balanceViewItem.wallet.coin.uid
-                            val arguments = CoinPage.Input(coinUid)
-
-                            navigation.slideFromRight(CoinPage(arguments))
-
-                            stat(
-                                page = StatPage.TokenPage,
-                                event = StatEvent.OpenCoin(coinUid)
-                            )
-                        }
-                    )
-                )
-            }
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF030D0E))
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
+        VeldigoAssetTopBar(
+            title = "${viewModel.wallet.coin.name} (${viewModel.wallet.coin.code})",
+            onBack = navigation::removeLastOrNull,
+        )
         val onClickReceive = {
             val wallet = viewModel.wallet
             val chainReceivePage = ChainRegistry[wallet.token.blockchainType]?.receivePage(wallet)
@@ -180,8 +170,9 @@ fun TokenBalanceScreen(
         val transactionItems = uiState.transactions
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .background(ComposeAppTheme.colors.lawrence)
+                .weight(1f)
+                .fillMaxWidth()
+                .background(Color(0xFF030D0E))
         ) {
             item {
                 uiState.balanceViewItem?.let { balanceViewItem ->
@@ -207,16 +198,30 @@ fun TokenBalanceScreen(
                         null
                     }
 
-                    TokenBalanceHeader(
-                        balanceViewItem = balanceViewItem,
+                    VeldigoAssetDetail(
+                        item = balanceViewItem,
                         navigation = navigation,
-                        viewModel = viewModel,
-                        receiveAddress = uiState.receiveAddress,
-                        warning = uiState.warningMessage,
-                        onClickReceive = onClickReceive,
-                        chartButtonEnabled = uiState.chartButtonEnabled,
-                        trailingContent = trailingContent,
+                        onReceive = onClickReceive,
                     )
+                    // Preserve chain-specific status and account warnings that must
+                    // not disappear during the visual redesign.
+                    trailingContent?.invoke()
+                    uiState.warningMessage?.let { warning ->
+                        TextAttention(modifier = Modifier.padding(16.dp), text = warning)
+                    }
+                    if (balanceViewItem.isWatchAccount) {
+                        uiState.receiveAddress?.let { address ->
+                            CellPrimary(
+                                middle = {
+                                    CellMiddleInfoTextIcon(text = stringResource(R.string.Balance_ReceiveAddress).hs)
+                                },
+                                right = {
+                                    CellRightNavigation(subtitle = address.shorten().hs)
+                                },
+                                onClick = onClickReceive,
+                            )
+                        }
+                    }
 
                     balanceViewItem.birthdayHeight?.let { birthdayHeight ->
                         BirthdayHeightCell(
