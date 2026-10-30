@@ -42,7 +42,7 @@ class EvmNetworkViewModel(
     }
 
     private fun viewItems(evmSyncSources: List<EvmSyncSource>): List<ViewItem> {
-        currentSyncSource = evmSyncSourceManager.getSyncSource(blockchain.type)
+        currentSyncSource = runCatching { evmSyncSourceManager.getSyncSource(blockchain.type) }.getOrNull()
         return evmSyncSources.map { evmSyncSource ->
             val currentSyncSourceId = currentSyncSource?.id
 
