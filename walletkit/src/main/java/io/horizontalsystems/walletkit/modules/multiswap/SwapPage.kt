@@ -3,11 +3,6 @@ package io.horizontalsystems.walletkit.modules.multiswap
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -131,8 +125,7 @@ data class SwapPage(val input: Input? = null) : HSPage() {
             parentScreenContentKey = contentKey(),
             tokenIn = input?.tokenIn,
             tokenOut = input?.tokenOut,
-            onClickClose = navigation::removeLastOrNull,
-            autofocus = false
+            onClickClose = navigation::removeLastOrNull
         )
     }
 
@@ -475,9 +468,9 @@ private fun SwapScreenInner(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFF030E0D))
+                    .background(ComposeAppTheme.colors.lawrence)
             ) {
-                VeldigoSwapForm(
+                SwapInput(
                     amountIn = uiState.amountIn,
                     fiatAmountIn = uiState.fiatAmountIn,
                     fiatAmountInputEnabled = uiState.fiatAmountInputEnabled,
@@ -486,6 +479,8 @@ private fun SwapScreenInner(
                     amountOut = quote?.amountOut,
                     fiatAmountOut = uiState.fiatAmountOut,
                     hasRateOut = uiState.hasRateOut,
+                    fiatPriceImpact = uiState.fiatPriceImpact,
+                    fiatPriceImpactLevel = uiState.fiatPriceImpactLevel,
                     onValueChange = onEnterAmount,
                     onFiatValueChange = onEnterFiatAmount,
                     onClickCoinFrom = {
@@ -515,8 +510,7 @@ private fun SwapScreenInner(
                     },
                     onClearClick = {
                         onEnterAmount(null)
-                    },
-                    quote = quote,
+                    }
                 )
                 Column(
                     modifier = Modifier
@@ -581,7 +575,6 @@ private fun SwapScreenInner(
                             onEnableTokenIn()
                         },
                         proceedEnabled = proceedEnabled,
-                        hasValidQuote = VeldigoSwapReferenceRules.quotedRateAvailable(quote),
                         onClickNext = onClickNext
                     )
                     VSpacer(height = bottomPadding)
@@ -599,7 +592,6 @@ private fun SwapActionButton(
     onActionStarted: () -> Unit,
     onEnableTokenIn: suspend () -> Unit,
     proceedEnabled: Boolean,
-    hasValidQuote: Boolean,
     onClickNext: () -> Unit
 ) {
     ButtonsGroupVertical {
@@ -714,24 +706,12 @@ private fun SwapActionButton(
             }
 
             SwapStep.Proceed -> {
-                Button(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(54.dp),
-                    enabled = VeldigoSwapReferenceRules.canProceed(currentStep, !proceedEnabled, hasValidQuote),
-                    onClick = onClickNext,
-                    shape = RoundedCornerShape(11.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF41E6C7),
-                        contentColor = Color(0xFF041411),
-                        disabledContainerColor = Color(0xFF193A34),
-                        disabledContentColor = Color(0xFF92B8B0),
-                    ),
-                ) {
-                    androidx.compose.material3.Text(
-                        text = stringResource(R.string.Veldigo_Swap_Action),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+                HSButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = stringResource(R.string.Swap_Proceed),
+                    enabled = proceedEnabled,
+                    onClick = onClickNext
+                )
             }
         }
     }
@@ -932,9 +912,137 @@ fun PriceField(
     )
 }
 
-// The previous generic SwapInput/SwapCoinInputTo rows are replaced by
-// VeldigoSwapForm. Keep the reusable AmountInput and FiatAmountInput helpers
-// below: the production TokenAmountInput still uses both.
+@Composable
+private fun SwapInput(
+    amountIn: BigDecimal?,
+    fiatAmountIn: BigDecimal?,
+    fiatAmountInputEnabled: Boolean,
+    onSwitchPairs: () -> Unit,
+    switchPairsEnabled: Boolean,
+    amountOut: BigDecimal?,
+    fiatAmountOut: BigDecimal?,
+    hasRateOut: Boolean,
+    fiatPriceImpact: BigDecimal?,
+    fiatPriceImpactLevel: PriceImpactLevel?,
+    onValueChange: (BigDecimal?) -> Unit,
+    onFiatValueChange: (BigDecimal?) -> Unit,
+    onClickCoinFrom: () -> Unit,
+    onClickCoinTo: () -> Unit,
+    tokenIn: Token?,
+    tokenOut: Token?,
+    currency: Currency,
+    focusRequester: FocusRequester,
+    availableBalance: BigDecimal?,
+    showBalancePlaceholder: Boolean,
+    onAvailableBalanceClick: (() -> Unit)?,
+    onPercentClick: (Int) -> Unit,
+    onClearClick: (() -> Unit)
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        AvailableBalanceRow(
+            balanceToken = tokenIn,
+            availableBalance = availableBalance,
+            showPlaceholder = showBalancePlaceholder,
+            onAvailableBalanceClick = onAvailableBalanceClick,
+            onPercentClick = onPercentClick,
+            onClearClick = onClearClick,
+            showClear = amountIn != null
+        )
+        Box {
+            Column {
+                TokenAmountInput(
+                    token = tokenIn,
+                    amount = amountIn,
+                    fiatAmount = fiatAmountIn,
+                    fiatAmountInputEnabled = fiatAmountInputEnabled,
+                    currency = currency,
+                    focusRequester = focusRequester,
+                    onValueChange = onValueChange,
+                    onFiatValueChange = onFiatValueChange,
+                    amountExceedsBalance = false,
+                    onTokenClick = onClickCoinFrom
+                )
+                SwapCoinInputTo(
+                    coinAmount = amountOut,
+                    fiatAmount = fiatAmountOut,
+                    hasRate = hasRateOut,
+                    fiatPriceImpact = fiatPriceImpact,
+                    fiatPriceImpactLevel = fiatPriceImpactLevel,
+                    currency = currency,
+                    token = tokenOut,
+                    onClickCoin = onClickCoinTo
+                )
+            }
+            Box(Modifier.align(Alignment.Center)) {
+                HSIconButton(
+                    variant = ButtonVariant.Secondary,
+                    style = ButtonStyle.Solid,
+                    size = ButtonSize.Small,
+                    icon = painterResource(id = R.drawable.ic_arrow_down_24),
+                    enabled = switchPairsEnabled,
+                    onClick = onSwitchPairs
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SwapCoinInputTo(
+    coinAmount: BigDecimal?,
+    fiatAmount: BigDecimal?,
+    hasRate: Boolean,
+    fiatPriceImpact: BigDecimal?,
+    fiatPriceImpactLevel: PriceImpactLevel?,
+    currency: Currency,
+    token: Token?,
+    onClickCoin: () -> Unit,
+) {
+    BoxBordered(bottom = true) {
+        Row(
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TokenSelector(token = token, onClick = onClickCoin)
+            HSpacer(8.dp)
+            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+                Text(
+                    text = (coinAmount ?: BigDecimal.ZERO).toPlainString(),
+                    style = ComposeAppTheme.typography.headline1,
+                    color = if (coinAmount == null) ComposeAppTheme.colors.grey else ComposeAppTheme.colors.leah,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (hasRate) {
+                    Row {
+                        Text(
+                            text = "${currency.symbol}${(fiatAmount ?: BigDecimal.ZERO).toPlainString()}",
+                            style = ComposeAppTheme.typography.body,
+                            color = if (fiatAmount == null) ComposeAppTheme.colors.andy else ComposeAppTheme.colors.grey,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        fiatPriceImpact?.let { diff ->
+                            HSpacer(width = 4.dp)
+                            Text(
+                                text = stringResource(R.string.Swap_FiatPriceImpact, diff.toPlainString()),
+                                style = ComposeAppTheme.typography.body,
+                                color = getPriceImpactColor(fiatPriceImpactLevel),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                } else {
+                    FiatLinePlaceholder(currency)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun FiatAmountInput(
