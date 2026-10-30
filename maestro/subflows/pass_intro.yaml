@@ -1,5 +1,9 @@
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+appId: ${APP_ID || 'com.brendigo.veldigo'}
 ---
-- tapOn: "Next"
-- tapOn: "Next"
-- tapOn: "Next"
+# First page is the Veldigo reference welcome (no legacy Next button).
+- assertVisible: "Create a new wallet"
+- swipe:
+    direction: LEFT
+- swipe:
+    direction: LEFT
+- tapOn: "Get started"
