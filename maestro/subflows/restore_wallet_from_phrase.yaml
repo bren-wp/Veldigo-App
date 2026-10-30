@@ -1,9 +1,9 @@
-# Restores a Bitcoin + Ethereum wallet from ${MNEMONIC} (callers must define it).
-# Starts from the intro of a freshly launched app, ends on the balance screen.
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+# Restore a wallet using a public BIP39 test vector provided by the caller.
+# Fresh install -> welcome -> existing gated import workflow.
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-- runFlow: pass_intro.yaml
-- tapOn: "Existing Wallet"
+- assertVisible: "Import existing wallet"
+- tapOn: "Import existing wallet"
 - runFlow: accept_terms.yaml
 - tapOn: "from Recovery Phrase"
 - tapOn: "Enter Recovery Phrase"
