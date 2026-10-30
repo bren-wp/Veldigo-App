@@ -113,4 +113,19 @@
     <string name="Veldigo_Swap_SlippageOnReview">Set on review</string>
     <string name="Veldigo_Swap_SlippageExplanation">You can review and adjust the supported slippage tolerance on the transaction confirmation screen, after a live provider quote has been calculated. No slippage percentage is assumed here.</string>
     <string name="Veldigo_Swap_Action">Swap</string>
+    <string name="Veldigo_Buy_Title">Buy Crypto</string>
+    <string name="Veldigo_Buy_Buy">Buy</string>
+    <string name="Veldigo_Buy_Sell">Sell</string>
+    <string name="Veldigo_Buy_Asset">Asset</string>
+    <string name="Veldigo_Buy_ChooseAsset">Choose asset</string>
+    <string name="Veldigo_Buy_NoAsset">No enabled wallet assets available</string>
+    <string name="Veldigo_Buy_Amount">Amount</string>
+    <string name="Veldigo_Buy_QuoteUnavailable">Fiat conversion unavailable — no purchase provider connected.</string>
+    <string name="Veldigo_Buy_PaymentMethod">Payment Method</string>
+    <string name="Veldigo_Buy_PaymentDisconnected">Payment method not connected</string>
+    <string name="Veldigo_Buy_NoPaymentProvider">Card purchases and sales are not available in this version. No payment method or verified fiat on-ramp provider is connected. No money has been charged and no trade has been submitted.</string>
+    <string name="Veldigo_Buy_BuyAsset">Buy %1$s</string>
+    <string name="Veldigo_Buy_SellAsset">Sell %1$s</string>
+    <string name="Veldigo_Buy_InvalidAmount">Enter a positive amount with at most two decimal places.</string>
+    <string name="Veldigo_Buy_UnavailableTitle">Fiat purchase unavailable</string>
 </resources>
