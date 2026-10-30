@@ -58,6 +58,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Custom RPC Connection Validation (screen 32) — **real device network tests, complete chain coverage, WSS/onion transport identity, proxy/TLS audit and exact 1:1 screenshot parity NOT verified**
 - [x] Bitcoin-family synchronization source (screen 33) — **real supported restore-mode selection, native navy/mint local-only UI, rescan warning, save/discard confirmation and guarded persistence implemented**, source QA documented
 - [ ] Bitcoin-family synchronization source (screen 33) — **native emulator/physical screenshot overlay, source switch/full rescan, BTC/BCH/LTC/DASH/eCash network regression and exact pixel parity NOT verified**
+- [x] Bitcoin-family synchronization status (screen 34) — **live active-account adapters, real progress/blocks, Tor-aware waiting, selected-chain counters, Refresh and post-source-change navigation implemented**, source QA recorded
+- [ ] Bitcoin-family synchronization status (screen 34) — **Android CI, emulator pixel overlay, physical sync/rescan, offline/Tor/reorg validation and full 1:1 parity NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
