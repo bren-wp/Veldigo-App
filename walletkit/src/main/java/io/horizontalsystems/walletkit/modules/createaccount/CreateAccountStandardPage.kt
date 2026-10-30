@@ -31,6 +31,8 @@ import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.core.stats.statAccountType
 import io.horizontalsystems.walletkit.helpers.HudHelper
 import io.horizontalsystems.walletkit.modules.evmfee.ButtonsGroupWithShade
+import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.modules.manageaccount.backupkey.BackupKeyPage
 import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsModule
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
@@ -65,7 +67,10 @@ data class CreateAccountStandardPage(val input: ManageAccountsModule.Input?) : H
         val inclusive = input?.popOffInclusive ?: true
         CreateAccountIntroScreen(
             onBackClick = { navigation.removeLastOrNull() },
-            onFinish = { navigation.removeLastUntil(popUpToInclusiveId, inclusive) },
+            onFinish = { createdAccount ->
+                navigation.removeLastUntil(popUpToInclusiveId, inclusive)
+                navigation.slideFromRight(BackupKeyPage(createdAccount))
+            },
         )
     }
 
@@ -74,7 +79,7 @@ data class CreateAccountStandardPage(val input: ManageAccountsModule.Input?) : H
 @Composable
 private fun CreateAccountIntroScreen(
     onBackClick: () -> Unit,
-    onFinish: () -> Unit
+    onFinish: (Account) -> Unit
 ) {
     val viewModel = viewModel<CreateAccountViewModel>(factory = CreateAccountModule.Factory())
     val view = LocalView.current
@@ -93,7 +98,11 @@ private fun CreateAccountIntroScreen(
             )
             delay(300)
 
-            onFinish.invoke()
+            // Use the saved account's actual mnemonic; never generate a second phrase.
+            val createdAccount = viewModel.createdAccount
+            if (createdAccount != null) {
+                onFinish.invoke(createdAccount)
+            }
             viewModel.onSuccessMessageShown()
 
             stat(
