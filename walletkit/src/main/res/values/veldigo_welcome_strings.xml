@@ -241,6 +241,7 @@
     <string name="Veldigo_Privacy_EnableTorWarning">Enable Tor and restart the app? Connection setup can take time. Your normal app PIN or biometric unlock may be required again.</string>
     <string name="Veldigo_Privacy_DisableTorWarning">Disable Tor and restart the app? The wallet will stop using the configured Tor proxy. Your normal app PIN or biometric unlock may be required again.</string>
     <string name="Veldigo_Networks_Search">Search networks or sync providers</string>
+    <string name="Veldigo_Networks_Clear">Clear network search</string>
     <string name="Veldigo_Networks_Description">Review the synchronization source for each supported network. Select a network to manage its actual connection settings.</string>
     <string name="Veldigo_Networks_BtcLike">Bitcoin-family networks</string>
     <string name="Veldigo_Networks_Other">EVM &amp; other networks</string>
