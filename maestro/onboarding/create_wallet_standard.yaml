@@ -1,8 +1,13 @@
 appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-# Use a fresh installation and the real secure wallet creation flow.
+# Fresh install -> create -> real backup; do not echo or capture seed words.
 - launchApp:
     clearState: true
 - runFlow: ../subflows/create_standard_wallet.yaml
-- assertVisible: "Receive"
-- assertVisible: "Send"
+- assertVisible: "Reveal recovery phrase"
+- tapOn: "Reveal recovery phrase"
+- assertVisible: "I've written it down"
+
+# Acknowledgement must NOT silently mark a backup verified.
+- tapOn: "I've written it down"
+- assertVisible: "Select requested words from your wallet recovery phrase"
