@@ -24,12 +24,16 @@ class BlockchainSettingsViewModel(
     var otherChains by mutableStateOf<List<BlockchainSettingsModule.BlockchainViewItem>>(emptyList())
         private set
 
+    var loaded by mutableStateOf(false)
+        private set
+
     init {
         viewModelScope.launch {
             service.blockchainItemsFlow.collect { sync(it) }
         }
+        // Wait for the first real service snapshot before showing the empty
+        // state; a pending initial load does not mean no networks exist.
         service.start()
-        sync(service.blockchainItems)
     }
 
     override fun onCleared() {
@@ -62,6 +66,7 @@ class BlockchainSettingsViewModel(
 
         btcLikeChains = btc
         otherChains = others
+        loaded = true
     }
 
     private fun BlockchainSettingsModule.BlockchainItem.Chain.toViewItem() =
