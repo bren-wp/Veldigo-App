@@ -1,217 +1,424 @@
 package io.horizontalsystems.walletkit.modules.btcblockchainsettings
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcBlockchainSettingsModule.BlockchainSettingsIcon
-import io.horizontalsystems.walletkit.modules.evmfee.ButtonsGroupWithShade
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
-import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
-import io.horizontalsystems.walletkit.ui.compose.TranslatableString
-import io.horizontalsystems.walletkit.ui.compose.components.AppBar
-import io.horizontalsystems.walletkit.ui.compose.components.CellUniversalLawrenceSection
-import io.horizontalsystems.walletkit.ui.compose.components.HSpacer
-import io.horizontalsystems.walletkit.ui.compose.components.MenuItem
-import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
-import io.horizontalsystems.walletkit.ui.compose.components.TextImportantWarning
-import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
-import io.horizontalsystems.walletkit.ui.compose.components.body_leah
-import io.horizontalsystems.walletkit.ui.compose.components.subhead2_grey
 import io.horizontalsystems.marketkit.models.Blockchain
 import kotlinx.serialization.Serializable
-import io.horizontalsystems.walletkit.uiv3.components.controls.HSButton
 
+/**
+ * Screen 33 — wallet-only Bitcoin-family source settings. The available
+ * choices are supplied by BtcBlockchainManager, not hard-coded node URLs.
+ */
 @Serializable
-data class BtcBlockchainSettingsPage(val blockchain: Blockchain) : HSPage() {
-
+data class BtcBlockchainSettingsPage(val blockchain: Blockchain) : HSPage(screenshotEnabled = false) {
     @Composable
     override fun GetContent(navigation: HSNavigation) {
         val viewModel = viewModel<BtcBlockchainSettingsViewModel>(
-            factory = BtcBlockchainSettingsModule.Factory(blockchain)
+            factory = BtcBlockchainSettingsModule.Factory(blockchain),
         )
         BtcBlockchainSettingsScreen(viewModel, navigation)
     }
-
 }
 
 @Composable
 private fun BtcBlockchainSettingsScreen(
     viewModel: BtcBlockchainSettingsViewModel,
-    navigation: HSNavigation
+    navigation: HSNavigation,
 ) {
+    var confirmSave by remember { mutableStateOf(false) }
+    var confirmDiscard by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.closeScreen) {
-        if (viewModel.closeScreen) {
+        if (viewModel.closeScreen) navigation.removeLastOrNull()
+    }
+
+    val onBack: () -> Unit = {
+        if (viewModel.saveButtonEnabled) {
+            confirmDiscard = true
+        } else {
             navigation.removeLastOrNull()
         }
     }
 
-    Surface(color = ComposeAppTheme.colors.tyler) {
-        Column {
-            AppBar(
-                title = viewModel.title,
-                navigationIcon = {
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            model = viewModel.blockchainIconUrl,
-                            error = painterResource(R.drawable.ic_platform_placeholder_32)
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(start = 14.dp)
-                            .size(24.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                    )
-                },
-                menuItems = listOf(
-                    MenuItem(
-                        title = TranslatableString.ResString(R.string.Button_Close),
-                        icon = R.drawable.ic_close,
-                        onClick = {
-                            navigation.removeLastOrNull()
-                        }
-                    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VeldigoHomePalette.Background)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 60.dp)
+                .padding(start = 8.dp, end = 56.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_m_left_24),
+                    contentDescription = stringResource(R.string.Button_Back),
+                    tint = VeldigoHomePalette.White,
                 )
+            }
+            Text(
+                text = stringResource(R.string.Veldigo_BtcSync_Title),
+                color = VeldigoHomePalette.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+        ) {
+            VeldigoBtcSyncHeader(viewModel.title)
+            Text(
+                text = stringResource(R.string.Veldigo_BtcSync_Description),
+                color = VeldigoHomePalette.Muted,
+                fontSize = 12.sp,
+                lineHeight = 18.sp,
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 16.dp),
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
+            Row(
+                modifier = Modifier.padding(start = 5.dp, top = 9.dp, bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
             ) {
-                Spacer(Modifier.height(12.dp))
-                RestoreSourceSettings(viewModel)
-                Spacer(Modifier.height(32.dp))
-                TextImportantWarning(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = stringResource(R.string.BtcBlockchainSettings_RestoreSourceChangeWarning)
+                Text(
+                    text = stringResource(R.string.Veldigo_BtcSync_AvailableModes),
+                    fontSize = 12.sp,
+                    color = VeldigoHomePalette.Muted,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
                 )
-                Spacer(Modifier.height(32.dp))
+                Text(
+                    text = viewModel.restoreSources.size.toString(),
+                    color = VeldigoHomePalette.Mint,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                )
             }
 
-            ButtonsGroupWithShade {
-                HSButton(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                    title = stringResource(R.string.Button_Save),
-                    enabled = viewModel.saveButtonEnabled,
-                    onClick = { viewModel.onSaveClick() }
+            VeldigoBtcSyncGroup {
+                if (viewModel.restoreSources.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.Veldigo_BtcSync_NoSources),
+                        modifier = Modifier.padding(16.dp),
+                        color = VeldigoHomePalette.Muted,
+                        fontSize = 13.sp,
+                    )
+                }
+                viewModel.restoreSources.forEachIndexed { index, source ->
+                    if (index > 0) {
+                        HorizontalDivider(
+                            color = VeldigoHomePalette.Border,
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(start = 66.dp, end = 12.dp),
+                        )
+                    }
+                    BlockchainSettingCell(
+                        title = source.title,
+                        subtitle = source.subtitle,
+                        checked = source.selected,
+                        icon = source.icon,
+                        onClick = { viewModel.onSelectRestoreMode(source) },
+                    )
+                }
+            }
+
+            if (viewModel.saveButtonEnabled) {
+                Text(
+                    text = stringResource(R.string.Veldigo_BtcSync_Unsaved),
+                    color = VeldigoHomePalette.Mint,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 5.dp, top = 11.dp),
+                )
+            }
+
+            Row(
+                modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 27.dp, bottom = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(11.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_shield_24),
+                    tint = VeldigoHomePalette.Mint,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                )
+                Text(
+                    text = stringResource(R.string.BtcBlockchainSettings_RestoreSourceChangeWarning),
+                    fontSize = 12.sp,
+                    lineHeight = 19.sp,
+                    color = VeldigoHomePalette.Muted,
+                )
+            }
+            Text(
+                text = stringResource(R.string.Veldigo_BtcSync_PrivacyNotice),
+                color = VeldigoHomePalette.Muted,
+                fontSize = 11.sp,
+                lineHeight = 17.sp,
+                modifier = Modifier.padding(start = 5.dp, end = 5.dp, bottom = 28.dp),
+            )
+        }
+
+        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+            if (viewModel.saveError) {
+                Text(
+                    text = stringResource(R.string.Veldigo_BtcSync_SaveError),
+                    color = Color(0xFFFFB38A),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 9.dp),
+                )
+            }
+            Button(
+                onClick = { confirmSave = true },
+                enabled = viewModel.saveButtonEnabled && !viewModel.saving,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = VeldigoHomePalette.Mint,
+                    contentColor = VeldigoHomePalette.Background,
+                    disabledContainerColor = VeldigoHomePalette.Border,
+                    disabledContentColor = VeldigoHomePalette.Muted,
+                ),
+            ) {
+                Text(
+                    text = stringResource(R.string.Button_Save),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }
+    }
 
+    if (confirmSave) {
+        AlertDialog(
+            onDismissRequest = { confirmSave = false },
+            title = { Text(stringResource(R.string.Veldigo_BtcSync_ConfirmTitle)) },
+            text = { Text(stringResource(R.string.Veldigo_BtcSync_ConfirmBody)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmSave = false
+                    viewModel.onSaveClick()
+                }) {
+                    Text(stringResource(R.string.Button_Save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmSave = false }) {
+                    Text(stringResource(R.string.Button_Cancel))
+                }
+            },
+        )
+    }
+
+    if (confirmDiscard) {
+        AlertDialog(
+            onDismissRequest = { confirmDiscard = false },
+            title = { Text(stringResource(R.string.Veldigo_BtcSync_DiscardTitle)) },
+            text = { Text(stringResource(R.string.Veldigo_BtcSync_DiscardBody)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDiscard = false
+                    navigation.removeLastOrNull()
+                }) {
+                    Text(stringResource(R.string.Veldigo_BtcSync_Discard))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDiscard = false }) {
+                    Text(stringResource(R.string.Button_Cancel))
+                }
+            },
+        )
     }
 }
 
 @Composable
-private fun RestoreSourceSettings(
-    viewModel: BtcBlockchainSettingsViewModel
-) {
-    BlockchainSettingSection(viewModel.restoreSources) { viewItem ->
-        viewModel.onSelectRestoreMode(viewItem)
+private fun VeldigoBtcSyncHeader(chainName: String) {
+    val shape = RoundedCornerShape(18.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp)
+            .clip(shape)
+            .background(VeldigoHomePalette.Surface)
+            .border(1.dp, VeldigoHomePalette.Border, shape)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(13.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(46.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF103C3B)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.globe_24),
+                contentDescription = null,
+                tint = VeldigoHomePalette.Mint,
+                modifier = Modifier.size(25.dp),
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = chainName,
+                color = VeldigoHomePalette.White,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = stringResource(R.string.Veldigo_BtcSync_ChainSubtitle),
+                color = VeldigoHomePalette.Muted,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
     }
 }
 
 @Composable
-private fun BlockchainSettingSection(
-    restoreSources: List<BtcBlockchainSettingsModule.ViewItem>,
-    onItemClick: (BtcBlockchainSettingsModule.ViewItem) -> Unit
-) {
-    subhead2_grey(
-        modifier = Modifier.padding(horizontal = 32.dp),
-        text = stringResource(R.string.BtcBlockchainSettings_RestoreSourceSettingsDescription)
+private fun VeldigoBtcSyncGroup(content: @Composable ColumnScope.() -> Unit) {
+    val shape = RoundedCornerShape(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(VeldigoHomePalette.Surface)
+            .border(1.dp, VeldigoHomePalette.Border, shape),
+        content = content,
     )
-    VSpacer(32.dp)
-    CellUniversalLawrenceSection(restoreSources) { item ->
-        BlockchainSettingCell(item.title, item.subtitle, item.selected, item.icon) {
-            onItemClick(item)
-        }
-    }
-
 }
 
+/** Public legacy helper preserved; blockchain icon URLs are never downloaded. */
 @Composable
 fun BlockchainSettingCell(
     title: String,
     subtitle: String,
     checked: Boolean,
     icon: BlockchainSettingsIcon?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-    RowUniversal(
-        onClick = onClick
+    val imageRes = when (icon) {
+        is BlockchainSettingsIcon.ApiIcon -> icon.resId
+        is BlockchainSettingsIcon.BlockchainIcon, null -> R.drawable.globe_24
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 74.dp)
+            .semantics { selected = checked }
+            .clickable(role = Role.RadioButton, onClick = onClick)
+            .padding(start = 13.dp, end = 13.dp, top = 12.dp, bottom = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        icon?.let {
-            HSpacer(width = 16.dp)
-            Image(
-                modifier = Modifier
-                    .size(32.dp),
-                painter = when (icon) {
-                    is BlockchainSettingsIcon.ApiIcon -> painterResource(icon.resId)
-                    is BlockchainSettingsIcon.BlockchainIcon -> rememberAsyncImagePainter(
-                        model = icon.url,
-                        error = painterResource(R.drawable.ic_platform_placeholder_32)
-                    )
-                },
-                contentDescription = null,
-            )
-        }
-
-        Column(modifier = Modifier
-            .padding(start = 16.dp)
-            .weight(1f)) {
-            body_leah(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(1.dp))
-            subhead2_grey(
-                text = subtitle,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
         Box(
             modifier = Modifier
-                .width(52.dp)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.Center
+                .size(40.dp)
+                .clip(RoundedCornerShape(11.dp))
+                .background(Color(0xFF103C3B)),
+            contentAlignment = Alignment.Center,
         ) {
-            if (checked) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_checkmark_20),
-                    tint = ComposeAppTheme.colors.jacob,
-                    contentDescription = null,
-                )
-            }
+            Icon(
+                painter = painterResource(imageRes),
+                contentDescription = null,
+                tint = VeldigoHomePalette.Mint,
+                modifier = Modifier.size(23.dp),
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = VeldigoHomePalette.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = subtitle,
+                modifier = Modifier.padding(top = 4.dp),
+                fontSize = 12.sp,
+                lineHeight = 17.sp,
+                color = VeldigoHomePalette.Muted,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (checked) {
+            Icon(
+                painter = painterResource(R.drawable.ic_checkmark_20),
+                contentDescription = stringResource(R.string.Veldigo_BtcSync_Selected),
+                tint = VeldigoHomePalette.Mint,
+                modifier = Modifier.size(20.dp),
+            )
+        } else {
+            Spacer(Modifier.size(20.dp))
         }
     }
 }
