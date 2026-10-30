@@ -51,6 +51,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.balance.token.VeldigoAssetChartRulesTest' --no-daemon --stacktrace
+      - name: Verify Send Continue never bypasses form validation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.send.v2.VeldigoSendUiRulesTest' --no-daemon --stacktrace
       - name: Upload test APK
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
