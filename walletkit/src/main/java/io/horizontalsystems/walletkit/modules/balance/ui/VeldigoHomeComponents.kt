@@ -144,8 +144,8 @@ internal fun VeldigoHomeActions(
     onSend: () -> Unit,
     onReceive: () -> Unit,
     onSwap: () -> Unit,
+    onBuy: () -> Unit,
 ) {
-    var showBuyNotice by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 19.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -172,19 +172,7 @@ internal fun VeldigoHomeActions(
             title = stringResource(R.string.Veldigo_Home_Buy),
             icon = R.drawable.ic_wallet_24,
             enabled = true,
-            onClick = { showBuyNotice = true },
-        )
-    }
-    if (showBuyNotice) {
-        AlertDialog(
-            onDismissRequest = { showBuyNotice = false },
-            title = { Text(stringResource(R.string.Veldigo_Home_BuyUnavailable)) },
-            text = { Text(stringResource(R.string.Veldigo_Home_BuyExplanation)) },
-            confirmButton = {
-                TextButton(onClick = { showBuyNotice = false }) {
-                    Text(stringResource(R.string.Button_Ok))
-                }
-            },
+            onClick = onBuy,
         )
     }
 }
