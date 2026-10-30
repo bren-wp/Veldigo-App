@@ -31,6 +31,10 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew :app:assembleBaseDebug --no-daemon --stacktrace
+      - name: Verify backup navigation does not serialize mnemonic secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SensitiveBackupRouteSerializationTest' --no-daemon --stacktrace
       - name: Upload test APK
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
