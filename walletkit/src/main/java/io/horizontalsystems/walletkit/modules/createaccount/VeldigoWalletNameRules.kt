@@ -9,7 +9,7 @@ internal object VeldigoWalletNameRules {
     const val MaxLength = 48
 
     fun input(value: String): String {
-        val clean = value.filterNot { it.isISOControl() }
+        val clean = value.filterNot { Character.isISOControl(it) }
         if (clean.length <= MaxLength) return clean
         val cut = clean.take(MaxLength)
         return if (cut.lastOrNull()?.isHighSurrogate() == true) cut.dropLast(1) else cut
