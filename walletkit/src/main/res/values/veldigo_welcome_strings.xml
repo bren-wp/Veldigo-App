@@ -19,4 +19,7 @@
     <string name="Veldigo_Onboarding02_Skip">Skip</string>
     <string name="Veldigo_Onboarding03_Title">All Your Crypto\nin One Place</string>
     <string name="Veldigo_Onboarding03_Description">Manage, send, receive and swap thousands of tokens.</string>
+    <string name="Veldigo_Onboarding04_Title">Freedom Without\nBorders</string>
+    <string name="Veldigo_Onboarding04_Description">Your crypto, on your terms.\nAnywhere in the world.</string>
+    <string name="Veldigo_Onboarding04_GetStarted">Get Started</string>
 </resources>
