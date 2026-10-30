@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -139,7 +140,8 @@ fun BalanceForAccount(
     androidx.compose.foundation.layout.Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette.Background),
+            .background(VeldigoHomePalette.Background)
+            .statusBarsPadding(),
     ) {
         Crossfade(
             targetState = uiState.viewState,
