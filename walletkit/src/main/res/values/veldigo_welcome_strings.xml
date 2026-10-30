@@ -41,4 +41,8 @@
     <string name="Veldigo_Backup_FixedDescription">These words belong to your existing wallet. Changing them would create a different wallet, not change this account. To use a new phrase, create a separate wallet and transfer your assets securely. Your current words have not changed.</string>
     <string name="Veldigo_Backup_NoWords">This account does not have a recovery phrase to display.</string>
     <string name="Veldigo_Backup_PassphraseWarning">Your additional passphrase is required for recovery. Write it down separately as well.</string>
+    <string name="Veldigo_Verify_Title">Confirm Recovery Phrase</string>
+    <string name="Veldigo_Verify_Description">Tap the words in the correct order.</string>
+    <string name="Veldigo_Verify_Confirm">Confirm</string>
+    <string name="Veldigo_Verify_Progress">%1$d of %2$d words selected</string>
 </resources>
