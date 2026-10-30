@@ -29,16 +29,21 @@ class CreateAccountViewModel(
     private val passphraseValidator: PassphraseValidator,
 ) : ViewModel() {
 
-    private var passphrase = ""
-    private var passphraseConfirmation = ""
+    // Compose-observable, memory-only inputs. They are never put in saved
+    // instance state or navigation args, and are cleared when advanced mode
+    // is disabled or when the creation screen completes.
+    var passphrase by mutableStateOf("")
+        private set
+    var passphraseConfirmation by mutableStateOf("")
+        private set
 
     val mnemonicKinds = CreateAccountModule.Kind.values().toList()
 
     val defaultAccountName = accountFactory.getNextAccountName()
-    var accountName by mutableStateOf(accountManager.getRandomWalletName())
+    var accountName by mutableStateOf(VeldigoWalletNameRules.input(accountManager.getRandomWalletName()))
         private set
 
-    var selectedKind: CreateAccountModule.Kind = Mnemonic12
+    var selectedKind by mutableStateOf(Mnemonic12)
         private set
 
     var passphraseEnabled by mutableStateOf(false)
@@ -67,7 +72,7 @@ class CreateAccountViewModel(
 
         val accountType = mnemonicAccountType(selectedKind.wordsCount)
         val account = accountFactory.account(
-            accountName.ifBlank { defaultAccountName },
+            VeldigoWalletNameRules.saved(accountName, defaultAccountName),
             accountType,
             AccountOrigin.Created,
             false,
@@ -81,11 +86,11 @@ class CreateAccountViewModel(
     }
 
     fun onChangeAccountName(name: String) {
-        accountName = name
+        accountName = VeldigoWalletNameRules.input(name)
     }
 
     fun generateRandomAccountName() {
-        accountName = accountManager.getRandomWalletName()
+        accountName = VeldigoWalletNameRules.input(accountManager.getRandomWalletName())
     }
 
     fun onChangePassphrase(v: String) {
@@ -122,6 +127,10 @@ class CreateAccountViewModel(
     }
 
     fun onSuccessMessageShown() {
+        // The created account has already been persisted; wipe transient
+        // passphrase fields and release the screen's reference to the mnemonic.
+        passphrase = ""
+        passphraseConfirmation = ""
         success = null
         createdAccount = null
     }
