@@ -2,7 +2,6 @@ package io.horizontalsystems.walletkit.modules.manageaccounts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -269,7 +269,7 @@ private fun VeldigoAccountFilterChip(label: String, selected: Boolean, onClick: 
             .clip(shape)
             .background(if (selected) VeldigoHomePalette.Mint else VeldigoHomePalette.Surface)
             .border(1.dp, if (selected) VeldigoHomePalette.Mint else VeldigoHomePalette.Border, shape)
-            .clickable(role = Role.Tab, onClick = onClick)
+            .selectable(selected = selected, role = Role.Tab, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -330,7 +330,7 @@ fun AccountCell(
                 if (highlighted) VeldigoHomePalette.Mint else VeldigoHomePalette.Border,
                 cardShape,
             )
-            .clickable(role = Role.Button) { onSelect(accountViewItem) }
+            .selectable(selected = highlighted, role = Role.RadioButton) { onSelect(accountViewItem) }
             .padding(start = 12.dp, top = 13.dp, bottom = 13.dp, end = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -382,7 +382,7 @@ fun AccountCell(
         } else if (warning) {
             Icon(
                 painter = painterResource(R.drawable.warning_outline_24),
-                contentDescription = stringResource(R.string.ManageAccounts_ManageWallet),
+                contentDescription = stringResource(R.string.Veldigo_Wallets_Warning),
                 tint = Color(0xFFFFC27A),
                 modifier = Modifier.size(20.dp),
             )
