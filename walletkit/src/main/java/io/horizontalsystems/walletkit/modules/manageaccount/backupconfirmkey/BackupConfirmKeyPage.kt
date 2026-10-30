@@ -52,6 +52,7 @@ import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.helpers.HudHelper
 import io.horizontalsystems.walletkit.modules.manageaccount.backupkey.BackupKeyPage
+import io.horizontalsystems.walletkit.modules.settings.security.setup.SecuritySetupPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
 import kotlinx.coroutines.delay
@@ -109,6 +110,12 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
             )
             delay(300)
             navigation.removeLastUntil(BackupKeyPage::class, true)
+            // Offer the actual PIN / biometric setup after verification, never
+            // before the original full mnemonic was confirmed. Existing protected
+            // wallets can return directly to their previous screen.
+            if (!App.pinComponent.isPinSet) {
+                navigation.slideFromRight(SecuritySetupPage)
+            }
         }
     }
     LaunchedEffect(state.error) {
