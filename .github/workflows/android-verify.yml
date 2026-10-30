@@ -103,6 +103,17 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.privacy.tor.TorPreferenceChangeRulesTest' --no-daemon --stacktrace
+      - name: Verify real-chain network search
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.blockchainsettings.NetworkSettingsListRulesTest' --no-daemon --stacktrace
+      - name: Verify Blockchain Settings has no mock balances or remote logo requests
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'rememberAsyncImagePainter|Coil\.load|fakeBalance|mockChain|demoNetwork|MarketScreen|WalletConnect' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/blockchainsettings/BlockchainSettingsPage.kt; then
+            echo 'Wallet-only network settings must use real chain settings and local assets'
+            exit 1
+          fi
       - name: Verify Privacy Settings navigation contains no credentials
         if: steps.source.outputs.present == 'true'
         run: |
