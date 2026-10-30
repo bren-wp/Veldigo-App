@@ -15,6 +15,8 @@ class RpcEndpointValidationTest {
         assertNull(RpcEndpointValidation.parse("http://example.org/rpc"))
         assertNull(RpcEndpointValidation.parse("ws://example.org/ws"))
         assertNull(RpcEndpointValidation.parse("ftp://example.org"))
+        // The current source loader only recognizes lowercase schemes.
+        assertNull(RpcEndpointValidation.parse("HTTPS://example.org"))
     }
 
     @Test fun rejectMalformedOrCredentialBearingEndpoints() {
