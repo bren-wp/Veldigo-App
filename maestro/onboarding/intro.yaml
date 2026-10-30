@@ -1,4 +1,4 @@
-appId: ${APP_ID || 'com.brendigo.veldigo'}
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
 # First launch: screenshot-driven Veldigo welcome page (slide 1).
 - launchApp:
