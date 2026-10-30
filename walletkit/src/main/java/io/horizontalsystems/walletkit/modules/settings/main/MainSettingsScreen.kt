@@ -62,7 +62,7 @@ import io.horizontalsystems.walletkit.modules.settings.security.SecuritySettings
 
 /**
  * Wallet-only Settings. The reference design is a compact Midnight Navy list
- * with real native routes; no market, NFT, swap, dApp, WalletConnect or
+ * with real native routes; no market, NFT, swap, third-party session or
  * subscription actions are reachable from this screen.
  *
  * Recovery phrases always require wallet selection and the existing secure
