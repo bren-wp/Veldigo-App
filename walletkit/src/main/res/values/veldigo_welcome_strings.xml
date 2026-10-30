@@ -77,4 +77,12 @@
     <string name="Veldigo_Home_Home">Home</string>
     <string name="Veldigo_Home_Markets">Markets</string>
     <string name="Veldigo_Home_History">History</string>
+    <string name="Veldigo_Asset_NoPrice">Market price unavailable</string>
+    <string name="Veldigo_Asset_NoChange">Price change unavailable</string>
+    <string name="Veldigo_Asset_ChartUnavailable">Live price chart is unavailable for this asset.</string>
+    <string name="Veldigo_Asset_YourBalance">Your Balance</string>
+    <string name="Veldigo_Asset_NoBalance">Balance unavailable</string>
+    <string name="Veldigo_Asset_About">About %1$s</string>
+    <string name="Veldigo_Asset_NoAbout">Verified market description is not available for this asset.</string>
+    <string name="Veldigo_Asset_LearnMore">More market information</string>
 </resources>
