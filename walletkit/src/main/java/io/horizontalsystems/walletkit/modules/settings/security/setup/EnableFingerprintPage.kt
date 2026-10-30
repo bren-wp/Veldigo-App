@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -56,6 +55,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.nav3.EntryPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
@@ -108,9 +108,9 @@ internal object BiometricSetupGate {
         preflight(deviceSecure, pinSet, biometricAvailable) == BiometricSetupPreflight.READY
 }
 
-private val bg = Color(0xFF030E0F)
-private val mint = Color(0xFF41E6C7)
-private val muted = Color(0xFFB5C6D7)
+private val bg = VeldigoHomePalette.Background
+private val mint = VeldigoHomePalette.Mint
+private val muted = VeldigoHomePalette.Muted
 
 private fun Context.findFragmentActivity(): FragmentActivity? {
     var node: Context? = this
@@ -193,7 +193,7 @@ internal fun EnableFingerprintScreen(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFF010909), bg, Color(0xFF041310))))
+            .background(bg)
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
@@ -206,7 +206,7 @@ internal fun EnableFingerprintScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(62.dp),
+                modifier = Modifier.fillMaxWidth().height(60.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onBack) {
@@ -276,11 +276,11 @@ internal fun EnableFingerprintScreen(
                 },
                 enabled = !authenticating,
                 modifier = Modifier.fillMaxWidth().height(54.dp),
-                shape = RoundedCornerShape(9.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = mint,
                     contentColor = bg,
-                    disabledContainerColor = Color(0xFF1E4B42),
+                    disabledContainerColor = VeldigoHomePalette.Border,
                 ),
             ) {
                 Text(
