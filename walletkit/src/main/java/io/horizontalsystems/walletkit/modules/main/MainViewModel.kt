@@ -425,16 +425,7 @@ class MainViewModel(
 
         // Only explicit chain-native payment requests are accepted.
         // Market, referral, WalletConnect and dApp signing links are not wallet routes.
-        if (
-            deeplinkString.startsWith("bitcoin:")
-            || deeplinkString.startsWith("ethereum:")
-            || deeplinkString.startsWith("toncoin:")
-            || deeplinkString.startsWith("monero:")
-            || deeplinkString.startsWith("tron:")
-            || deeplinkString.startsWith("solana:")
-            || deeplinkString.startsWith("zcash:")
-            || deeplinkString.startsWith("litecoin:")
-        ) {
+        if (WalletDeepLinkPolicy.isNativePaymentRequest(deeplinkString)) {
             AddressUriParser.addressUri(deeplinkString)?.let { addressUri ->
                 viewModelScope.launch {
                     // A payment link normally cold-starts the app, and accounts load after this
