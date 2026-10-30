@@ -102,4 +102,5 @@
     <string name="Veldigo_Receive_ShareAddress">Share Address</string>
     <string name="Veldigo_Receive_ShareRequest">Share Payment Request</string>
     <string name="Veldigo_Receive_RequestAmount">Requested amount: %1$s</string>
+    <string name="Veldigo_Receive_ClearAmount">Remove requested amount</string>
 </resources>
