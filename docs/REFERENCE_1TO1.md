@@ -40,6 +40,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Add Wallet (screen 23) — **native screenshot/density parity, hardware and recovery flow tests NOT verified**
 - [x] Create Wallet Form (screen 24) — **real account creation, title/name, advanced BIP39 option, passphrase confirmation and existing backup route retained**, native visual QA pending
 - [ ] Create Wallet Form (screen 24) — **no exact-size standalone reference, emulator/physical pixel diff and recovery regression pending**
+- [x] Recovery Phrase Backup / Verification (screen 25) — **real saved words, responsive 2-column phone grid, Mint navigation and full ordered check retained**
+- [ ] Recovery Phrase Backup / Verification (screen 25) — **native pixel diff, phrase restoration vectors, screenshot blocking and device accessibility remain unverified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
