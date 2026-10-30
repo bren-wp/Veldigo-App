@@ -113,12 +113,12 @@ internal object NftGallerySafety {
         if (!uri.scheme.equals("https", ignoreCase = true) || uri.userInfo != null) return null
         val host = uri.host?.lowercase(Locale.ROOT) ?: return null
         if (host == "localhost" || host.endsWith(".localhost") || host.endsWith(".local")) return null
-        if (host == "::1" || host == "[::1]") return null
+        if (host.contains(':')) return null
         if (host == "127.0.0.1" || host.startsWith("127.")) return null
         if (host == "10.0.0.1" || host.startsWith("10.")) return null
         if (host.startsWith("192.168.") || host.startsWith("169.254.")) return null
         val octets = host.split(".")
-        if (octets.size == 4 && octets.all { it.toIntOrNull() in 0..255 }) {
+        if (octets.size == 4 && octets.all { octet -> octet.toIntOrNull()?.let { it in 0..255 } == true }) {
             val first = octets[0].toInt()
             val second = octets[1].toInt()
             if (first == 0 || first >= 224 || (first == 172 && second in 16..31)) return null
