@@ -1,0 +1,16 @@
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
+---
+# Uses a newly generated account; never records the recovery phrase in logs.
+- launchApp:
+    clearState: true
+- runFlow: ../subflows/create_standard_wallet.yaml
+- assertVisible: "Reveal recovery phrase"
+- tapOn: "Reveal recovery phrase"
+- tapOn: "Show different words"
+- assertVisible: "Recovery phrase cannot be changed"
+- assertVisible: "These words belong to your existing wallet.*"
+- tapOn: "OK"
+- assertVisible: "I've written it down"
+- tapOn: "I've written it down"
+- assertVisible: "Select requested words from your wallet recovery phrase"
+# Deliberately do not solve the quiz or mark backup complete.
