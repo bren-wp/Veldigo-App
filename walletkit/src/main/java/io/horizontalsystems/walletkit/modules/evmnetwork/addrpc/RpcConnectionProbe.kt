@@ -3,11 +3,13 @@ package io.horizontalsystems.walletkit.modules.evmnetwork.addrpc
 import com.google.gson.JsonParser
 import io.horizontalsystems.marketkit.models.BlockchainType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.ResponseBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 import java.net.URI
@@ -81,20 +83,8 @@ internal class RpcConnectionProbe(
 
                 // Size limit prevents a misbehaving RPC returning enormous HTML,
                 // a huge JSON payload, or unlimited data into wallet process RAM.
-                val reader = response.body?.charStream()?.buffered()
-                    ?: return@use Result(Outcome.InvalidResponse)
-                val result = reader.use { stream ->
-                    val chars = CharArray(8193)
-                    var count = 0
-                    while (count < chars.size) {
-                        val n = stream.read(chars, count, chars.size - count)
-                        if (n < 0) break
-                        if (n == 0) break
-                        count += n
-                    }
-                    if (count == 0 || count > 8192) return@use Result(Outcome.InvalidResponse)
-                    String(chars, 0, count)
-                }
+                val body = response.body ?: return@use Result(Outcome.InvalidResponse)
+                val result = readLimitedBody(body) ?: return@use Result(Outcome.InvalidResponse)
                 val reportedId = RpcChainIdResponse.parse(result)
                     ?: return@use Result(Outcome.InvalidResponse)
                 if (RpcChainIdentityRules.matches(expected, reportedId)) {
@@ -103,12 +93,26 @@ internal class RpcConnectionProbe(
                     Result(Outcome.WrongChain, reportedId)
                 }
             }
+        } catch (cancel: CancellationException) {
+            throw cancel
         } catch (_: Exception) {
             // Do not render or log exception text: it may include the URL,
             // authentication header, or embedded RPC API key.
             Result(Outcome.Unreachable)
         }
     }
+    private fun readLimitedBody(body: ResponseBody): String? =
+        body.charStream().buffered().use { stream ->
+            val chars = CharArray(8193)
+            var count = 0
+            while (count < chars.size) {
+                val n = stream.read(chars, count, chars.size - count)
+                if (n < 0) break
+                if (n == 0) break
+                count += n
+            }
+            if (count == 0 || count > 8192) null else String(chars, 0, count)
+        }
 }
 
 /** Validate response framing as well as a properly formed positive EVM chain ID. */
