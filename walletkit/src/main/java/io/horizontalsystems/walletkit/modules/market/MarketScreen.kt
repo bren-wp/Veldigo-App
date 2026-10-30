@@ -66,41 +66,10 @@ import io.horizontalsystems.marketkit.models.MarketGlobal
 import java.math.BigDecimal
 
 @Composable
-fun MarketScreen(
-    navigation: HSNavigation,
-) {
-    val viewModel = viewModel<MarketViewModel>(factory = MarketModule.Factory())
-    val uiState = viewModel.uiState
-    val tabs = viewModel.tabs
-
-    HSScaffold(
-        title = stringResource(R.string.Market_Title),
-        menuItems = listOf(
-            MenuItem(
-                title = TranslatableString.ResString(R.string.Balance_ReceiveHint_Search),
-                icon = R.drawable.ic_search,
-                tint = ComposeAppTheme.colors.grey,
-                onClick = {
-                    navigation.slideFromBottom(MarketSearchPage)
-                    stat(
-                        page = StatPage.Markets,
-                        event = StatEvent.Open(StatPage.MarketSearch)
-                    )
-                }
-            )
-        ),
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column {
-//                Crossfade(uiState.marketGlobal, label = "") {
-//                    MetricsBoard(navigation, it, uiState.currency)
-//                }
-                TabsSection(navigation, tabs, uiState.selectedTab) { tab ->
-                    viewModel.onSelect(tab)
-                }
-            }
-        }
-    }
+fun MarketScreen(navigation: HSNavigation) {
+    // Screen 16 keeps the existing MainPage bottom navigation.
+    // Full market price/rank data still originates from MarketKit.
+    VeldigoMarketsContent(navigation)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
