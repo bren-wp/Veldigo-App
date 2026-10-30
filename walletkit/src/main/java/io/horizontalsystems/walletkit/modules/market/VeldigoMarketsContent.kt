@@ -83,9 +83,15 @@ internal object VeldigoMarketRules {
         val needle = query.trim()
         if (needle.isEmpty()) return items
         return items.filter {
-            it.fullCoin.coin.code.contains(needle, ignoreCase = true) ||
-                it.fullCoin.coin.name.contains(needle, ignoreCase = true)
+            matchesQuery(it.fullCoin.coin.code, it.fullCoin.coin.name, needle)
         }
+    }
+
+    fun matchesQuery(code: String, name: String, query: String): Boolean {
+        val needle = query.trim()
+        return needle.isEmpty() ||
+            code.contains(needle, ignoreCase = true) ||
+            name.contains(needle, ignoreCase = true)
     }
 
     fun changeLabel(change: BigDecimal?): String? = change?.let {
