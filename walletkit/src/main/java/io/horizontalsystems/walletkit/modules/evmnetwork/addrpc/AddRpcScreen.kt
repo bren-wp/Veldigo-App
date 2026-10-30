@@ -1,6 +1,7 @@
 package io.horizontalsystems.walletkit.modules.evmnetwork.addrpc
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -202,6 +206,117 @@ fun AddRpcScreen(
                 modifier = Modifier.padding(top = 10.dp),
             )
 
+            // Read-only chain identity probe: never conflate an HTTPS response
+            // with complete RPC trust, and never bypass the wallet's Tor proxy.
+            Spacer(Modifier.size(24.dp))
+            Text(
+                text = stringResource(R.string.Veldigo_RpcProbe_Heading),
+                color = VeldigoHomePalette.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = stringResource(R.string.Veldigo_RpcProbe_Hint),
+                color = VeldigoHomePalette.Muted,
+                fontSize = 12.sp,
+                lineHeight = 18.sp,
+                modifier = Modifier.padding(top = 7.dp, bottom = 13.dp),
+            )
+            androidx.compose.material3.OutlinedButton(
+                onClick = viewModel::onTestConnection,
+                enabled = !viewModel.checkingConnection && viewModel.url.isNotBlank(),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                shape = RoundedCornerShape(13.dp),
+                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                    contentColor = VeldigoHomePalette.Mint,
+                    disabledContentColor = VeldigoHomePalette.Muted,
+                ),
+            ) {
+                if (viewModel.checkingConnection) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = VeldigoHomePalette.Mint,
+                        strokeWidth = 2.dp,
+                    )
+                    Spacer(Modifier.size(9.dp))
+                }
+                Text(
+                    text = stringResource(
+                        if (viewModel.checkingConnection) R.string.Veldigo_RpcProbe_Testing
+                        else R.string.Veldigo_RpcProbe_Test,
+                    ),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+
+            viewModel.connectionResult?.let { result ->
+                val positive = result.outcome == RpcConnectionProbe.Outcome.Verified
+                val hardError = result.outcome == RpcConnectionProbe.Outcome.WrongChain ||
+                    result.outcome == RpcConnectionProbe.Outcome.InvalidUrl
+                val statusLabel = when (result.outcome) {
+                    RpcConnectionProbe.Outcome.Verified -> R.string.Veldigo_RpcProbe_Verified
+                    RpcConnectionProbe.Outcome.WrongChain -> R.string.Veldigo_RpcProbe_WrongChain
+                    RpcConnectionProbe.Outcome.InvalidResponse -> R.string.Veldigo_RpcProbe_InvalidResponse
+                    RpcConnectionProbe.Outcome.Unreachable -> R.string.Veldigo_RpcProbe_Unreachable
+                    RpcConnectionProbe.Outcome.NotTestedTor -> R.string.Veldigo_RpcProbe_Tor
+                    RpcConnectionProbe.Outcome.NotTestedTransport -> R.string.Veldigo_RpcProbe_Transport
+                    RpcConnectionProbe.Outcome.NotTestedChain -> R.string.Veldigo_RpcProbe_UnknownChain
+                    RpcConnectionProbe.Outcome.InvalidUrl -> R.string.Veldigo_RpcProbe_InvalidUrl
+                    RpcConnectionProbe.Outcome.UnsupportedAuth -> R.string.Veldigo_RpcProbe_Auth
+                }
+                Text(
+                    text = stringResource(statusLabel),
+                    color = when {
+                        positive -> VeldigoHomePalette.Mint
+                        hardError -> Color(0xFFFFB38A)
+                        else -> VeldigoHomePalette.Muted
+                    },
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    modifier = Modifier.padding(top = 11.dp),
+                )
+                if (result.reportedChainId != null) {
+                    Text(
+                        text = stringResource(
+                            R.string.Veldigo_RpcProbe_ReportedId,
+                            result.reportedChainId.toString(),
+                        ),
+                        color = VeldigoHomePalette.Muted,
+                        fontSize = 11.sp,
+                        modifier = Modifier.padding(top = 5.dp),
+                    )
+                }
+
+                if (RpcConnectionUiRules.canAcknowledge(result.outcome)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 9.dp)
+                            .clickable {
+                                viewModel.onAcknowledgeUnverified(!viewModel.riskAcknowledged)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            checked = viewModel.riskAcknowledged,
+                            onCheckedChange = viewModel::onAcknowledgeUnverified,
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = VeldigoHomePalette.Mint,
+                                uncheckedColor = VeldigoHomePalette.Muted,
+                                checkmarkColor = VeldigoHomePalette.Background,
+                            ),
+                        )
+                        Text(
+                            text = stringResource(R.string.Veldigo_RpcProbe_ProceedUnverified),
+                            color = VeldigoHomePalette.Muted,
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp,
+                        )
+                    }
+                }
+            }
+
             Row(
                 modifier = Modifier.padding(top = 29.dp, bottom = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -224,7 +339,7 @@ fun AddRpcScreen(
 
         Button(
             onClick = viewModel::onAddClick,
-            enabled = viewModel.url.isNotBlank() && !ui.closeScreen,
+            enabled = viewModel.canSave && !ui.closeScreen,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 13.dp)
