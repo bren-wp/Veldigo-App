@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
  * Never run the probe directly when Tor is configured: this independent client
  * has no proof it uses the wallet's Tor proxy and could leak the user's IP.
  */
-internal class RpcConnectionProbe(
+class RpcConnectionProbe(
     private val client: OkHttpClient = OkHttpClient.Builder()
         .followRedirects(false)
         .followSslRedirects(false)
