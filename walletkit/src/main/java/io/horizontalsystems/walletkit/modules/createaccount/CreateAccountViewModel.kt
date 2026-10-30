@@ -59,6 +59,8 @@ class CreateAccountViewModel(
         private set
 
     fun createAccount() {
+        // Two quick taps must not generate two distinct funded-wallet identities.
+        if (success != null || createdAccount != null) return
         if (passphraseEnabled && passphraseIsInvalid()) {
             return
         }
