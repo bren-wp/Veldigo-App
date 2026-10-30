@@ -81,7 +81,7 @@ internal fun VeldigoSwapForm(
     quote: SwapProviderQuote?,
 ) {
     var explainSlippage by remember { mutableStateOf(false) }
-    val validQuote = quote?.takeIf(VeldigoSwapReferenceRules::quotedRateAvailable)
+    val validQuote = quote?.takeIf { VeldigoSwapReferenceRules.quotedRateAvailable(it) }
 
     Column(
         modifier = Modifier
@@ -254,7 +254,7 @@ internal fun VeldigoSwapForm(
 /** UI helper: a quote must be present before a real price can be shown. */
 internal object VeldigoSwapReferenceRules {
     fun quotedRateAvailable(quote: SwapProviderQuote?): Boolean =
-        quote != null && quote.amountIn > BigDecimal.ZERO && quote.amountOut >= BigDecimal.ZERO
+        quote != null && quote.amountIn > BigDecimal.ZERO && quote.amountOut > BigDecimal.ZERO
 
     fun canProceed(step: SwapStep, isAlreadyProceeding: Boolean, hasQuote: Boolean): Boolean =
         step == SwapStep.Proceed && !isAlreadyProceeding && hasQuote
