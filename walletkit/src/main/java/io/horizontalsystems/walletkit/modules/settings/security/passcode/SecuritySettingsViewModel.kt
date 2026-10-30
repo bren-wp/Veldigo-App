@@ -32,6 +32,14 @@ class SecuritySettingsViewModel(
     private var hideSuspiciousTxs = spamManager.hideSuspiciousTx
 
     init {
+        // OS BiometricPrompt now enables this setting on a separate navigation
+        // page. Reflect its real persisted result when returning to Settings.
+        viewModelScope.launch {
+            pinComponent.isBiometricAuthEnabledFlow.collect {
+                emitState()
+            }
+        }
+
         viewModelScope.launch {
             pinComponent.pinSetFlow.collect {
                 pinEnabled = pinComponent.isPinSet
