@@ -67,7 +67,7 @@ data object SecuritySetupPage : HSPage() {
             onBack = navigation::removeLastOrNull,
             biometricAvailable = App.systemInfoManager.biometricAuthSupported,
             pinAlreadySet = App.pinComponent.isPinSet,
-            onBiometric = { navigation.slideFromRight(SecuritySettingsPage) },
+            onBiometric = { navigation.slideFromRight(EnableFingerprintPage) },
             onPin = {
                 if (App.pinComponent.isPinSet) {
                     navigation.slideFromRight(SecuritySettingsPage)
