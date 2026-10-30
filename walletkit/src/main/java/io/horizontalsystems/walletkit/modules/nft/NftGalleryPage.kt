@@ -58,6 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
 import io.horizontalsystems.walletkit.entities.nft.NftAssetShortMetadata
 import io.horizontalsystems.walletkit.modules.main.MainModule
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
@@ -77,7 +78,8 @@ data object NftGalleryPage : HSPage() {
     override fun GetContent(navigation: HSNavigation) {
         val model: NftGalleryViewModel = viewModel()
         val state by model.state.collectAsStateWithLifecycle()
-        val account = App.accountManager.activeAccount?.id
+        val activeAccount by App.accountManager.activeAccountStateFlow.collectAsStateWithLifecycle()
+        val account = (activeAccount as? ActiveAccountState.ActiveAccount)?.account?.id
         val activity = LocalActivity.current as ComponentActivity
         val mainModel = MainModule.viewModel(activity)
         var selected by remember { mutableStateOf<NftAssetShortMetadata?>(null) }
