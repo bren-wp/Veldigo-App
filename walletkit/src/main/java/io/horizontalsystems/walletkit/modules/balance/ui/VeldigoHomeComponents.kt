@@ -45,12 +45,12 @@ import io.horizontalsystems.walletkit.ui.compose.components.diffText
 
 /** Home reference panel 10: UI is derived exclusively from live wallet and price services. */
 internal object VeldigoHomePalette {
-    val Background = Color(0xFF030E0D)
+    val Background = Color(0xFF071421)
     val Mint = Color(0xFF41E6C7)
-    val White = Color(0xFFF5F8F7)
-    val Muted = Color(0xFF98B4B3)
-    val Surface = Color(0xFF152322)
-    val Border = Color(0xFF28504A)
+    val White = Color(0xFFFFFFFF)
+    val Muted = Color(0xFFB5C6D7)
+    val Surface = Color(0xFF112337)
+    val Border = Color(0xFF234254)
 }
 
 @Composable
@@ -140,15 +140,12 @@ internal fun VeldigoTotalBalance(
 @Composable
 internal fun VeldigoHomeActions(
     sendEnabled: Boolean,
-    swapEnabled: Boolean,
     onSend: () -> Unit,
     onReceive: () -> Unit,
-    onSwap: () -> Unit,
-    onBuy: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 19.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         VeldigoAction(
             title = stringResource(R.string.Balance_Send),
@@ -161,18 +158,6 @@ internal fun VeldigoHomeActions(
             icon = R.drawable.ic_arrow_down_24,
             enabled = true,
             onClick = onReceive,
-        )
-        VeldigoAction(
-            title = stringResource(R.string.Swap),
-            icon = R.drawable.ic_swap_circle_24,
-            enabled = swapEnabled,
-            onClick = onSwap,
-        )
-        VeldigoAction(
-            title = stringResource(R.string.Veldigo_Home_Buy),
-            icon = R.drawable.ic_wallet_24,
-            enabled = true,
-            onClick = onBuy,
         )
     }
 }
@@ -210,46 +195,28 @@ private fun VeldigoAction(
     }
 }
 
-/**
- * Tabs do not fake NFTs. No holdings/metadata are invented when the NFT
- * data source is not wired to the portfolio view.
- */
+/** Asset management replaces the legacy Tokens/NFTs segment. */
 @Composable
-internal fun VeldigoAssetTabs(selectedNfts: Boolean, onSelectNfts: (Boolean) -> Unit) {
+internal fun VeldigoAssetHeader(onManageAssets: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 17.dp)
-            .height(50.dp)
-            .clip(RoundedCornerShape(11.dp))
-            .background(VeldigoHomePalette.Surface)
-            .border(1.dp, VeldigoHomePalette.Border.copy(alpha = .55f), RoundedCornerShape(11.dp)),
+            .padding(horizontal = 18.dp, vertical = 17.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        listOf(false to R.string.Veldigo_Home_Tokens, true to R.string.Veldigo_Home_Nfts)
-            .forEach { (isNft, title) ->
-                val selected = selectedNfts == isNft
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
-                        .then(
-                            if (selected) Modifier.border(
-                                width = 1.5.dp,
-                                color = VeldigoHomePalette.Mint,
-                                shape = RoundedCornerShape(10.dp),
-                            ) else Modifier
-                        )
-                        .clickable(role = Role.Tab, onClick = { onSelectNfts(isNft) }),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(title),
-                        color = if (selected) VeldigoHomePalette.Mint else VeldigoHomePalette.White,
-                        fontSize = 15.sp,
-                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                    )
-                }
-            }
+        Text(
+            text = stringResource(R.string.Veldigo_Home_Tokens),
+            color = VeldigoHomePalette.White,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+        TextButton(onClick = onManageAssets) {
+            Text(
+                text = stringResource(R.string.ManageCoins_AddToken),
+                color = VeldigoHomePalette.Mint,
+            )
+        }
     }
 }
 
