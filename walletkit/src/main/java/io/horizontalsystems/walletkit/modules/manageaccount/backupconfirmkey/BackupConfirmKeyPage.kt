@@ -192,59 +192,61 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
             }
             Spacer(Modifier.height(20.dp))
 
-            // Every chip corresponds to one word from the real saved mnemonic;
-            // the words are shuffled and can never be copied or logged here.
-            val items = state.wordOptions
+            // Display shuffled choices from the saved phrase. On pause the
+            // words are masked, the challenge resets, and FLAG_SECURE prevents
+            // screenshots and Android Recents thumbnails.
+            val selectedDescription = stringResource(R.string.Veldigo_Verify_Selected)
+            val notSelectedDescription = stringResource(R.string.Veldigo_Verify_NotSelected)
             BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                 val columns = RecoveryPhraseGridRules.columns(maxWidth.value)
                 Column(modifier = Modifier.fillMaxWidth()) {
-            items.chunked(columns).forEachIndexed { rowIndex, rowItems ->
-                if (rowIndex > 0) Spacer(Modifier.height(9.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    rowItems.forEach { option ->
-                        val selected = !option.enabled
-                        val selectedDescription = stringResource(R.string.Veldigo_Verify_Selected)
-                        val notSelectedDescription = stringResource(R.string.Veldigo_Verify_NotSelected)
-                        val shape = RoundedCornerShape(10.dp)
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .heightIn(min = 46.dp)
-                                .background(
-                                    if (selected) Color(0xFF123E39) else verifyPanel,
-                                    shape,
-                                )
-                                .border(
-                                    1.dp,
-                                    if (selected) verifyMint else verifyBorder,
-                                    shape,
-                                )
-                                .clickable(enabled = option.enabled && inForeground && !state.readyToConfirm, role = Role.Button) {
-                                    viewModel.onSelectWord(option)
-                                }
-                                .semantics {
-                                    stateDescription = if (selected) selectedDescription else notSelectedDescription
-                                }
-                                .padding(horizontal = 4.dp),
-                            contentAlignment = Alignment.Center,
+                    state.wordOptions.chunked(columns).forEachIndexed { rowIndex, rowItems ->
+                        if (rowIndex > 0) Spacer(Modifier.height(9.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(9.dp),
                         ) {
-                            Text(
-                                text = if (inForeground) option.word else "••••",
-                                color = if (selected) verifyMint else Color.White,
-                                fontSize = 12.sp,
-                                lineHeight = 15.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            rowItems.forEach { option ->
+                                val selected = !option.enabled
+                                val shape = RoundedCornerShape(10.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .heightIn(min = 48.dp)
+                                        .background(
+                                            if (selected) Color(0xFF123E39) else verifyPanel,
+                                            shape,
+                                        )
+                                        .border(
+                                            1.dp,
+                                            if (selected) verifyMint else verifyBorder,
+                                            shape,
+                                        )
+                                        .clickable(
+                                            enabled = option.enabled && inForeground && !state.readyToConfirm,
+                                            role = Role.Button,
+                                        ) { viewModel.onSelectWord(option) }
+                                        .semantics {
+                                            stateDescription = if (selected) selectedDescription
+                                                else notSelectedDescription
+                                        }
+                                        .padding(horizontal = 6.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        text = if (inForeground) option.word else "••••",
+                                        color = if (selected) verifyMint else Color.White,
+                                        fontSize = 13.sp,
+                                        lineHeight = 17.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                            }
+                            repeat(columns - rowItems.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
-                    repeat(columns - rowItems.size) { Spacer(Modifier.weight(1f)) }
                 }
-                }
-            }
             }
             if (state.hiddenWordItems.isNotEmpty()) {
                 Spacer(Modifier.height(18.dp))
