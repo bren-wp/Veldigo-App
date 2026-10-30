@@ -2,6 +2,9 @@ package io.horizontalsystems.walletkit.modules.settings.security.setup
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.draw.clip
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,9 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
@@ -60,12 +61,13 @@ import kotlinx.serialization.Serializable
  * Real PIN and biometric configuration stay in existing security-protected flows.
  */
 @Serializable
-data object SecuritySetupPage : HSPage() {
+data object SecuritySetupPage : HSPage(screenshotEnabled = false) {
     @Composable
     override fun GetContent(navigation: HSNavigation) {
         SecuritySetupScreen(
             onBack = navigation::removeLastOrNull,
             biometricAvailable = App.systemInfoManager.biometricAuthSupported,
+            deviceSecure = !App.systemInfoManager.isSystemLockOff,
             pinAlreadySet = App.pinComponent.isPinSet,
             onBiometric = { navigation.slideFromRight(EnableFingerprintPage(finishOnSuccess = true)) },
             onPin = {
@@ -79,18 +81,19 @@ data object SecuritySetupPage : HSPage() {
     }
 }
 
-private val background = Color(0xFF030D0E)
-private val tile = Color(0xFF152223)
-private val mint = Color(0xFF41E6C7)
-private val muted = Color(0xFF9FB5B9)
-private val iconTile = Color(0xFF174840)
+private val background = VeldigoHomePalette.Background
+private val tile = VeldigoHomePalette.Surface
+private val mint = VeldigoHomePalette.Mint
+private val muted = VeldigoHomePalette.Muted
+private val iconTile = Color(0xFF103C3B)
 
-private enum class SetupIcon { Biometric, Pin, Password }
+private enum class SetupIcon { Biometric, Pin }
 
 @Composable
 internal fun SecuritySetupScreen(
     onBack: () -> Unit,
     biometricAvailable: Boolean,
+    deviceSecure: Boolean,
     pinAlreadySet: Boolean,
     onBiometric: () -> Unit,
     onPin: () -> Unit,
@@ -100,7 +103,7 @@ internal fun SecuritySetupScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(background, Color(0xFF041010), background)))
+            .background(background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
@@ -161,8 +164,16 @@ internal fun SecuritySetupScreen(
             ),
             description = stringResource(R.string.Veldigo_SecuritySetup_BiometricDetails),
             onClick = {
-                if (biometricAvailable) onBiometric()
-                else notice = R.string.Veldigo_SecuritySetup_NoBiometrics
+                when (BiometricSetupGate.preflight(
+                    deviceSecure = deviceSecure,
+                    pinSet = pinAlreadySet,
+                    biometricAvailable = biometricAvailable,
+                )) {
+                    BiometricSetupPreflight.READY -> onBiometric()
+                    BiometricSetupPreflight.PIN_REQUIRED -> onPin()
+                    BiometricSetupPreflight.DEVICE_LOCK_REQUIRED -> notice = R.string.Veldigo_Fingerprint_DeviceLock
+                    BiometricSetupPreflight.BIOMETRIC_UNAVAILABLE -> notice = R.string.Veldigo_SecuritySetup_NoBiometrics
+                }
             },
         )
         Spacer(Modifier.height(12.dp))
@@ -175,13 +186,29 @@ internal fun SecuritySetupScreen(
             ),
             onClick = onPin,
         )
-        Spacer(Modifier.height(12.dp))
-        SecuritySetupChoice(
-            icon = SetupIcon.Password,
-            title = stringResource(R.string.Veldigo_SecuritySetup_Password),
-            description = stringResource(R.string.Veldigo_SecuritySetup_PasswordDetails),
-            onClick = { notice = R.string.Veldigo_SecuritySetup_NoPassword },
-        )
+        Spacer(Modifier.height(18.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(tile, RoundedCornerShape(14.dp))
+                .border(1.dp, VeldigoHomePalette.Border, RoundedCornerShape(14.dp))
+                .padding(15.dp),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_shield_24),
+                contentDescription = null,
+                tint = mint,
+                modifier = Modifier.size(23.dp),
+            )
+            Text(
+                text = stringResource(R.string.Veldigo_SecuritySetup_SafetyNote),
+                color = muted,
+                fontSize = 12.sp,
+                lineHeight = 18.sp,
+            )
+        }
         Spacer(Modifier.height(22.dp))
     }
 
@@ -209,17 +236,19 @@ private fun SecuritySetupChoice(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(94.dp)
-            .background(tile, RoundedCornerShape(13.dp))
-            .border(1.dp, Color(0xFF213031), RoundedCornerShape(13.dp))
+            .heightIn(min = 94.dp)
+            .clip(RoundedCornerShape(17.dp))
+            .background(tile)
+            .border(1.dp, VeldigoHomePalette.Border, RoundedCornerShape(17.dp))
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = 15.dp),
+            .padding(horizontal = 15.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
                 .size(47.dp)
-                .background(iconTile, RoundedCornerShape(12.dp)),
+                .clip(RoundedCornerShape(12.dp))
+                .background(iconTile),
             contentAlignment = Alignment.Center,
         ) {
             SecurityChoiceGlyph(icon)
@@ -231,7 +260,7 @@ private fun SecuritySetupChoice(
                 color = Color.White,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(Modifier.height(5.dp))
@@ -240,7 +269,7 @@ private fun SecuritySetupChoice(
                 color = muted,
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
-                maxLines = 2,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
         }
@@ -287,25 +316,7 @@ private fun SecurityChoiceGlyph(kind: SetupIcon) {
                     )
                 }
             }
-            SetupIcon.Password -> {
-                drawArc(
-                    color = mint,
-                    startAngle = 180f,
-                    sweepAngle = 180f,
-                    useCenter = false,
-                    topLeft = Offset(w * .26f, h * .06f),
-                    size = Size(w * .48f, h * .69f),
-                    style = Stroke(line),
-                )
-                drawRoundRect(
-                    color = mint,
-                    topLeft = Offset(w * .16f, h * .44f),
-                    size = Size(w * .68f, h * .46f),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(3.dp.toPx()),
-                    style = Stroke(line),
-                )
-                drawCircle(mint, radius = 1.65.dp.toPx(), center = Offset(w * .50f, h * .66f))
-            }
+
         }
     }
 }
