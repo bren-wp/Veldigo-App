@@ -161,6 +161,10 @@ fun ReceiveAddressScreen(
                             coinCode = coinCode ?: title.substringAfterLast(' '),
                             slot1 = slot1,
                             onSetAmount = { openAmountDialog.value = true },
+                            onClearAmount = {
+                                setAmount(null)
+                                stat(page = StatPage.Receive, event = StatEvent.RemoveAmount)
+                            },
                         )
                     }
                 }
