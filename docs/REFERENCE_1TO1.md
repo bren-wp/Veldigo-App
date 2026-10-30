@@ -52,6 +52,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Privacy Settings (screen 29) — **native screenshot/pixel overlay, Tor DNS/proxy leak and on-device relock/accessibility checks NOT performed**
 - [x] Network / Blockchain Settings (screen 30) — **real configured chain groups, source-backed RPC labels, search, local icons and EVM/chain navigation implemented**, QA documented
 - [ ] Network / Blockchain Settings (screen 30) — **native screenshot/pixel diff, real provider switch/reconnect, offline error and RPC/Tor leak audit NOT performed**
+- [x] EVM Network / RPC Providers (screen 31) — **real default/custom sources, selected provider, secret-redacted URL, confirmed custom-source removal and branded Add RPC form implemented**
+- [ ] EVM Network / RPC Providers (screen 31) — **native screenshot/pixel diff, chain-ID check, endpoint transport security and device integration NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
