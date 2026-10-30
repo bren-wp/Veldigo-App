@@ -59,6 +59,7 @@ import io.horizontalsystems.walletkit.modules.balance.BalanceViewItem2
 import io.horizontalsystems.walletkit.modules.balance.BalanceViewModel
 import io.horizontalsystems.walletkit.modules.balance.TotalUIState
 import io.horizontalsystems.walletkit.modules.balance.token.TokenBalancePage
+import io.horizontalsystems.walletkit.modules.buy.BuyCryptoPage
 import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
 import io.horizontalsystems.walletkit.modules.multiswap.SwapPage
@@ -262,6 +263,9 @@ fun BalanceItems(
                     onSwap = {
                         navigation.slideFromRight(SwapPage())
                         stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Swap))
+                    },
+                    onBuy = {
+                        navigation.slideFromRight(BuyCryptoPage)
                     },
                 )
             }
