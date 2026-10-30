@@ -7,71 +7,68 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.core.imageUrl
 import io.horizontalsystems.walletkit.core.order
-import io.horizontalsystems.walletkit.core.providers.Translator
 import kotlinx.coroutines.launch
 
+/**
+ * View state is derived from real ChainRegistry and EVM providers. Compose
+ * mutations happen in a single collector; do not launch a second coroutine
+ * for every refresh and risk publishing stale network ordering.
+ */
 class BlockchainSettingsViewModel(
-    private val service: BlockchainSettingsService
+    private val service: BlockchainSettingsService,
 ) : ViewModel() {
 
-    var btcLikeChains by mutableStateOf<List<BlockchainSettingsModule.BlockchainViewItem>>(listOf())
+    var btcLikeChains by mutableStateOf<List<BlockchainSettingsModule.BlockchainViewItem>>(emptyList())
         private set
 
-    var otherChains by mutableStateOf<List<BlockchainSettingsModule.BlockchainViewItem>>(listOf())
+    var otherChains by mutableStateOf<List<BlockchainSettingsModule.BlockchainViewItem>>(emptyList())
         private set
 
     init {
         viewModelScope.launch {
-            service.blockchainItemsFlow.collect {
-                sync(it)
-            }
+            service.blockchainItemsFlow.collect { sync(it) }
         }
-
         service.start()
         sync(service.blockchainItems)
     }
 
     override fun onCleared() {
         service.stop()
+        super.onCleared()
     }
 
-    private fun sync(blockchainItems: List<BlockchainSettingsModule.BlockchainItem>) {
-        viewModelScope.launch {
-            val chainItems = blockchainItems
-                .filterIsInstance<BlockchainSettingsModule.BlockchainItem.Chain>()
-                .filter { it.btcLike }
-                .map { item ->
-                    BlockchainSettingsModule.BlockchainViewItem(
-                        title = item.blockchain.name,
-                        subtitle = item.subtitle,
-                        imageUrl = item.blockchain.type.imageUrl,
-                        blockchainItem = item
-                    )
-                }
-            btcLikeChains = chainItems.sortedBy { it.blockchainItem.blockchain.type.order }
+    private fun sync(items: List<BlockchainSettingsModule.BlockchainItem>) {
+        val btc = items
+            .filterIsInstance<BlockchainSettingsModule.BlockchainItem.Chain>()
+            .filter { it.btcLike }
+            .map { it.toViewItem() }
+            .sortedBy { it.blockchainItem.blockchain.type.order }
 
-            otherChains = blockchainItems
-                .mapNotNull { item ->
-                    when (item) {
-                        is BlockchainSettingsModule.BlockchainItem.Evm -> BlockchainSettingsModule.BlockchainViewItem(
+        val others = items
+            .mapNotNull { item ->
+                when (item) {
+                    is BlockchainSettingsModule.BlockchainItem.Evm ->
+                        BlockchainSettingsModule.BlockchainViewItem(
                             title = item.blockchain.name,
                             subtitle = item.syncSource.name,
                             imageUrl = item.blockchain.type.imageUrl,
-                            blockchainItem = item
+                            blockchainItem = item,
                         )
-                        is BlockchainSettingsModule.BlockchainItem.Chain -> if (item.btcLike) null else {
-                            BlockchainSettingsModule.BlockchainViewItem(
-                                title = item.blockchain.name,
-                                subtitle = item.subtitle,
-                                imageUrl = item.blockchain.type.imageUrl,
-                                blockchainItem = item
-                            )
-                        }
-
-                        else -> null
-                    }
+                    is BlockchainSettingsModule.BlockchainItem.Chain ->
+                        if (item.btcLike) null else item.toViewItem()
                 }
-        }
+            }
+            .sortedBy { it.blockchainItem.blockchain.type.order }
+
+        btcLikeChains = btc
+        otherChains = others
     }
 
+    private fun BlockchainSettingsModule.BlockchainItem.Chain.toViewItem() =
+        BlockchainSettingsModule.BlockchainViewItem(
+            title = blockchain.name,
+            subtitle = subtitle,
+            imageUrl = blockchain.type.imageUrl,
+            blockchainItem = this,
+        )
 }
