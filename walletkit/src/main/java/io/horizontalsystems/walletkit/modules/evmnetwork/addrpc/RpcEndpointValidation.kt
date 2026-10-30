@@ -2,7 +2,6 @@ package io.horizontalsystems.walletkit.modules.evmnetwork.addrpc
 
 import io.horizontalsystems.walletkit.core.utils.OnionNodeUrl
 import java.net.URI
-import java.util.Locale
 
 /**
  * Only TLS-backed public RPC or ordinary HTTP for valid .onion hosts.
@@ -14,7 +13,9 @@ internal object RpcEndpointValidation {
     fun parse(value: String): URI? {
         if (value.isBlank() || value.length > MaxUrlLength || value.any(Char::isWhitespace)) return null
         val uri = runCatching { URI(value) }.getOrNull() ?: return null
-        val scheme = uri.scheme?.lowercase(Locale.ROOT) ?: return null
+        // EvmSyncSourceManager currently reads URI schemes case-sensitively.
+        // Accept canonical lowercase variants so saved RPCs remain loadable.
+        val scheme = uri.scheme ?: return null
         if (uri.host.isNullOrBlank() || uri.rawUserInfo != null || uri.rawFragment != null) return null
         if (uri.port !in -1..65535 || uri.port == 0) return null
         val secure = scheme == "https" || scheme == "wss"
