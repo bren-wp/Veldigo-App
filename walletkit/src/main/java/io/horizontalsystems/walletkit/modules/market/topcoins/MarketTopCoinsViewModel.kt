@@ -55,6 +55,7 @@ class MarketTopCoinsViewModel(
         isRefreshing = isRefreshing,
         viewState = viewState,
         viewItems = viewItems,
+        marketItems = sortedMarketItems.orEmpty(),
         topMarkets = topMarkets,
         topMarket = topMarket,
         sortingFields = sortingFields,
@@ -133,9 +134,7 @@ class MarketTopCoinsViewModel(
 
     private fun refreshSortedMarketItems() {
         sortedMarketItems = marketItemList?.let { list ->
-            list
-                .subList(0, min(list.size, topMarket.value))
-                .sort(sortingField)
+            list.sort(sortingField).take(min(list.size, topMarket.value))
         }
     }
 
@@ -235,6 +234,7 @@ data class MarketTopCoinsUiState(
     val isRefreshing: Boolean,
     val viewState: ViewState,
     val viewItems: List<MarketViewItem>,
+    val marketItems: List<MarketItem> = emptyList(),
     val topMarkets: EnumEntries<TopMarket>,
     val topMarket: TopMarket,
     val sortingFields: List<SortingField>,
