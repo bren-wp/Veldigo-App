@@ -5,5 +5,7 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
     direction: LEFT
 - assertVisible: "Secure"
 - tapOn: "Next"
-- assertVisible: "Get started"
+- assertVisible: "All Your Crypto"
+- tapOn: "Next"
+- assertVisible: "Freedom without borders"
 - tapOn: "Get started"
