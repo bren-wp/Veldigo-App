@@ -154,4 +154,8 @@
     <string name="Veldigo_Tab_Wallet">Wallet</string>
     <string name="Veldigo_Tab_Assets">Assets</string>
     <string name="Veldigo_Tab_Activity">Activity</string>
+    <string name="Veldigo_Wallets_Title">Wallets</string>
+    <string name="Veldigo_Wallets_All">All</string>
+    <string name="Veldigo_Wallets_Search">Search wallets</string>
+    <string name="Veldigo_Wallets_Active">Active wallet</string>
 </resources>
