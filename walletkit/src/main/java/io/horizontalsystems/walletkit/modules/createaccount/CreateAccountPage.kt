@@ -38,7 +38,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
@@ -192,7 +191,9 @@ fun CreateAccountScreen(navigation: HSNavigation, input: ManageAccountsModule.In
             kind = WalletSetupIconKind.Import,
             onClick = {
                 navigation.navigateWithTermsAccepted(
-                    screen = ImportWalletPage(input),
+                    screen = ImportWalletPage(
+                        input ?: ManageAccountsModule.Input(CreateAccountPage::class, true)
+                    ),
                     navigationType = NavigationType.SlideFromRight,
                     statPageFrom = StatPage.NewWallet,
                     statPageTo = StatPage.ImportWallet,
