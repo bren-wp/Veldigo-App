@@ -1,0 +1,20 @@
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
+---
+# Onboarding 4 reference: mint globe and a single final CTA.
+- launchApp:
+    clearState: true
+- assertVisible: "Create a new wallet"
+- swipe:
+    direction: LEFT
+- assertVisible: "Secure"
+- tapOn: "Next"
+- assertVisible: "All Your Crypto"
+- tapOn: "Next"
+- assertVisible: "Get Started"
+- assertNotVisible: "Skip"
+- tapOn: "Get Started"
+# Do not display onboarding after it is completed and the app restarts.
+- assertVisible: "Markets"
+- launchApp
+- assertVisible: "Markets"
+- assertNotVisible: "Get Started"
