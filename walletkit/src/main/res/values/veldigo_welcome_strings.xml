@@ -32,4 +32,13 @@
     <string name="Veldigo_CreateWallet_HardwareDetails">Ledger, Trezor and more (unavailable)</string>
     <string name="Veldigo_CreateWallet_HardwareUnavailableTitle">Hardware wallets unavailable</string>
     <string name="Veldigo_CreateWallet_HardwareUnavailableBody">This build does not support connecting Ledger, Trezor or other hardware wallets. Never enter your hardware wallet recovery phrase to simulate a connection.</string>
+    <string name="Veldigo_Backup_Title">Backup Your\nRecovery Phrase</string>
+    <string name="Veldigo_Backup_Description">Write down these %1$d words in order and keep them safe. Never share them with anyone.</string>
+    <string name="Veldigo_Backup_Reveal">Reveal recovery phrase</string>
+    <string name="Veldigo_Backup_WrittenDown">I\'ve written it down</string>
+    <string name="Veldigo_Backup_DifferentWords">Show different words</string>
+    <string name="Veldigo_Backup_FixedTitle">Recovery phrase cannot be changed</string>
+    <string name="Veldigo_Backup_FixedDescription">These words belong to your existing wallet. Changing them would create a different wallet, not change this account. To use a new phrase, create a separate wallet and transfer your assets securely. Your current words have not changed.</string>
+    <string name="Veldigo_Backup_NoWords">This account does not have a recovery phrase to display.</string>
+    <string name="Veldigo_Backup_PassphraseWarning">Your additional passphrase is required for recovery. Write it down separately as well.</string>
 </resources>
