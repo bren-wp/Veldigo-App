@@ -45,6 +45,8 @@ import io.horizontalsystems.chartview.models.ChartPoint
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.modules.balance.BalanceViewItem
+import io.horizontalsystems.walletkit.modules.balance.ui.IconCell
+import io.horizontalsystems.walletkit.entities.Wallet
 import io.horizontalsystems.walletkit.modules.chart.ChartViewModel
 import io.horizontalsystems.walletkit.modules.coin.overview.CoinOverviewModule
 import io.horizontalsystems.walletkit.modules.coin.overview.CoinOverviewViewModel
@@ -84,6 +86,7 @@ internal fun VeldigoAssetDetail(
                 price = item.exchangeValue?.value,
                 points = emptyList(),
                 change = null,
+                periodLabel = null,
                 periods = emptyList(),
                 onSelectPeriod = {},
             )
@@ -103,7 +106,14 @@ internal fun VeldigoAssetDetail(
                 price = chartState.chartHeaderView?.value ?: item.exchangeValue?.value,
                 points = graph?.items.orEmpty(),
                 change = change,
-                periods = chartState.tabItems.map { p -> Triple(p.title, p.selected, p.item) },
+                periodLabel = chartState.tabItems.firstOrNull { it.selected }?.let {
+                    if (it.item == HsTimePeriod.Day1) "24h" else it.title
+                },
+                periods = chartState.tabItems.filter { p ->
+                    p.item == HsTimePeriod.Day1 || p.item == HsTimePeriod.Week1 ||
+                    p.item == HsTimePeriod.Month1 || p.item == HsTimePeriod.Month3 ||
+                    p.item == HsTimePeriod.Year1 || p.item == null
+                }.map { p -> Triple(p.title, p.selected, p.item) },
                 onSelectPeriod = chart::onSelectChartInterval,
             )
             VeldigoHoldingPanel(item, navigation, onReceive)
@@ -119,6 +129,7 @@ private fun VeldigoMarketPanel(
     price: String?,
     points: List<ChartPoint>,
     change: Float?,
+    periodLabel: String?,
     periods: List<Triple<String, Boolean, HsTimePeriod?>>,
     onSelectPeriod: (HsTimePeriod?) -> Unit,
 ) {
@@ -133,7 +144,10 @@ private fun VeldigoMarketPanel(
         )
         Spacer(Modifier.height(7.dp))
         Text(
-            text = change?.let { String.format(Locale.US, "%+.2f%%", it) }
+            text = change?.let { value ->
+                val percent = String.format(Locale.US, "%+.2f%%", value)
+                if (periodLabel == null) percent else "$percent ($periodLabel)"
+            }
                 ?: stringResource(R.string.Veldigo_Asset_NoChange),
             color = if (change == null) assetMuted
                 else if (change >= 0) assetMint else Color(0xFFEC8585),
@@ -315,7 +329,7 @@ private fun VeldigoAboutPanel(
 /** Matches the reference's back chevron and centered coin name without a duplicate app bar. */
 @Composable
 internal fun VeldigoAssetTopBar(
-    title: String,
+    wallet: Wallet,
     onBack: () -> Unit,
 ) {
     Row(
@@ -329,16 +343,28 @@ internal fun VeldigoAssetTopBar(
                 tint = Color.White,
             )
         }
-        Text(
-            text = title,
+        Row(
             modifier = Modifier.weight(1f).padding(end = 40.dp),
-            textAlign = TextAlign.Center,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconCell(
+                failedIconVisible = false,
+                token = wallet.token,
+                iconAlpha = 1f,
+                onClickSyncError = null,
+            )
+            Spacer(Modifier.width(5.dp))
+            Text(
+                text = "${wallet.coin.name} (${wallet.coin.code})",
+                textAlign = TextAlign.Center,
             color = Color.White,
             fontWeight = FontWeight.SemiBold,
             fontSize = 15.sp,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
