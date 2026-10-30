@@ -88,7 +88,8 @@ fun ReceiveScreen(
 
     val uiState = addressViewModel.uiState
     ReceiveAddressScreen(
-        title = stringResource(R.string.Deposit_Title, wallet.coin.code),
+        title = stringResource(R.string.Veldigo_Receive_Title, wallet.coin.code),
+        coinCode = wallet.coin.code,
         uiState = uiState,
         setAmount = { amount -> addressViewModel.setAmount(amount) },
         onErrorClick = { addressViewModel.onErrorClick() },
