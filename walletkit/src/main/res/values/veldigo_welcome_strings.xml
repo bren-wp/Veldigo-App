@@ -323,4 +323,18 @@
     <string name="Veldigo_BtcStatus_SyncedHint">All enabled wallets for this blockchain report synchronized adapters. This is a local status, not independent proof of chain integrity.</string>
     <string name="Veldigo_BtcStatus_Failed">Synchronization issue</string>
     <string name="Veldigo_BtcStatus_FailedHint">At least one active adapter reported an error. Retry when your network is available, or review your synchronization source. Detailed error text is hidden for privacy.</string>
+    <string name="Veldigo_MoneroNodes_Title">Monero Network</string>
+    <string name="Veldigo_MoneroNodes_Header">Monero nodes</string>
+    <string name="Veldigo_MoneroNodes_Subheader">Network connection settings</string>
+    <string name="Veldigo_MoneroNodes_Connection">Connection preferences</string>
+    <string name="Veldigo_MoneroNodes_AutoNote">Automatic selection uses current node reachability measurements. Disable it to choose a specific node manually.</string>
+    <string name="Veldigo_MoneroNodes_Default">Available nodes</string>
+    <string name="Veldigo_MoneroNodes_Custom">Custom nodes</string>
+    <string name="Veldigo_MoneroNodes_Empty">No custom Monero nodes configured.</string>
+    <string name="Veldigo_MoneroNodes_Unnamed">Monero node</string>
+    <string name="Veldigo_MoneroNodes_Selected">Selected node</string>
+    <string name="Veldigo_MoneroNodes_Remove">Remove custom node</string>
+    <string name="Veldigo_MoneroNodes_DeleteTitle">Remove custom node?</string>
+    <string name="Veldigo_MoneroNodes_DeleteWarning">This removes the selected saved connection. Choose another node before removing a currently active node. Your Monero wallet and keys are not deleted.</string>
+    <string name="Veldigo_MoneroNodes_Privacy">Monero nodes may observe connection metadata and wallet network requests. A successful ping only measures recent reachability and is not proof that a node is trustworthy. Choose trusted nodes carefully; changing a node may restart wallet synchronization.</string>
 </resources>
