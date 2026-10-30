@@ -42,6 +42,6 @@ class SecuritySetupRouteTest {
     @Test
     fun securitySetupNeverPretendsToBeAnUnlockBypass() {
         assertFalse(SecuritySetupPage.accessibleWhileLocked)
-        assertTrue(SecuritySetupPage.screenshotEnabled)
+        assertFalse(SecuritySetupPage.screenshotEnabled)
     }
 }
