@@ -430,7 +430,7 @@ private fun ColumnScope.SendFormTab(
             } else if (!isPrivateSend) {
                 Button(
                     modifier = Modifier.fillMaxWidth().height(54.dp),
-                    enabled = step is SendStep.Proceed,
+                    enabled = VeldigoSendUiRules.canContinue(step),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF41E6C7),
