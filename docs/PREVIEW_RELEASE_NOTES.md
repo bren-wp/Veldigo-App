@@ -1,24 +1,27 @@
-# Veldigo v0.4.0-preview.1 — Android engineering preview
+# VELDIGO v0.4.0-preview.2 — Android engineering preview
 
-**TEST ONLY. NOT PRODUCTION-READY. DO NOT STORE OR TRANSFER REAL CRYPTO.**
+**TEST-ONLY PREVIEW. NOT PRODUCTION-READY. DO NOT STORE, SEND OR RECEIVE REAL FUNDS.**
 
-### Updated Android experience
-- Midnight-navy portfolio action tiles with mint icons; existing Send/Receive/Swap handlers preserved.
-- Real receiving QR no longer obstructed by a central logo, improving compatibility with QR readers.
-- Veldigo copy/share buttons sized for touch and narrow Android screens; actions use live blockchain URI data.
-- Security center restyling and removal of upstream paywalled Defense System purchase prompts.
-- Continued dark/light/system selection and Android accessibility font scaling from v0.3.
-- More descriptive README and per-screen UI validation checklist.
+This preview includes the wallet-only UI work merged from PR #7 and the Android/Kotlin CI fixes.
 
-### Release artifacts
-- Android **debug/test-signed** APK and AAB for review only; no production Play signing.
-- SHA256SUMS and BUILD_INFO documenting exact source commit and signing type.
-- Package identifier of TEST debug builds has a development suffix and is not the production application ID.
+### Included in this test build
+- Main wallet navigation: Wallet, Assets, Activity and Settings; Send/Receive actions.
+- Updated onboarding, create/import/watch-only wallet routes and recovery phrase confirmation UI.
+- Updated PIN and biometric setup, Security Center, privacy and network settings screens.
+- Transactions list and detail screen account isolation; revised BTC-family synchronization and EVM RPC settings UI.
+- Android PR verification #358 passed at source commit `ba391907c5cefc5d2e1b5683986d77c870df4a1a`; this new version builds from its own release commit.
 
-### Mandatory pre-production gates
-- Independently audit key handling, seed phrase backup/recovery, per-network signing, address validation and transactions.
-- Replace upstream-owned credentials, wallet services, paywalled modules and configure approved Veldigo-controlled APIs.
-- Validate visual parity for all provided screens on emulator and physical Android devices.
-- Obtain protected production upload key; complete financial declarations, privacy, regional compliance and crash/ANR QA.
+### Attached files
+- `VELDIGO-v0.4.0-preview.2-TEST.apk`: Android debug/test-signed installation package (development application ID with `.dev` suffix).
+- `VELDIGO-v0.4.0-preview.2-TEST.aab`: Android debug/test-signed app bundle (not signed with the production Google Play upload key).
+- `SHA256SUMS.txt`: SHA-256 hashes of both files.
+- `BUILD_INFO.txt`: exact source commit and signing type.
 
-Original Unstoppable Wallet Android MIT attribution retained. Passing CI demonstrates buildability, not financial security.
+### Critical pre-production work
+- Audit mnemonic/key storage, account switching, transaction signing, fee/address handling and every supported network.
+- Replace upstream-owned credentials and unused legacy integrations and independently verify transport/privacy boundaries.
+- Complete real-device backup/recovery, biometric/PIN, privacy, send/receive and per-chain test transfers on test networks.
+- Compare original-size device screenshots for visual parity; passing compilation does not establish pixel-perfect 1:1.
+- Perform production keystore signing, Play Console compliance and crash/ANR testing before releasing to real users.
+
+Upstream MIT attribution remains in the repository. This is a test build, not a security certification.

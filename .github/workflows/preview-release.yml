@@ -1,49 +1,68 @@
-name: Veldigo preview APK and AAB release
+name: Veldigo test-only APK and AAB prerelease
 
 on:
   push:
-    branches:
-      - feature/veldigo-visual-safety-v04
+    branches: [main]
+    paths:
+      - app/build.gradle.kts
+      - .github/workflows/preview-release.yml
+      - docs/PREVIEW_RELEASE_NOTES.md
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: veldigo-preview-v04
-  cancel-in-progress: true
+  group: veldigo-preview-release
+  cancel-in-progress: false
 
 jobs:
   preview:
-    if: github.repository == 'bren-wp/Veldigo-App'
+    if: github.repository == 'bren-wp/Veldigo-Wallet'
     runs-on: ubuntu-latest
     timeout-minutes: 65
     steps:
       - uses: actions/checkout@v4
+
+      - name: Read version and reject an existing release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' app/build.gradle.kts | head -n 1)"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-preview\.[0-9]+$ ]]; then
+            echo "Expected a uniquely versioned engineering preview" >&2
+            exit 1
+          fi
+          TAG="v${VERSION}"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists. Refusing to replace published assets." >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          test -f licenses/Unstoppable-Wallet-MIT.txt
+          grep -q 'applicationId = "com.brendigo.veldigo"' app/build.gradle.kts
+          if git ls-files | grep -E '\.(jks|p12|pfx)$'; then
+            echo "Private release signing material must not be committed" >&2
+            exit 1
+          fi
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - name: Verify build identification and licenses
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f licenses/Unstoppable-Wallet-MIT.txt
-          grep -q 'applicationId = "com.brendigo.veldigo"' app/build.gradle.kts
-          grep -q 'versionName = "0.4.0-preview.1"' app/build.gradle.kts
-          if git ls-files | grep -E '\.(jks|p12|pfx)$'; then
-            echo "Private release keystore may not be committed" >&2
-            exit 1
-          fi
-          echo "TEST signing only. Not production ready."
-      - name: Build Android test APK and AAB
+
+      - name: Build debug/test-signed APK and AAB
         shell: bash
         run: |
           set -euo pipefail
           chmod +x ./gradlew
           ./gradlew :app:assembleBaseDebug :app:bundleBaseDebug --no-daemon --stacktrace
-      - name: Validate artifacts and checksums
+
+      - name: Verify packages and generate SHA256SUMS
         shell: bash
         run: |
           set -euo pipefail
@@ -54,27 +73,23 @@ jobs:
           test -n "$AAB" && test -s "$AAB"
           unzip -t "$APK" >/dev/null
           unzip -t "$AAB" >/dev/null
-          cp "$APK" dist/VELDIGO-v0.4.0-preview.1-TEST.apk
-          cp "$AAB" dist/VELDIGO-v0.4.0-preview.1-TEST.aab
+          cp "$APK" "dist/VELDIGO-${TAG}-TEST.apk"
+          cp "$AAB" "dist/VELDIGO-${TAG}-TEST.aab"
           (cd dist && sha256sum *.apk *.aab > SHA256SUMS.txt)
-          printf 'Commit: %s\nSigning: development/test\nProduction ready: NO\n' "$GITHUB_SHA" > dist/BUILD_INFO.txt
-      - name: Publish clearly labeled test-only prerelease
+          printf 'Version: %s\nCommit: %s\nSigning: Android development/test key\nPackage: debug with .dev suffix\nProduction ready: NO\n' "$VERSION" "$GITHUB_SHA" > dist/BUILD_INFO.txt
+
+      - name: Publish GitHub prerelease with both binaries
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.4.0-preview.1
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
-            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --prerelease
-          else
-            gh release create "$TAG" dist/* \
-              --repo "$GITHUB_REPOSITORY" \
-              --target "$GITHUB_SHA" \
-              --prerelease \
-              --title "VELDIGO v0.4.0-preview.1 (TEST ONLY)" \
-              --notes-file docs/PREVIEW_RELEASE_NOTES.md
-          fi
-          # Ensure GitHub marks every TEST artifact as a prerelease.
-          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --prerelease
+          test -s "dist/VELDIGO-${TAG}-TEST.apk"
+          test -s "dist/VELDIGO-${TAG}-TEST.aab"
+          test -s dist/SHA256SUMS.txt
+          gh release create "$TAG" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "VELDIGO $VERSION (TEST ONLY)" \
+            --notes-file docs/PREVIEW_RELEASE_NOTES.md
