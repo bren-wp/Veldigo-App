@@ -83,6 +83,11 @@ fun ManageAccountsScreen(navigation: HSNavigation, mode: ManageAccountsModule.Mo
     var searchOpen by rememberSaveable { mutableStateOf(false) }
     var selectedFilter by rememberSaveable { mutableStateOf(VeldigoWalletFilter.All) }
 
+    // Reapply the saved search after Android recreates this composable and VM.
+    LaunchedEffect(searchQuery) {
+        if (viewModel.searchQuery != searchQuery) viewModel.updateFilter(searchQuery)
+    }
+
     LaunchedEffect(viewModel.finish) {
         if (viewModel.finish) navigation.removeLastOrNull()
     }
