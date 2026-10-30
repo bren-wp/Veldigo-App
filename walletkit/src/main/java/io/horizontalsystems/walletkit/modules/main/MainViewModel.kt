@@ -1,12 +1,10 @@
 package io.horizontalsystems.walletkit.modules.main
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.IPinComponent
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
-import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.IAccountManager
 import io.horizontalsystems.walletkit.core.IBackupManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
@@ -19,7 +17,6 @@ import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
 import io.horizontalsystems.walletkit.core.managers.DonationShowManager
 import io.horizontalsystems.walletkit.core.managers.ReleaseNotesManager
 import io.horizontalsystems.walletkit.core.managers.WalletEventType
-import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
@@ -27,20 +24,15 @@ import io.horizontalsystems.walletkit.core.utils.AddressUriParser
 import io.horizontalsystems.walletkit.entities.AddressUri
 import io.horizontalsystems.walletkit.entities.LaunchPage
 import io.horizontalsystems.walletkit.modules.balance.OpenSendTokenSelect
-import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
-import io.horizontalsystems.walletkit.modules.market.platform.MarketPlatformPage
 import io.horizontalsystems.walletkit.modules.pin.core.LockGate
 import io.horizontalsystems.walletkit.modules.walletconnect.WCManager
 import io.horizontalsystems.walletkit.modules.walletconnect.WCSessionManager
-import io.horizontalsystems.walletkit.modules.walletconnect.list.WCListPage
 import io.horizontalsystems.marketkit.models.TokenType
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class MainViewModel(
     private val pinComponent: IPinComponent,
@@ -374,75 +366,6 @@ class MainViewModel(
         LaunchPage.Auto -> currentMainTab
     }
 
-    private fun getNavigationDataForDeeplink(deepLink: Uri): Pair<MainNavigation, DeeplinkPage?> {
-        var tab = currentMainTab
-        var deeplinkPage: DeeplinkPage? = null
-        val deeplinkString = deepLink.toString()
-        val deeplinkScheme: String = Translator.getString(R.string.DeeplinkScheme)
-
-        // Cold-start fallback: while DAppManager isn't yet available, WC deeplinks are routed here
-        // (via MainActivity) and shown through the WC list. Once available, MainActivity pairs
-        // directly so the proposal dialog works from any screen (see Nav3.handleWalletConnectDeepLink).
-        val wcUri: String? = wcManager.getWalletConnectUri(deepLink)
-
-        when {
-            wcUri != null -> {
-                wcSupportState = wcManager.getWalletConnectSupportState()
-                if (wcSupportState == WCManager.SupportState.Supported) {
-                    deeplinkPage = DeeplinkPage(WCListPage(WCListPage.Input(wcUri)))
-                    tab = MainNavigation.Settings
-                }
-            }
-
-            MarketDeepLinks.isMarketDeepLink(deeplinkString, deeplinkScheme) -> {
-                // The page itself is opened at the navigation root (see Nav3) so it shows
-                // right away; only the tab behind it is switched here, so going back lands on
-                // Market and the page stays browsable while locked.
-                when (val page = MarketDeepLinks.page(deepLink, deeplinkScheme)) {
-                    is CoinPage -> stat(page = StatPage.Widget, event = StatEvent.OpenCoin(page.input.coinUid))
-                    is MarketPlatformPage -> stat(page = StatPage.Widget, event = StatEvent.Open(StatPage.TopPlatform))
-                    else -> {}
-                }
-
-                if (lockGate.isLocked) {
-                    // The app may be sitting on the keypad because of a pending unlock request
-                    // (e.g. a wallet tab was tapped earlier). The user now asked for public
-                    // content, so drop that request — otherwise the keypad would keep covering
-                    // the page this deeplink opens.
-                    lockGate.cancelUnlockRequest()
-                }
-
-                tab = MainNavigation.Market
-            }
-
-            deeplinkString.startsWith("https://unstoppable.money/referral") -> {
-                val userId: String? = deepLink.getQueryParameter("userId")
-                val referralCode: String? = deepLink.getQueryParameter("referralCode")
-                if (userId != null && referralCode != null) {
-                    registerApp(userId, referralCode)
-                }
-            }
-
-            else -> {}
-        }
-        return Pair(tab, deeplinkPage)
-    }
-
-    private fun registerApp(userId: String, referralCode: String) {
-        viewModelScope.launch {
-            try {
-                val response = networkManager.registerApp(userId, referralCode)
-                if (response.success) {
-                    //do nothing
-                } else {
-                    Log.e("MainViewModel", "registerApp api fail message: ${response.message}")
-                }
-            } catch (e: Exception) {
-                Log.e("MainViewModel", "registerApp error: ", e)
-            }
-        }
-    }
-
     private fun syncNavigation() {
         val currentNavItem = mainNavItems.getOrNull(selectedTabIndex)?.mainNavItem
         val newIndex = currentNavItem?.let { items.indexOf(it) } ?: -1
@@ -500,35 +423,8 @@ class MainViewModel(
     fun handleDeepLink(uri: Uri) {
         val deeplinkString = uri.toString()
 
-        // A wrapped WalletConnect link (e.g. `unstoppable.money://wc?uri=wc:...`) shares the
-        // app's `unstoppable.money` scheme with TonConnect, so it would be swallowed by the
-        // TonConnect branch below and the WC pairing would never start. Exclude it here and
-        // let getNavigationDataForDeeplink() detect it (by `wc:` prefix or host == "wc").
-        val isWalletConnectDeeplink = deeplinkString.startsWith("wc:") || uri.host == "wc"
-
-        if (!isWalletConnectDeeplink) {
-            val plugin = ChainRegistry.all.firstOrNull { it.isDeepLinkSupported(deeplinkString, fromScanner = false) }
-            if (plugin != null) {
-                val returnParam = uri.getQueryParameter("ret")
-                // when app is opened from camera app, it returns "none" as ret param
-                // so we don't need closing app in this case
-                val closeApp = returnParam != "none"
-                viewModelScope.launch {
-                    try {
-                        plugin.handleDeepLink(deeplinkString, closeApp)
-                    } catch (e: CancellationException) {
-                        throw e
-                    } catch (e: Exception) {
-                        // A malformed link must not escape the coroutine and take the app down.
-                        // This screen has no error surface, so it stays silent here, unlike the
-                        // scanner path which reports it.
-                        Timber.e(e, "Handling deep link failed")
-                    }
-                }
-                return
-            }
-        }
-
+        // Only explicit chain-native payment requests are accepted.
+        // Market, referral, WalletConnect and dApp signing links are not wallet routes.
         if (
             deeplinkString.startsWith("bitcoin:")
             || deeplinkString.startsWith("ethereum:")
@@ -576,16 +472,8 @@ class MainViewModel(
             }
         }
 
-        val (tab, deeplinkPageData) = getNavigationDataForDeeplink(uri)
-        deeplinkPage = deeplinkPageData
-        currentMainTab = tab
-        val newTabIndex = items.indexOf(tab)
-        snapTabSwitch = lockGate.isLocked
-        updateSelectedTab(selectedTabIndex, newTabIndex)
-        selectedTabIndex = newTabIndex
-        syncNavigation()
-        reportSelectedTab()
-        emitState()
+        // Reject all unsupported external links rather than navigating to a removed tab.
+        return
     }
 
     fun onSendOpened() {
