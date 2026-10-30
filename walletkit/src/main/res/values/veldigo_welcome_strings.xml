@@ -128,4 +128,14 @@
     <string name="Veldigo_Buy_SellAsset">Sell %1$s</string>
     <string name="Veldigo_Buy_InvalidAmount">Enter a positive amount with at most two decimal places.</string>
     <string name="Veldigo_Buy_UnavailableTitle">Fiat purchase unavailable</string>
+    <string name="Veldigo_Markets_Title">Markets</string>
+    <string name="Veldigo_Markets_Search">Search coins...</string>
+    <string name="Veldigo_Markets_AllSearch">Search all cryptocurrencies</string>
+    <string name="Veldigo_Markets_All">All</string>
+    <string name="Veldigo_Markets_TopGainers">Top Gainers</string>
+    <string name="Veldigo_Markets_TopLosers">Top Losers</string>
+    <string name="Veldigo_Markets_Coin">Coins</string>
+    <string name="Veldigo_Markets_Price">Price</string>
+    <string name="Veldigo_Markets_Change">24h%</string>
+    <string name="Veldigo_Markets_NoResults">No matching coins in the current top 100. Use full market search to find additional assets.</string>
 </resources>
