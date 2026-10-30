@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -47,6 +48,7 @@ import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.entities.transactionrecords.TransactionRecord
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.ui.compose.components.HsImage
 import io.horizontalsystems.walletkit.ui.compose.components.DescriptionCell
 import io.horizontalsystems.walletkit.ui.compose.components.PriceWithToggleCell
 import io.horizontalsystems.walletkit.ui.compose.components.SectionTitleCell
@@ -165,16 +167,78 @@ fun TransactionInfo(
     navigation: HSNavigation,
     modifier: Modifier = Modifier,
 ) {
+    // Show a single actual send/receive amount as a reference-led summary.
+    // Never use the illustration's transaction values or duplicate an amount.
+    val summary = viewModel.viewItems.flatten()
+        .filterIsInstance<TransactionInfoViewItem.Amount>()
+        .singleOrNull()
+        ?.takeIf { it.amountType == AmountType.Received || it.amountType == AmountType.Sent }
+
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .background(VeldigoHomePalette.Background),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(top = 12.dp, bottom = 32.dp)
+        contentPadding = PaddingValues(top = 14.dp, bottom = 32.dp)
     ) {
-        items(viewModel.viewItems) { section ->
-            TransactionInfoSection(section, navigation, viewModel::getRawTransaction)
+        if (summary != null) {
+            item { VeldigoTransactionSummary(summary) }
         }
+        items(viewModel.viewItems) { section ->
+            TransactionInfoSection(
+                section = section,
+                navigation = navigation,
+                getRawTransaction = viewModel::getRawTransaction,
+                summaryItem = summary,
+            )
+        }
+    }
+}
+
+/** Summary inspired by panel 20 in Veldigo Crypto Wallet UI Showcase. */
+@Composable
+private fun VeldigoTransactionSummary(amount: TransactionInfoViewItem.Amount) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        HsImage(
+            url = amount.coinIconUrl,
+            alternativeUrl = amount.alternativeCoinIconUrl,
+            placeholder = amount.coinIconPlaceholder,
+            modifier = Modifier.size(50.dp).clip(CircleShape),
+        )
+        Spacer(Modifier.size(9.dp))
+        Text(
+            text = stringResource(
+                if (amount.amountType == AmountType.Received)
+                    R.string.TransactionInfo_Received
+                else
+                    R.string.TransactionInfo_Sent
+            ),
+            color = VeldigoHomePalette.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(Modifier.size(5.dp))
+        Text(
+            text = amount.coinValue.value,
+            color = if (amount.amountType == AmountType.Received)
+                VeldigoHomePalette.Mint else VeldigoHomePalette.White,
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+        Text(
+            text = amount.fiatValue.value,
+            color = VeldigoHomePalette.Muted,
+            fontSize = 13.sp,
+            maxLines = 2,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
     }
 }
 
@@ -189,9 +253,9 @@ private fun VeldigoTransactionCard(content: List<@Composable () -> Unit>) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(VeldigoHomePalette.Surface)
-            .border(1.dp, VeldigoHomePalette.Border, RoundedCornerShape(18.dp))
+            .border(1.dp, VeldigoHomePalette.Border, RoundedCornerShape(20.dp))
             .padding(vertical = 4.dp),
     ) {
         content.forEachIndexed { index, item ->
@@ -213,11 +277,14 @@ private fun VeldigoTransactionCard(content: List<@Composable () -> Unit>) {
 fun TransactionInfoSection(
     section: List<TransactionInfoViewItem>,
     navigation: HSNavigation,
-    getRawTransaction: () -> String?
+    getRawTransaction: () -> String?,
+    summaryItem: TransactionInfoViewItem.Amount? = null,
 ) {
-    //items without background
-    if (section.size == 1) {
-        when (val item = section[0]) {
+    val visibleSection = if (summaryItem != null) section.filterNot { it === summaryItem } else section
+    if (visibleSection.isEmpty()) return
+
+    if (visibleSection.size == 1) {
+        when (val item = visibleSection[0]) {
             is TransactionInfoViewItem.WarningMessage -> {
                 WarningMessageCell(item.message)
                 return
@@ -225,6 +292,21 @@ fun TransactionInfoSection(
 
             is TransactionInfoViewItem.Description -> {
                 DescriptionCell(text = item.text)
+                return
+            }
+
+            is TransactionInfoViewItem.Explorer -> {
+                item.url?.let { url ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .border(1.dp, VeldigoHomePalette.Mint, RoundedCornerShape(12.dp)),
+                    ) {
+                        TransactionInfoExplorerCell(title = item.title, url = url)
+                    }
+                }
                 return
             }
 
@@ -236,7 +318,7 @@ fun TransactionInfoSection(
 
     VeldigoTransactionCard(
         buildList {
-            for (viewItem in section) {
+            for (viewItem in visibleSection) {
                 when (viewItem) {
                     is TransactionInfoViewItem.Transaction -> {
                         add {
