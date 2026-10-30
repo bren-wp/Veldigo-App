@@ -41,7 +41,10 @@ class SecurityTorSettingsViewModel(
 
     /** Called only from an explicit confirmation, not during recomposition. */
     fun setTorEnabled() {
-        val requested = pendingTorEnabled ?: return
+        val requested = TorPreferenceChangeRules.confirmTarget(
+            current = torManager.isTorEnabled,
+            pending = pendingTorEnabled,
+        ) ?: return resetSwitch()
         pendingTorEnabled = null
         showRestartAlert = false
 
