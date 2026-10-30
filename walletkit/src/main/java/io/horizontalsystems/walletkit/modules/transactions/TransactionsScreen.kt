@@ -49,6 +49,7 @@ import io.horizontalsystems.walletkit.entities.ViewState
 import io.horizontalsystems.walletkit.modules.balance.BalanceAccountsViewModel
 import io.horizontalsystems.walletkit.modules.balance.BalanceModule
 import io.horizontalsystems.walletkit.modules.balance.BalanceScreenState
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.transactionInfo.TransactionInfoPage
 import io.horizontalsystems.walletkit.modules.transactionInfo.TransactionInfoPayload
@@ -133,7 +134,7 @@ fun TransactionsScreen(
                 uiState.viewState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ComposeAppTheme.colors.lawrence),
+                    .background(VeldigoHomePalette.Background),
                 label = ""
             ) { viewState ->
                 if (listVisible && viewState == ViewState.Success) {
@@ -141,13 +142,13 @@ fun TransactionsScreen(
                         if (transactionItems.isEmpty()) {
                             if (syncing) {
                                 ListEmptyView(
-                                    modifier = Modifier.background(ComposeAppTheme.colors.lawrence),
+                                    modifier = Modifier.background(VeldigoHomePalette.Background),
                                     text = stringResource(R.string.Transactions_WaitForSync),
                                     icon = R.drawable.ic_clock
                                 )
                             } else {
                                 ListEmptyView(
-                                    modifier = Modifier.background(ComposeAppTheme.colors.lawrence),
+                                    modifier = Modifier.background(VeldigoHomePalette.Background),
                                     text = stringResource(R.string.Transactions_EmptyList),
                                     icon = R.drawable.ic_outgoingraw
                                 )
@@ -175,7 +176,7 @@ fun TransactionsScreen(
                                 state = listState,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(ComposeAppTheme.colors.lawrence)
+                                    .background(VeldigoHomePalette.Background)
                             ) {
                                 transactionList(
                                     transactionsMap = transactionItems,
@@ -219,7 +220,7 @@ fun LazyListScope.transactionList(
             HeaderStick(
                 borderBottom = true,
                 text = dateHeader,
-                color = ComposeAppTheme.colors.lawrence,
+                color = VeldigoHomePalette.Background,
             )
         }
 
@@ -255,13 +256,13 @@ fun TransactionCell(item: TransactionViewItem, onClick: () -> Unit) {
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, Color(0xFF234556), RoundedCornerShape(16.dp))
-            .background(Color(0xFF112337))
+            .border(1.dp, VeldigoHomePalette.Border, RoundedCornerShape(16.dp))
+            .background(VeldigoHomePalette.Surface)
     ) {
         RowUniversal(
             modifier = Modifier
                 .height(72.dp)
-                .background(Color(0xFF112337))
+                .background(VeldigoHomePalette.Surface)
                 .clickable(onClick = onClick),
         ) {
             Box(
