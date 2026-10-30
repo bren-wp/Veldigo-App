@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Only real wallet/security signals are required to present Settings.
- * Do not initialize WalletConnect sessions, pending dApp requests, markets,
+ * Do not initialize third-party connection sessions, pending requests, markets,
  * paywall/subscription state or swap-debug settings for the wallet-only UI.
  */
 class MainSettingsViewModel(
