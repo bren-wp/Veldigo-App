@@ -257,7 +257,7 @@ private fun EvmNetworkScreen(
                     // Revalidate the current state after any account/provider
                     // update; never delete the currently selected source.
                     val latestItem = viewModel.viewState.customItems.firstOrNull { it.id == item.id }
-                    if (latestItem != null && RpcEndpointDisplayRules.canDelete(true, !latestItem.selected)) {
+                    if (latestItem != null && RpcEndpointDisplayRules.canDelete(true, latestItem.selected)) {
                         viewModel.onRemoveCustomRpc(latestItem.syncSource)
                         stat(
                             page = StatPage.BlockchainSettingsEvm,
