@@ -32,6 +32,7 @@ class BtcBlockchainSettingsViewModel(
         private set
 
     val title: String = service.blockchain.name
+    val blockchain get() = service.blockchain
 
     init {
         viewModelScope.launch {
