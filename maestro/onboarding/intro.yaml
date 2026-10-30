@@ -1,29 +1,35 @@
 appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-# First launch: Veldigo welcome page.
+# First launch: native Veldigo welcome (reference panel 1).
 - launchApp:
     clearState: true
 - assertVisible: "Your control."
 - assertVisible: "Create a new wallet"
 - assertVisible: "Import existing wallet"
 
-# Second page must show native Veldigo security artwork and real navigation.
+# Second screen: security (reference panel 2).
 - swipe:
     direction: LEFT
 - assertVisible: "Secure"
 - assertVisible: "Your assets, protected with industry-leading security."
 - assertVisible: "Next"
-- assertVisible: "Skip"
-
-# The Next button must navigate forward; old Next-only intro is not acceptable.
 - tapOn: "Next"
-- assertVisible: "All your crypto in one place"
+
+# Third screen: cryptocurrencies (reference panel 3), not premature onboarding exit.
+- assertVisible: "All Your Crypto"
+- assertVisible: "Manage, send, receive and swap thousands of tokens."
+- assertVisible: "Next"
+- assertVisible: "Skip"
+- tapOn: "Next"
+
+# Fourth screen remains in the pager until its own reference-led UI pass.
+- assertVisible: "Freedom without borders"
 - assertVisible: "Get started"
 - tapOn: "Get started"
+
+# Intro completion persists after relaunch.
 - assertVisible: "Markets"
 - assertNotVisible: "Create a new wallet"
-
-# Relaunch: previous introduction must not return.
 - launchApp
 - assertVisible: "Markets"
 - assertNotVisible: "Secure"
