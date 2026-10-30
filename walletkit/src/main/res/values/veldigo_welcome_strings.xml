@@ -139,4 +139,16 @@
     <string name="Veldigo_Markets_Change">24h%</string>
     <string name="Veldigo_Markets_NoResults">No matching coins in the current top 100. Use full market search to find additional assets.</string>
     <string name="Veldigo_Markets_Change1d">1D%</string>
+    <string name="Veldigo_Nft_Title">Your NFTs</string>
+    <string name="Veldigo_Nft_Short">NFTs</string>
+    <string name="Veldigo_Nft_Consent">Load your Ethereum NFT gallery? This shares your public receiving address with the existing NFT metadata provider. No private keys or recovery phrase are sent.</string>
+    <string name="Veldigo_Nft_Load">Load NFTs</string>
+    <string name="Veldigo_Nft_Refresh">Retry loading</string>
+    <string name="Veldigo_Nft_EthereumOnly">NFT discovery currently supports Ethereum accounts only. No supported Ethereum wallet is enabled for the selected account.</string>
+    <string name="Veldigo_Nft_WalletNotReady">Your Ethereum wallet address is not available yet. Check network and account synchronization, then retry.</string>
+    <string name="Veldigo_Nft_ProviderFailed">The NFT metadata provider could not return your collection. Please try again later. This does not mean that your account has no NFTs.</string>
+    <string name="Veldigo_Nft_AccountChanged">The active wallet has changed. Reload this gallery before viewing account-specific results.</string>
+    <string name="Veldigo_Nft_Empty">The metadata provider did not report any Ethereum NFTs for this address. Ownership and other networks are not independently verified here.</string>
+    <string name="Veldigo_Nft_ProviderDisclaimer">Provider-reported Ethereum NFTs; on-chain ownership is not independently verified. Never interact with unsolicited assets.</string>
+    <string name="Veldigo_Nft_TokenId">Token ID: %1$s</string>
 </resources>
