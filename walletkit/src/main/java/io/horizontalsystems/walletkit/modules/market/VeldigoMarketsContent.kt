@@ -58,6 +58,7 @@ import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.market.favorites.MarketFavoritesScreen
 import io.horizontalsystems.walletkit.modules.market.search.MarketSearchPage
 import io.horizontalsystems.walletkit.modules.market.topcoins.MarketTopCoinsViewModel
+import io.horizontalsystems.walletkit.modules.settings.appearance.PriceChangeInterval
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.ui.compose.components.ListErrorView
 import io.horizontalsystems.walletkit.modules.coin.overview.ui.Loading
@@ -251,7 +252,11 @@ internal fun VeldigoMarketsContent(navigation: HSNavigation) {
                     fontSize = 11.sp,
                 )
                 Text(
-                    stringResource(R.string.Veldigo_Markets_Change),
+                    stringResource(
+                        if (App.priceManager.priceChangeInterval == PriceChangeInterval.LAST_24H)
+                            R.string.Veldigo_Markets_Change
+                        else R.string.Veldigo_Markets_Change1d
+                    ),
                     modifier = Modifier.width(72.dp),
                     textAlign = TextAlign.End,
                     color = muted,
