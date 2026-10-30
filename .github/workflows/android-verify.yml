@@ -67,6 +67,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.buy.VeldigoFiatPurchaseGateTest' --no-daemon --stacktrace
+      - name: Verify Markets search and real-price filter logic
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.market.VeldigoMarketRulesTest' --no-daemon --stacktrace
       - name: Upload test APK
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
