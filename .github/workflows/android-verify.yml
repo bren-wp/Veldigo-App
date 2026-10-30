@@ -87,6 +87,17 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.createaccount.VeldigoWalletNameRulesTest' --no-daemon --stacktrace
+      - name: Verify wallet-only Settings status warnings
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.main.VeldigoSettingsStatusRulesTest' --no-daemon --stacktrace
+      - name: Verify Settings excludes unsupported market and dApp entry points
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'WalletConnect|WCListPage|DAppManager|SwapPage|MarketScreen|NftGalleryPage|BuyCryptoPage|SimulateFailSwap|BuySubscription' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/main/{MainSettingsScreen,MainSettingsViewModel,MainSettingsModule}.kt; then
+            echo 'Unsupported feature entry point remains in wallet-only Settings'
+            exit 1
+          fi
       - name: Compile debug AAB
         if: steps.source.outputs.present == 'true'
         run: |
