@@ -101,6 +101,14 @@ class PinSetViewModel(
         }
     }
 
+    override fun onCleared() {
+        // Release plaintext references on cancellation/back navigation too.
+        enteredPin = ""
+        submittedPin = ""
+        error = null
+        super.onCleared()
+    }
+
     private fun resetWithError(errorMessage: Int) {
         submittedPin = ""
         enteredPin = ""
