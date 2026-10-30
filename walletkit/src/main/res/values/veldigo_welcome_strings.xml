@@ -22,4 +22,14 @@
     <string name="Veldigo_Onboarding04_Title">Freedom Without\nBorders</string>
     <string name="Veldigo_Onboarding04_Description">Your crypto, on your terms.\nAnywhere in the world.</string>
     <string name="Veldigo_Onboarding04_GetStarted">Get Started</string>
+    <string name="Veldigo_CreateWallet_Title">Create New Wallet</string>
+    <string name="Veldigo_CreateWallet_Subtitle">Set up your wallet in a few simple steps.</string>
+    <string name="Veldigo_CreateWallet_New">Create a new wallet</string>
+    <string name="Veldigo_CreateWallet_NewDetails">Generate a new seed phrase</string>
+    <string name="Veldigo_CreateWallet_Import">Import existing wallet</string>
+    <string name="Veldigo_CreateWallet_ImportDetails">Use your seed phrase or private key</string>
+    <string name="Veldigo_CreateWallet_Hardware">Connect hardware wallet</string>
+    <string name="Veldigo_CreateWallet_HardwareDetails">Ledger, Trezor and more (unavailable)</string>
+    <string name="Veldigo_CreateWallet_HardwareUnavailableTitle">Hardware wallets unavailable</string>
+    <string name="Veldigo_CreateWallet_HardwareUnavailableBody">This build does not support connecting Ledger, Trezor or other hardware wallets. Never enter your hardware wallet recovery phrase to simulate a connection.</string>
 </resources>
