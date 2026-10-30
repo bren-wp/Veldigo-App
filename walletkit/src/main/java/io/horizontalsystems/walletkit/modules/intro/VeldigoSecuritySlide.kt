@@ -122,24 +122,7 @@ internal fun VeldigoSecuritySlide(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(if (compact) 22.dp else 28.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(9.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.semantics {
-                    contentDescription = "Onboarding slide 2 of 3"
-                },
-            ) {
-                repeat(3) { index ->
-                    Spacer(
-                        Modifier
-                            .size(if (index == 1) 8.dp else 6.dp)
-                            .background(
-                                if (index == 1) mint else Color(0xFF405760),
-                                RoundedCornerShape(100.dp),
-                            )
-                    )
-                }
-            }
+            VeldigoIntroProgress(completed = 0)
             Spacer(Modifier.height(25.dp))
             Button(
                 onClick = onNext,
