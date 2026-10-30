@@ -21,7 +21,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
@@ -82,6 +88,8 @@ private fun SecurityCenterScreen(
     }
 
     val ui = securitySettingsViewModel.uiState
+    var confirmDisablePin by remember { mutableStateOf(false) }
+    var confirmDisableDuress by remember { mutableStateOf(false) }
     val authorizedEditPin = navigation.authorizedAction {
         navigation.slideFromRight(EditPinPage)
     }
@@ -239,7 +247,7 @@ private fun SecurityCenterScreen(
                         subtitle = stringResource(R.string.Veldigo_SecurityCenter_RemoveDuressHint),
                         icon = R.drawable.trash_24,
                         iconTint = Color(0xFFFFB38A),
-                        onClick = authorizedDisableDuress,
+                        onClick = { confirmDisableDuress = true },
                     )
                 }
             }
@@ -252,7 +260,7 @@ private fun SecurityCenterScreen(
                         subtitle = stringResource(R.string.Veldigo_SecurityCenter_DisablePinHint),
                         icon = R.drawable.lock_24,
                         iconTint = Color(0xFFFFB38A),
-                        onClick = authorizedDisablePin,
+                        onClick = { confirmDisablePin = true },
                     )
                 }
             }
@@ -281,6 +289,52 @@ private fun SecurityCenterScreen(
             Spacer(Modifier.height(28.dp))
         }
     }
+    if (confirmDisablePin) {
+        VeldigoSecurityConfirmDialog(
+            title = stringResource(R.string.Veldigo_SecurityCenter_ConfirmDisablePin),
+            description = stringResource(R.string.Veldigo_SecurityCenter_ConfirmDisablePinHint),
+            onDismiss = { confirmDisablePin = false },
+            onConfirm = {
+                confirmDisablePin = false
+                authorizedDisablePin()
+            },
+        )
+    }
+    if (confirmDisableDuress) {
+        VeldigoSecurityConfirmDialog(
+            title = stringResource(R.string.Veldigo_SecurityCenter_ConfirmRemoveDuress),
+            description = stringResource(R.string.Veldigo_SecurityCenter_ConfirmRemoveDuressHint),
+            onDismiss = { confirmDisableDuress = false },
+            onConfirm = {
+                confirmDisableDuress = false
+                authorizedDisableDuress()
+            },
+        )
+    }
+}
+
+@Composable
+private fun VeldigoSecurityConfirmDialog(
+    title: String,
+    description: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { Text(description) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.Button_Confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.Button_Cancel))
+            }
+        },
+    )
 }
 
 @Composable
