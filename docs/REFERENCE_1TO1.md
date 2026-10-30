@@ -46,6 +46,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Security Setup / PIN / Biometrics (screen 26) — **unverified native screenshot diff, biometric device paths, lockout/privacy QA and cryptographic security review**
 - [x] Settings / Security Overview (screen 27) — **native navy/mint grouped wallet-only settings, live PIN/biometric statuses and real routes implemented**, source QA recorded
 - [ ] Settings / Security Overview (screen 27) — **Android screenshots, font/density overlay and on-device navigation/accessibility verification NOT performed**
+- [x] Security Center (screen 28) — **real PIN/biometric/duress/auth controls, auto-lock, privacy toggles and source-backed status implemented**, QA documentation committed
+- [ ] Security Center (screen 28) — **native screenshot overlays, OS biometric/PIN device checks, authorization regression and 1:1 pixel parity NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
