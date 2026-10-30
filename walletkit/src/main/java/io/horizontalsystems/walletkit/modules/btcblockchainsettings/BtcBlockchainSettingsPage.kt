@@ -1,5 +1,6 @@
 package io.horizontalsystems.walletkit.modules.btcblockchainsettings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -77,6 +78,12 @@ private fun BtcBlockchainSettingsScreen(
 ) {
     var confirmSave by remember { mutableStateOf(false) }
     var confirmDiscard by remember { mutableStateOf(false) }
+
+    // Hardware/system Back must follow the same unsaved-change protection
+    // as the visible toolbar back arrow.
+    BackHandler(enabled = viewModel.saveButtonEnabled && !viewModel.closeScreen) {
+        confirmDiscard = true
+    }
 
     LaunchedEffect(viewModel.closeScreen) {
         if (viewModel.closeScreen) navigation.removeLastOrNull()
