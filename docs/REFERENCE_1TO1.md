@@ -56,6 +56,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] EVM Network / RPC Providers (screen 31) — **native screenshot/pixel diff, chain-ID check, endpoint transport security and device integration NOT verified**
 - [x] Custom RPC Connection Validation (screen 32) — **read-only HTTPS eth_chainId probe, wrong-chain block, real unverified-consent state and Tor-aware no-probe rule implemented**, QA documented
 - [ ] Custom RPC Connection Validation (screen 32) — **real device network tests, complete chain coverage, WSS/onion transport identity, proxy/TLS audit and exact 1:1 screenshot parity NOT verified**
+- [x] Bitcoin-family synchronization source (screen 33) — **real supported restore-mode selection, native navy/mint local-only UI, rescan warning, save/discard confirmation and guarded persistence implemented**, source QA documented
+- [ ] Bitcoin-family synchronization source (screen 33) — **native emulator/physical screenshot overlay, source switch/full rescan, BTC/BCH/LTC/DASH/eCash network regression and exact pixel parity NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
