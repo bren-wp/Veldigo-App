@@ -53,6 +53,11 @@ class CreateAccountViewModel(
     var success by mutableStateOf<AccountType?>(null)
         private set
 
+    // The exact account saved by this operation, used only for opening the real
+    // recovery-phrase backup after creation; never a newly generated replacement.
+    var createdAccount by mutableStateOf<Account?>(null)
+        private set
+
     fun createAccount() {
         if (passphraseEnabled && passphraseIsInvalid()) {
             return
@@ -69,6 +74,7 @@ class CreateAccountViewModel(
 
         accountManager.save(account)
         activateDefaultWallets(account)
+        createdAccount = account
         success = accountType
     }
 
@@ -115,6 +121,7 @@ class CreateAccountViewModel(
 
     fun onSuccessMessageShown() {
         success = null
+        createdAccount = null
     }
 
     private fun passphraseIsInvalid(): Boolean {
