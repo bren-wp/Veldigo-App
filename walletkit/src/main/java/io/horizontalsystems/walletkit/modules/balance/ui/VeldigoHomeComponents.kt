@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.modules.balance.BalanceViewItem2
 import io.horizontalsystems.walletkit.modules.balance.TotalUIState
-import io.horizontalsystems.walletkit.ui.compose.components.diffText
 
 /** Home reference panel 10: UI is derived exclusively from live wallet and price services. */
 internal object VeldigoHomePalette {
@@ -270,16 +269,6 @@ internal fun VeldigoAssetRow(
                 text = if (hidden) "••••" else item.secondaryValue?.value ?: "—",
                 color = VeldigoHomePalette.Muted,
                 fontSize = 12.sp,
-            )
-        }
-        val change = if (hidden) null else item.diff?.value
-        if (change != null) {
-            Spacer(Modifier.width(10.dp))
-            Text(
-                text = diffText(change),
-                color = if (change.signum() >= 0) VeldigoHomePalette.Mint else Color(0xFFED8A8A),
-                fontSize = 12.sp,
-                maxLines = 1,
             )
         }
     }
