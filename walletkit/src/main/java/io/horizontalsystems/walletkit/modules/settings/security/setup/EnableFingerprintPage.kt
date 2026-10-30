@@ -68,13 +68,16 @@ import kotlinx.serialization.Serializable
  * genuine successful Android BiometricPrompt, a secure device, and an existing PIN.
  */
 @Serializable
-data object EnableFingerprintPage : HSPage(screenshotEnabled = false) {
+data class EnableFingerprintPage(val finishOnSuccess: Boolean = false) : HSPage(screenshotEnabled = false) {
     @Composable
     override fun GetContent(navigation: HSNavigation) {
         EnableFingerprintScreen(
             onBack = navigation::removeLastOrNull,
             onPinRequired = { navigation.slideFromRight(SetPinPage()) },
-            onAuthenticated = { navigation.removeLastUntil(EntryPage::class, inclusive = false) },
+            onAuthenticated = {
+                if (finishOnSuccess) navigation.removeLastUntil(EntryPage::class, inclusive = false)
+                else navigation.removeLastOrNull()
+            },
         )
     }
 }
