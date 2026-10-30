@@ -92,6 +92,11 @@ fun IntroScreen(navigation: HSNavigation) {
                 },
                 onLanguage = { navigation.slideFromRight(LanguageSettingsPage) },
             )
+        } else if (index == 1) {
+            VeldigoSecuritySlide(
+                onNext = { scope.launch { pager.animateScrollToPage(2) } },
+                onSkip = model::onStartClicked,
+            )
         } else {
             FollowupIntroSlide(
                 index = index,
