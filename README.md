@@ -25,7 +25,7 @@ Veldigo combines a distinctive dark-navy design with mint accents and an open-so
 
 **Receive securely.** Generate a live receiving address and QR code for the selected chain. Never substitute illustrative reference addresses.
 
-**Stay in control.** Create or restore a wallet, configure PIN/biometric protection where available, and manage connected dApps with reviewable permissions.
+**Stay in control.** Create or restore a wallet, configure PIN/biometric protection where available, and review local wallet security controls.
 
 ### Essentials, designed with intent
 
@@ -33,7 +33,7 @@ Veldigo combines a distinctive dark-navy design with mint accents and an open-so
 - **Send deliberately.** Review destination, network, asset and transaction fees in the existing confirmation flow.
 - **Receive confidently.** Share or copy the *real receiving URI* and scan a high-contrast QR without a logo obscuring its code.
 - **Recover responsibly.** Securely back up recovery words offline. Never send seed phrases to support agents or websites.
-- **Manage access.** Set local device protection, review security settings and manage wallet connections supported by the application.
+- **Manage access.** Set local device protection, review security settings and keep recovery phrases offline.
 
 ### Designed around what matters
 
@@ -61,11 +61,11 @@ Veldigo combines a distinctive dark-navy design with mint accents and an open-so
 
 ### Veldigo isn't an exchange
 
-Veldigo is intended as a non-custodial wallet. Fiat purchases, swaps, WalletConnect and other third-party integrations depend on independent providers, their terms, supported jurisdictions and appropriate API credentials. A visible UI design does **not** mean a partner service is ready for commercial use.
+Veldigo is strictly a non-custodial wallet for managing, receiving and sending owned crypto assets. Buying, selling, swapping, trading, staking, NFTs, dApp browsing and WalletConnect are **outside the product scope**. The legacy codebase is being audited to isolate and decommission those subsystems without disrupting core blockchain signing, fee estimation or synchronization.
 
 ## Android UI/UX
 
-Veldigo adopts the dark navy + mint visual direction across the portfolio, settings, wallet creation and transaction flows. Supported device sizes, Android font scaling, visual states and accessibility must be checked before a real-money launch.
+Veldigo uses a wallet-only navigation model: **Wallet · Assets · Activity · Settings**, with real **Send** and **Receive** actions. Its dark navy + mint direction covers the portfolio, settings, wallet creation and transaction flows. Supported device sizes, Android font scaling, visual states and accessibility must be checked before a real-money launch.
 
 Every token icon, amount, fee, receiving address and transaction history entry must reflect the **real wallet state**. Illustration values from design concepts are never authentic blockchain data.
 
@@ -73,7 +73,7 @@ Every token icon, amount, fee, receiving address and transaction history entry m
 
 Built for Android in **Kotlin and Jetpack Compose**, Veldigo retains a non-custodial architecture inherited from its MIT-licensed upstream project. Our design system prioritizes readable typography, thoughtful spacing, accessible controls, subtle outlines, and a recognisable **#41E6C7** mint accent.
 
-This preview improves receive QR readability, wallet action buttons, and removes unconfigured third-party premium purchase prompts from the Security Center. All existing blockchain operations continue to require per-network verification and approved service keys. See [the pixel-parity checklist](docs/REFERENCE_1TO1.md) and [production blockers](docs/SECURITY_RELEASE_GATES.md).
+The draft wallet-only PR removes new Buy, Markets, Swap and NFT UI, excludes trading charts from asset details, restricts external deep links to chain-native payment requests and keeps the real send/receive infrastructure. The upstream legacy modules still require a dependency and session-migration audit. All existing blockchain operations continue to require per-network verification and approved service keys. See [the pixel-parity checklist](docs/REFERENCE_1TO1.md) and [production blockers](docs/SECURITY_RELEASE_GATES.md).
 
 ## Downloads and current status
 
@@ -83,7 +83,7 @@ The [Releases page](https://github.com/bren-wp/Veldigo-Wallet/releases) provides
 
 ## Wallet safety
 
-Cryptocurrency transactions are generally irreversible. Always inspect the recipient and network, protect recovery words offline and do not share a seed phrase with anyone claiming to provide Veldigo support. Veldigo is not a custodian or an exchange, and external swaps/purchases depend on independent providers.
+Cryptocurrency transactions are generally irreversible. Always inspect the recipient and network, protect recovery words offline and do not share a seed phrase with anyone claiming to provide Veldigo support. Veldigo is not a custodian or an exchange, and swaps and purchases are not supported product features.
 
 ## Open source & attribution
 
@@ -100,7 +100,7 @@ Built with **Kotlin / Jetpack Compose**. Package name: `com.brendigo.veldigo`. M
 ./gradlew :app:bundleBaseDebug
 ```
 
-For reproducible provenance, refer to the pinned import commit in [the import script](scripts/import_upstream.py). Use [the screen parity matrix](docs/REFERENCE_1TO1.md) when reviewing every Android screen. For a production build, configure project-owned credentials and secure signing through CI secrets; never commit release keys, mnemonics or private keys.
+For reproducible provenance, refer to the pinned import commit in [the import script](scripts/import_upstream.py). Use [the screen parity matrix](docs/REFERENCE_1TO1.md) when reviewing every Android screen. For a production build, configure project-owned credentials and secure signing through CI secrets; never commit release keys, mnemonics or private keys. See [wallet-only migration status](docs/WALLET_SCOPE_DECOMMISSION_2026-10-30.md), [chain verification matrix](docs/CHAIN_SUPPORT_MATRIX.md) and [Transaction History QA](docs/TRANSACTION_HISTORY_SCREEN_QA_2026-10-30.md).
 
 ---
 
