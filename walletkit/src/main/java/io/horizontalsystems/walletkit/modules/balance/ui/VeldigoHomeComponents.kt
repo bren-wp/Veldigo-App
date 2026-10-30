@@ -254,18 +254,6 @@ internal fun VeldigoAssetTabs(selectedNfts: Boolean, onSelectNfts: (Boolean) -> 
 }
 
 @Composable
-internal fun VeldigoNftUnavailable() {
-    Text(
-        text = stringResource(R.string.Veldigo_Home_NftUnavailable),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp, vertical = 30.dp),
-        color = VeldigoHomePalette.Muted,
-        textAlign = TextAlign.Center,
-        lineHeight = 21.sp,
-        fontSize = 14.sp,
-    )
-}
-
-@Composable
 internal fun VeldigoAssetRow(
     item: BalanceViewItem2,
     hidden: Boolean,
