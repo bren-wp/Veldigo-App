@@ -111,6 +111,17 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcRestoreSelectionRulesTest' --no-daemon --stacktrace
+      - name: Verify live Bitcoin-family synchronization summary rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcSyncStatusRulesTest' --no-daemon --stacktrace
+      - name: Verify Bitcoin sync status is adapter-backed, never invented
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'fakeProgress|mockSync|demoNetwork|rememberAsyncImagePainter|rawErrorMessage|\.error\.message' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/btcblockchainsettings/{BtcSyncStatusPage,BtcSyncStatusViewModel,BtcSyncStatusRules}.kt; then
+            echo 'BTC sync screen must show only live adapter states without leaking errors'
+            exit 1
+          fi
       - name: Verify Bitcoin-family UI uses no remote image requests or fake nodes
         if: steps.source.outputs.present == 'true'
         run: |
