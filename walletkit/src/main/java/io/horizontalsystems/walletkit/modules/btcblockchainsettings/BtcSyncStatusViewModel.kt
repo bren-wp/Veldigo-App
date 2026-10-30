@@ -32,7 +32,7 @@ class BtcSyncStatusViewModel(
     private val torManager: ITorManager,
 ) : ViewModel() {
 
-    var summary by mutableStateOf(BtcSyncStatusRules.summarize(emptyList(), false))
+    internal var summary by mutableStateOf(BtcSyncStatusRules.summarize(emptyList(), false))
         private set
 
     val canRefresh: Boolean get() =

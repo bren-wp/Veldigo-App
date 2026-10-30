@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
@@ -81,7 +82,10 @@ data object TransactionInfoPage : HSPage(screenshotEnabled = false) {
             return
         }
 
-        val accountState by App.accountManager.activeAccountStateFlow.collectAsStateWithLifecycle()
+        val accountState by App.accountManager.activeAccountStateFlow.collectAsStateWithLifecycle(
+            initialValue = ActiveAccountState.NotLoaded,
+            lifecycle = LocalLifecycleOwner.current.lifecycle,
+        )
         when (val state = accountState) {
             ActiveAccountState.NotLoaded -> Unit
             is ActiveAccountState.ActiveAccount -> {
