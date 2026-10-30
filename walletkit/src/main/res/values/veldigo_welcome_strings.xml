@@ -223,4 +223,21 @@
     <string name="Veldigo_SecurityCenter_ConfirmDisablePinHint">Disabling your app PIN also disables biometric wallet unlock. Authenticate to confirm this security change.</string>
     <string name="Veldigo_SecurityCenter_ConfirmRemoveDuress">Remove Duress PIN?</string>
     <string name="Veldigo_SecurityCenter_ConfirmRemoveDuressHint">This removes the separate emergency PIN. Authenticate to confirm this change.</string>
+    <string name="Veldigo_Privacy_Heading">Your privacy, your choice</string>
+    <string name="Veldigo_Privacy_Subheading">Control optional usage data and how the wallet connects to its networks. Your blockchain transfers remain public on their respective networks.</string>
+    <string name="Veldigo_Privacy_Data">Usage data</string>
+    <string name="Veldigo_Privacy_Network">Network privacy</string>
+    <string name="Veldigo_Privacy_Device">Device protection</string>
+    <string name="Veldigo_Privacy_DeviceSecurity">App lock &amp; privacy</string>
+    <string name="Veldigo_Privacy_DeviceSecurityHint">Manage PIN, biometrics, auto-lock and hidden balances</string>
+    <string name="Veldigo_Privacy_ManageSecurity">Open security settings</string>
+    <string name="Veldigo_Privacy_Notice">Tor can obscure some network metadata but does not make public blockchain activity anonymous. Network behavior varies by supported chain. Never enter your recovery phrase on websites or share it with others.</string>
+    <string name="Veldigo_Privacy_TorExplanation">Tor is optional. Changing this setting restarts the app and may require you to unlock again. A selected Tor setting does not guarantee that every chain connection is currently established through Tor.</string>
+    <string name="Veldigo_Privacy_TorDisabled">Off</string>
+    <string name="Veldigo_Privacy_TorConnected">Connected</string>
+    <string name="Veldigo_Privacy_TorConnecting">Connecting</string>
+    <string name="Veldigo_Privacy_TorFailed">Connection failed — review network</string>
+    <string name="Veldigo_Privacy_TorNotConnected">On — waiting for connection</string>
+    <string name="Veldigo_Privacy_EnableTorWarning">Enable Tor and restart the app? Connection setup can take time. Your normal app PIN or biometric unlock may be required again.</string>
+    <string name="Veldigo_Privacy_DisableTorWarning">Disable Tor and restart the app? The wallet will stop using the configured Tor proxy. Your normal app PIN or biometric unlock may be required again.</string>
 </resources>
