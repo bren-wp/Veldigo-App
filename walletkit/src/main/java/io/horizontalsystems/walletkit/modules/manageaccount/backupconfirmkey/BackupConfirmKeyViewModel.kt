@@ -93,7 +93,14 @@ class BackupConfirmKeyViewModel(
         if (confirmed || !readyToConfirm || hiddenWordItems.isEmpty()) return
         // Explicitly verify the whole original phrase once more before storage.
         if (!RecoveryWordVerifier.canConfirm(hiddenWordItems)) return
-        accountManager.update(account.copy(isBackedUp = true))
+        // The wallet may have been deleted or replaced while the protected
+        // confirmation screen was open. Never recreate it from stale state.
+        val current = accountManager.account(account.id)
+        if (!RecoveryBackupAccountGuard.matches(current, account)) {
+            clearSelectionOnBackground()
+            return
+        }
+        accountManager.update(current!!.copy(isBackedUp = true))
         confirmed = true
         emitState()
     }
