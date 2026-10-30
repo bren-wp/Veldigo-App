@@ -1,11 +1,14 @@
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-# Fresh install: create a new standard wallet
+# Fresh install -> create -> real backup; do not echo or capture seed words.
 - launchApp:
     clearState: true
 - runFlow: ../subflows/create_standard_wallet.yaml
+- assertVisible: "Reveal recovery phrase"
+- tapOn: "Reveal recovery phrase"
+- assertVisible: "I've written it down"
 
-# Wallet is created: balance screen with wallet actions
-- assertVisible: "Receive"
-- assertVisible: "Send"
-- assertVisible: "$0"
+# Acknowledgement must NOT silently mark a backup verified.
+- tapOn: "I've written it down"
+- assertVisible: "Tap the words in the correct order."
+- assertVisible: "Confirm"

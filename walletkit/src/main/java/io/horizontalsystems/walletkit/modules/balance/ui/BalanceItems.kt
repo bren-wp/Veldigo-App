@@ -61,8 +61,10 @@ import io.horizontalsystems.walletkit.modules.balance.TotalUIState
 import io.horizontalsystems.walletkit.modules.balance.token.TokenBalancePage
 import io.horizontalsystems.walletkit.modules.coin.CoinPage
 import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
-import io.horizontalsystems.walletkit.modules.multiswap.SwapPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsPage
+import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsModule
+import io.horizontalsystems.walletkit.modules.settings.security.SecuritySettingsPage
 import io.horizontalsystems.walletkit.modules.rateapp.RateAppModule
 import io.horizontalsystems.walletkit.modules.rateapp.RateAppViewModel
 import io.horizontalsystems.walletkit.modules.receive.ReceiveChooseCoinPage
@@ -83,6 +85,7 @@ import io.horizontalsystems.walletkit.uiv3.components.AlertFormat
 import io.horizontalsystems.walletkit.uiv3.components.AlertType
 import io.horizontalsystems.walletkit.uiv3.components.BalanceButtonsGroup
 import io.horizontalsystems.walletkit.uiv3.components.BoxBordered
+import io.horizontalsystems.walletkit.uiv3.components.HSSwipeToReveal
 import io.horizontalsystems.walletkit.uiv3.components.cards.CardsElementAmountText
 import io.horizontalsystems.walletkit.uiv3.components.cell.CellLeftImage
 import io.horizontalsystems.walletkit.uiv3.components.cell.CellMiddleInfoTextIcon
@@ -94,6 +97,7 @@ import io.horizontalsystems.walletkit.uiv3.components.controls.ButtonSize
 import io.horizontalsystems.walletkit.uiv3.components.controls.ButtonStyle
 import io.horizontalsystems.walletkit.uiv3.components.controls.ButtonVariant
 import io.horizontalsystems.walletkit.uiv3.components.controls.HSButton
+import io.horizontalsystems.walletkit.uiv3.components.controls.HSCellButton
 import io.horizontalsystems.walletkit.uiv3.components.controls.HSDropdownButton
 import io.horizontalsystems.walletkit.uiv3.components.controls.HSIconButton
 import io.horizontalsystems.walletkit.uiv3.components.menu.MenuGroup
@@ -217,86 +221,42 @@ fun BalanceItems(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ComposeAppTheme.colors.lawrence),
+                .background(VeldigoHomePalette.Background),
             state = listState,
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
             item {
-                TotalBalanceRow(
-                    totalState = uiState.totalUiState,
-                    onClickTitle = remember {
-                        {
-                            viewModel.toggleBalanceVisibility()
-                            HudHelper.vibrate(context)
-
-                            stat(page = StatPage.Balance, event = StatEvent.ToggleBalanceHidden)
-                        }
+                VeldigoHomeTopBar(
+                    onWallets = {
+                        navigation.slideFromRight(ManageAccountsPage(ManageAccountsModule.Mode.Switcher))
                     },
-                    onClickSubtitle = remember {
-                        {
-                            viewModel.toggleTotalType()
-                            HudHelper.vibrate(context)
-
-                            stat(page = StatPage.Balance, event = StatEvent.ToggleConversionCoin)
-                        }
-                    },
-                    balanceHidden = uiState.balanceHidden
+                    onSettings = { navigation.slideFromRight(SecuritySettingsPage) },
                 )
-            }
-
-            if (uiState.balanceTabButtonsEnabled && !accountViewItem.isWatchAccount) {
-                item {
-                    BalanceButtonsGroup {
-                        BalanceActionButton(
-                            variant = ButtonVariant.Primary,
-                            icon = R.drawable.ic_scan_24,
-                            title = stringResource(R.string.Button_ScanQr),
-                            onClick = onScanClick
-                        )
-                        BalanceActionButton(
-                            variant = ButtonVariant.Secondary,
-                            icon = R.drawable.ic_arrow_down_24,
-                            title = stringResource(R.string.Balance_Receive),
-                            enabled = true,
-                            onClick = {
-                                navigation.slideFromRight(ReceiveChooseCoinPage)
-
-                                stat(
-                                    page = StatPage.Balance,
-                                    event = StatEvent.Open(StatPage.ReceiveTokenList)
-                                )
-                            }
-                        )
-                        BalanceActionButton(
-                            variant = ButtonVariant.Secondary,
-                            icon = R.drawable.ic_arrow_up_24,
-                            title = stringResource(R.string.Balance_Send),
-                            onClick = {
-                                navigation.slideFromRight(SendTokenSelectPage())
-
-                                stat(
-                                    page = StatPage.Balance,
-                                    event = StatEvent.Open(StatPage.SendTokenList)
-                                )
-                            }
-                        )
-                        if (viewModel.isSwapEnabled) {
-                            BalanceActionButton(
-                                variant = ButtonVariant.Secondary,
-                                icon = R.drawable.ic_swap_circle_24,
-                                title = stringResource(R.string.Swap),
-                                onClick = {
-                                    navigation.slideFromRight(SwapPage())
-
-                                    stat(
-                                        page = StatPage.Balance,
-                                        event = StatEvent.Open(StatPage.Swap)
-                                    )
-                                }
-                            )
-                        }
-                    }
-                }
+                VeldigoTotalBalance(
+                    state = uiState.totalUiState,
+                    hidden = uiState.balanceHidden,
+                    onToggleHide = {
+                        viewModel.toggleBalanceVisibility()
+                        HudHelper.vibrate(context)
+                        stat(page = StatPage.Balance, event = StatEvent.ToggleBalanceHidden)
+                    },
+                    onToggleCurrency = {
+                        viewModel.toggleTotalType()
+                        HudHelper.vibrate(context)
+                        stat(page = StatPage.Balance, event = StatEvent.ToggleConversionCoin)
+                    },
+                )
+                VeldigoHomeActions(
+                    sendEnabled = !accountViewItem.isWatchAccount,
+                    onSend = {
+                        navigation.slideFromRight(SendTokenSelectPage())
+                        stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.SendTokenList))
+                    },
+                    onReceive = {
+                        navigation.slideFromRight(ReceiveChooseCoinPage)
+                        stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.ReceiveTokenList))
+                    },
+                )
             }
 
             item {
@@ -354,46 +314,10 @@ fun BalanceItems(
                 }
             }
 
-            if (balanceViewItems.isNotEmpty()) {
-                stickyHeader {
-                    TabsSectionButtons(
-                        left = {
-                            BalanceSortingSelector(
-                                sortType = uiState.sortType,
-                                sortTypes = uiState.sortTypes
-                            ) {
-                                viewModel.setSortType(it)
-                            }
-                            HSIconButton(
-                                variant = ButtonVariant.Secondary,
-                                size = ButtonSize.Small,
-                                icon = painterResource(R.drawable.ic_manage_20),
-                                contentDescription = stringResource(R.string.ManageCoins_title),
-                                onClick = {
-                                    navigation.slideFromRight(ManageWalletsPage)
-
-                                    stat(
-                                        page = StatPage.Balance,
-                                        event = StatEvent.Open(StatPage.CoinManager)
-                                    )
-                                }
-                            )
-                        },
-                        right = {
-                            if (!uiState.networkAvailable) {
-                                subheadSB_lucian(stringResource(R.string.Hud_Text_NoInternet))
-                            }
-                            if (uiState.loading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    color = ComposeAppTheme.colors.leah,
-                                    backgroundColor = ComposeAppTheme.colors.andy,
-                                    strokeWidth = 2.dp
-                                )
-                            }
-                        }
-                    )
-                }
+            item {
+                VeldigoAssetHeader(
+                    onManageAssets = { navigation.slideFromRight(ManageWalletsPage) },
+                )
             }
 
             if (balanceViewItems.isEmpty()) {
@@ -416,41 +340,26 @@ fun BalanceItems(
                         item.wallet.hashCode()
                     }
                 ) { index, item ->
-                    BoxBordered(top = true, bottom = index == balanceViewItems.size - 1) {
-                        BalanceCardSwipable(
-                            viewItem = item,
-                            balanceHidden = uiState.balanceHidden,
-                            revealed = revealedCardId == item.wallet.hashCode(),
-                            onReveal = { walletHashCode ->
-                                if (revealedCardId != walletHashCode) {
-                                    revealedCardId = walletHashCode
-                                }
-                            },
-                            onConceal = {
-                                revealedCardId = null
-                            },
-                            onClick = {
-                                navigateToTokenBalance.invoke(item)
-                            },
-                            onClickSyncError = {
-                                onClickSyncError.invoke(item)
-                            },
-                            onContextMenuItemClick = {
-                                handleContextMenuClick(
-                                    menuItem = it,
-                                    balanceViewItem = item,
-                                    navigation = navigation,
-                                    onAddressCopyClick = { wallet ->
-                                        handleReceiveAddress(viewModel, wallet, view, navigation)
-                                    },
-                                    onDisable = onDisable
-                                )
-                            },
-                            onDisable = {
-                                onDisable.invoke(item)
-                            }
-                        )
-                    }
+                    HSSwipeToReveal(
+                        modifier = Modifier.background(VeldigoHomePalette.Background),
+                        revealed = revealedCardId == item.wallet.hashCode(),
+                        onReveal = { revealedCardId = item.wallet.hashCode() },
+                        onConceal = { revealedCardId = null },
+                        actions = {
+                            HSCellButton(
+                                icon = painterResource(R.drawable.trash_24),
+                                onClick = { onDisable(item) }
+                            )
+                        },
+                        content = {
+                            VeldigoAssetRow(
+                                item = item,
+                                hidden = uiState.balanceHidden,
+                                onClick = { navigateToTokenBalance(item) },
+                                onSyncError = { onClickSyncError(item) },
+                            )
+                        },
+                    )
 
                 }
 
@@ -516,16 +425,8 @@ private fun handleContextMenuClick(
 
         BalanceContextMenuItem.CopyAddress -> { onAddressCopyClick.invoke(balanceViewItem.wallet) }
 
-        BalanceContextMenuItem.Swap -> {
-            navigation.slideFromRight(
-                SwapPage(SwapPage.Input(tokenIn = balanceViewItem.wallet.token))
-            )
-
-            stat(
-                page = StatPage.Balance,
-                event = StatEvent.Open(StatPage.Swap)
-            )
-        }
+        // Kept as a no-op for compatibility with legacy context menu state.
+        BalanceContextMenuItem.Swap -> Unit
 
         BalanceContextMenuItem.CoinInfo -> {
             val coinUid = balanceViewItem.wallet.coin.uid

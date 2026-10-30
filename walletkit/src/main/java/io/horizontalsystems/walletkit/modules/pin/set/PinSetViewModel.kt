@@ -34,6 +34,7 @@ class PinSetViewModel(
     )
 
     fun onDelete() {
+        if (finished) return
         if (enteredPin.isNotEmpty()) {
             enteredPin = enteredPin.dropLast(1)
             emitState()
@@ -41,12 +42,17 @@ class PinSetViewModel(
     }
 
     fun finished() {
+        // The OS keystore/PIN component has already persisted the verified PIN.
+        // Release screen-local plaintext string references on completion.
+        enteredPin = ""
+        submittedPin = ""
         finished = false
+        error = null
         emitState()
     }
 
     fun onKeyClick(number: Int) {
-        if (enteredPin.length >= PinModule.PIN_COUNT) return
+        if (!PinSetInputRules.canAppend(number, enteredPin.length, finished)) return
 
         error = null
         reverseSlideAnimation = false
@@ -93,6 +99,14 @@ class PinSetViewModel(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        // Release plaintext references on cancellation/back navigation too.
+        enteredPin = ""
+        submittedPin = ""
+        error = null
+        super.onCleared()
     }
 
     private fun resetWithError(errorMessage: Int) {

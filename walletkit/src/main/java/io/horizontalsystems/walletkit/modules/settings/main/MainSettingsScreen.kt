@@ -1,55 +1,51 @@
 package io.horizontalsystems.walletkit.modules.settings.main
 
-import android.content.Context
-import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.horizontalsystems.walletkit.BuildConfig
 import io.horizontalsystems.walletkit.R
-import io.horizontalsystems.walletkit.core.App
-import io.horizontalsystems.walletkit.core.managers.RateAppManager
-import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
-import io.horizontalsystems.walletkit.core.stats.StatPremiumTrigger
 import io.horizontalsystems.walletkit.core.stats.stat
-import io.horizontalsystems.walletkit.entities.SimulateFailSwapMode
 import io.horizontalsystems.walletkit.modules.backuplocal.fullbackup.BackupManagerPage
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
+import io.horizontalsystems.walletkit.modules.basecurrency.BaseCurrencySettingsPage
 import io.horizontalsystems.walletkit.modules.blockchainsettings.BlockchainSettingsPage
 import io.horizontalsystems.walletkit.modules.contacts.ContactsRouterPage
 import io.horizontalsystems.walletkit.modules.contacts.Mode
@@ -58,331 +54,310 @@ import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.settings.about.AboutPage
 import io.horizontalsystems.walletkit.modules.settings.appearance.AppearancePage
-import io.horizontalsystems.walletkit.modules.settings.banners.DonateBanner
-import io.horizontalsystems.walletkit.modules.settings.banners.SubscriptionBanner
-import io.horizontalsystems.walletkit.modules.settings.donate.DonateTokenSelectPage
-import io.horizontalsystems.walletkit.modules.settings.donate.WhyDonatePage
 import io.horizontalsystems.walletkit.modules.settings.faq.FaqListPage
 import io.horizontalsystems.walletkit.modules.settings.guides.GuidesPage
-import io.horizontalsystems.walletkit.modules.settings.labs.UnstoppableLabsPage
-import io.horizontalsystems.walletkit.modules.settings.main.ui.BannerCarousel
+import io.horizontalsystems.walletkit.modules.settings.language.LanguageSettingsPage
 import io.horizontalsystems.walletkit.modules.settings.privacy.PrivacySettingsPage
 import io.horizontalsystems.walletkit.modules.settings.security.SecuritySettingsPage
-import io.horizontalsystems.walletkit.modules.settings.subscription.SubscriptionPage
-import io.horizontalsystems.walletkit.modules.usersubscription.BuySubscriptionHavHostPage
-import io.horizontalsystems.walletkit.modules.walletconnect.WCAccountTypeNotSupportedSheet
-import io.horizontalsystems.walletkit.modules.walletconnect.WCErrorNoAccountSheet
-import io.horizontalsystems.walletkit.modules.walletconnect.WCManager
-import io.horizontalsystems.walletkit.modules.walletconnect.list.WCListPage
-import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
-import io.horizontalsystems.walletkit.ui.compose.components.AppBar
-import io.horizontalsystems.walletkit.ui.compose.components.BadgeText
-import io.horizontalsystems.walletkit.ui.compose.components.CellSingleLineLawrenceSection
-import io.horizontalsystems.walletkit.ui.compose.components.CellUniversalLawrenceSection
-import io.horizontalsystems.walletkit.ui.compose.components.HsDivider
-import io.horizontalsystems.walletkit.ui.compose.components.PremiumHeader
-import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
-import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
-import io.horizontalsystems.walletkit.ui.compose.components.body_leah
-import io.horizontalsystems.walletkit.ui.compose.components.caption_grey
-import io.horizontalsystems.walletkit.ui.compose.components.cell.SectionPremiumUniversalLawrence
-import io.horizontalsystems.walletkit.ui.compose.components.subhead1_grey
-import io.horizontalsystems.walletkit.ui.helpers.LinkHelper
-import io.horizontalsystems.dapp.core.DAppManager
-import io.horizontalsystems.subscriptions.core.PrioritySupport
 
+/**
+ * Wallet-only Settings. The reference design is a compact Midnight Navy list
+ * with real native routes; no market, NFT, swap, third-party session or
+ * subscription actions are reachable from this screen.
+ *
+ * Recovery phrases always require wallet selection and the existing secure
+ * account management flow; this screen never materializes seed words.
+ */
 @Composable
 fun SettingsScreen(
     navigation: HSNavigation,
     viewModel: MainSettingsViewModel = viewModel(factory = MainSettingsModule.Factory()),
 ) {
-
-    Surface(
-        color = Color(0xFF071421)
-    ) {
-        Column {
-            AppBar(
-                stringResource(R.string.Settings_Title),
-            )
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .windowInsetsPadding(WindowInsets.navigationBars)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .background(Color(0xFF112337), RoundedCornerShape(20.dp))
-                        .padding(horizontal = 18.dp, vertical = 18.dp)
-                ) {
-                    Text("Your wallet. Your rules.", fontSize = 18.sp,
-                         fontWeight = FontWeight.Bold, color = Color.White)
-                    Spacer(Modifier.height(6.dp))
-                    Text("Manage security, your accounts and connected apps.",
-                         fontSize = 13.sp, color = Color(0xFFB5C6D7))
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                SettingSections(
-                    viewModel = viewModel,
-                    navigation = navigation,
-                    )
-                SettingsFooter(viewModel.appVersion, viewModel.companyWebPage)
-                VSpacer(70.dp)
-            }
-        }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refresh()
     }
-}
+    val state = viewModel.uiState
 
-@Composable
-private fun SettingSections(
-    viewModel: MainSettingsViewModel,
-    navigation: HSNavigation,
-) {
-    val uiState = viewModel.uiState
-    val context = LocalContext.current
-    val isFDroidBuild = io.horizontalsystems.walletkit.core.App.appConfigProvider.fdroidBuild
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VeldigoHomePalette.Background)
+            .statusBarsPadding(),
+    ) {
+        Text(
+            text = stringResource(R.string.Settings_Title),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 60.dp)
+                .padding(start = 20.dp, top = 17.dp, end = 16.dp, bottom = 10.dp),
+            color = VeldigoHomePalette.White,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+        )
 
-    CellUniversalLawrenceSection(
-        listOfNotNull({
-            HsSettingCell(
-                R.string.SettingsSecurity_ManageKeys,
-                R.drawable.wallet_24,
-                showAlert = uiState.manageWalletShowAlert,
-                onClick = {
-                    navigation.slideFromRight(
-                        ManageAccountsPage(ManageAccountsModule.Mode.Manage)
-                    )
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.ManageWallets))
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.BlockchainSettings_Title,
-                R.drawable.box_24,
-                onClick = {
-                    navigation.slideFromRight(BlockchainSettingsPage)
-
-                    stat(
-                        page = StatPage.Settings,
-                        event = StatEvent.Open(StatPage.BlockchainSettings)
-                    )
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_SecurityCenter,
-                R.drawable.shield_24,
-                showAlert = uiState.securityCenterShowAlert,
-                onClick = {
-                    navigation.slideFromRight(SecuritySettingsPage)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Security))
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_Privacy,
-                R.drawable.lock_24,
-                onClick = {
-                    navigation.slideFromRight(PrivacySettingsPage)
-
-                    stat(page = StatPage.AboutApp, event = StatEvent.Open(StatPage.Privacy))
-                }
-            )
-        }, if (DAppManager.isAvailable) {
-            {
-                HsSettingCell(
-                    R.string.DAppConnection_Title,
-                    R.drawable.link_24,
-                    value = (uiState.wcCounterType as? MainSettingsModule.CounterType.SessionCounter)?.number?.toString(),
-                    counterBadge = (uiState.wcCounterType as? MainSettingsModule.CounterType.PendingRequestCounter)?.number?.toString(),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp),
+        ) {
+            VeldigoSettingsSectionHeading(R.string.Veldigo_Settings_Security)
+            VeldigoSettingsGroup {
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Settings_SecurityCenter),
+                    icon = R.drawable.shield_24,
+                    value = stringResource(
+                        if (state.pinEnabled) R.string.Veldigo_Settings_PinActive
+                        else R.string.Veldigo_Settings_PinMissing
+                    ),
+                    showAlert = state.securityCenterShowAlert,
                     onClick = {
-                        when (val state = viewModel.walletConnectSupportState) {
-                            WCManager.SupportState.Supported -> {
-                                navigation.slideFromRight(WCListPage())
-
-                                stat(
-                                    page = StatPage.Settings,
-                                    event = StatEvent.Open(StatPage.WalletConnect)
-                                )
-                            }
-
-                            WCManager.SupportState.NotSupportedDueToNoActiveAccount -> {
-                                navigation.slideFromBottom(WCErrorNoAccountSheet)
-                            }
-
-                            is WCManager.SupportState.NotSupported -> {
-                                navigation.slideFromBottom(
-                                    WCAccountTypeNotSupportedSheet(WCAccountTypeNotSupportedSheet.Input(state.accountTypeDescription))
-                                )
-                            }
-                        }
-                    }
+                        navigation.slideFromRight(SecuritySettingsPage)
+                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Security))
+                    },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_Biometric),
+                    icon = R.drawable.lock_24,
+                    value = stringResource(
+                        if (state.biometricEnabled) R.string.Veldigo_Settings_Enabled
+                        else R.string.Veldigo_Settings_Disabled
+                    ),
+                    onClick = { navigation.slideFromRight(SecuritySettingsPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_ChangePin),
+                    icon = R.drawable.key_24,
+                    subtitle = stringResource(
+                        if (state.pinEnabled) R.string.Veldigo_Settings_ChangePinHint
+                        else R.string.Veldigo_Settings_SetPinHint
+                    ),
+                    onClick = { navigation.slideFromRight(SecuritySettingsPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_RecoveryPhrase),
+                    icon = R.drawable.icon_key_24,
+                    subtitle = stringResource(R.string.Veldigo_Settings_RecoveryHint),
+                    showAlert = state.manageWalletShowAlert,
+                    onClick = {
+                        // Never open a seed directly from unprotected Settings.
+                        // Existing account management validates the selected wallet
+                        // and authorizes any protected recovery-phrase action.
+                        navigation.slideFromRight(
+                            ManageAccountsPage(ManageAccountsModule.Mode.Manage)
+                        )
+                    },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Settings_Privacy),
+                    icon = R.drawable.lock_24,
+                    onClick = { navigation.slideFromRight(PrivacySettingsPage) },
                 )
             }
-        } else {
-            null
-        }
-        )
-    )
 
-    VSpacer(24.dp)
-
-    CellUniversalLawrenceSection(
-        buildList {
-            add {
-                HsSettingCell(
-                    R.string.Contacts,
-                    R.drawable.user_24,
+            VeldigoSettingsSectionHeading(R.string.Veldigo_Settings_Wallet)
+            VeldigoSettingsGroup {
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_WalletManagement),
+                    icon = R.drawable.wallet_24,
+                    showAlert = state.manageWalletShowAlert,
+                    onClick = {
+                        navigation.slideFromRight(ManageAccountsPage(ManageAccountsModule.Mode.Manage))
+                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.ManageWallets))
+                    },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_BackupRestore),
+                    icon = R.drawable.file_24,
+                    onClick = { navigation.slideFromRight(BackupManagerPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_Networks),
+                    icon = R.drawable.box_24,
+                    onClick = { navigation.slideFromRight(BlockchainSettingsPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Contacts),
+                    icon = R.drawable.user_24,
                     onClick = {
                         navigation.slideFromRight(
                             ContactsRouterPage(ContactsRouterPage.Input(Mode.Full))
                         )
-
-                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Contacts))
-                    }
+                    },
                 )
             }
+
+            VeldigoSettingsSectionHeading(R.string.Veldigo_Settings_Preferences)
+            VeldigoSettingsGroup {
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Veldigo_Settings_Appearance),
+                    icon = R.drawable.ic_settings_24,
+                    onClick = { navigation.slideFromRight(AppearancePage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.SettingsCurrency_Title),
+                    icon = R.drawable.globe_24,
+                    onClick = { navigation.slideFromRight(BaseCurrencySettingsPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Settings_Language),
+                    icon = R.drawable.globe_24,
+                    onClick = { navigation.slideFromRight(LanguageSettingsPage) },
+                )
+            }
+
+            VeldigoSettingsSectionHeading(R.string.Veldigo_Settings_Information)
+            VeldigoSettingsGroup {
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.SettingsAboutApp_Title),
+                    icon = R.drawable.ic_info_20,
+                    showAlert = state.aboutAppShowAlert,
+                    onClick = { navigation.slideFromRight(AboutPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Settings_Faq),
+                    icon = R.drawable.message_24,
+                    onClick = { navigation.slideFromRight(FaqListPage) },
+                )
+                VeldigoSettingsSeparator()
+                VeldigoSettingsRow(
+                    title = stringResource(R.string.Guides_Title),
+                    icon = R.drawable.book_24,
+                    onClick = { navigation.slideFromRight(GuidesPage) },
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.Veldigo_Settings_Version, viewModel.appVersion),
+                color = VeldigoHomePalette.Muted,
+                fontSize = 11.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp, bottom = 96.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
         }
-    )
-
-    VSpacer(24.dp)
-
-    CellUniversalLawrenceSection(
-        buildList {
-            add {
-                HsSettingCell(
-                    R.string.Settings_AppSettings,
-                    R.drawable.uw_logo_24,
-                    onClick = {
-                        navigation.slideFromRight(AppearancePage)
-
-                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Appearance))
-                    }
-                )
-            }
-            add {
-                HsSettingCell(
-                    R.string.BackupManager_Title,
-                    R.drawable.file_24,
-                    onClick = {
-                        navigation.slideFromRight(BackupManagerPage)
-
-                        stat(
-                            page = StatPage.Settings,
-                            event = StatEvent.Open(StatPage.BackupManager)
-                        )
-                    }
-                )
-            }
-        }
-    )
-
-    VSpacer(24.dp)
-
-    CellUniversalLawrenceSection(
-        listOf({
-            HsSettingCell(
-                R.string.SettingsAboutApp_Title,
-                R.drawable.ic_info_20,
-                showAlert = uiState.aboutAppShowAlert,
-                onClick = {
-                    navigation.slideFromRight(AboutPage)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.AboutApp))
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_ShareThisWallet,
-                R.drawable.ic_share_24,
-                onClick = {
-                    shareAppLink(uiState.appWebPageLink, context)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.TellFriends))
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_Faq,
-                R.drawable.message_24,
-                onClick = {
-                    navigation.slideFromRight(FaqListPage)
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Guides_Title,
-                R.drawable.book_24,
-                onClick = {
-                    navigation.slideFromRight(GuidesPage)
-                }
-            )
-        })
-    )
-
-    if (BuildConfig.DEBUG) {
-        VSpacer(24.dp)
-
-        DebugSettingsSection()
     }
+}
 
-    VSpacer(32.dp)
+/** Section order and action availability reflect wallet-only functionality. */
+@Composable
+private fun VeldigoSettingsSectionHeading(@StringRes title: Int) {
+    Text(
+        text = stringResource(title),
+        color = VeldigoHomePalette.Muted,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp,
+        modifier = Modifier.padding(start = 4.dp, top = 20.dp, bottom = 10.dp),
+    )
 }
 
 @Composable
-private fun DebugSettingsSection() {
-    var simulateFailSwap by remember { mutableStateOf(App.localStorage.simulateFailSwap) }
-    var showSwapProviderName by remember { mutableStateOf(App.localStorage.showSwapProviderName) }
-
-    CellUniversalLawrenceSection(
-        listOf({
-            RowUniversal(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                onClick = {
-                    // Cycle None -> Server -> Local -> None
-                    val modes = SimulateFailSwapMode.entries
-                    val next = modes[(simulateFailSwap.ordinal + 1) % modes.size]
-                    simulateFailSwap = next
-                    App.localStorage.simulateFailSwap = next
-                }
-            ) {
-                body_leah(
-                    text = "Simulate Fail Swap",
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f)
-                )
-                subhead1_grey(
-                    text = simulateFailSwap.name.lowercase(),
-                    maxLines = 1,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        }, {
-            RowUniversal(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                onClick = {
-                    showSwapProviderName = !showSwapProviderName
-                    App.localStorage.showSwapProviderName = showSwapProviderName
-                }
-            ) {
-                body_leah(
-                    text = "Show swap provider name",
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f)
-                )
-                subhead1_grey(
-                    text = showSwapProviderName.toString(),
-                    maxLines = 1,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        })
+private fun VeldigoSettingsGroup(content: @Composable ColumnScope.() -> Unit) {
+    val shape = RoundedCornerShape(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(VeldigoHomePalette.Surface)
+            .border(1.dp, VeldigoHomePalette.Border, shape),
+        content = content,
     )
 }
 
+@Composable
+private fun VeldigoSettingsSeparator() {
+    HorizontalDivider(
+        modifier = Modifier.padding(start = 55.dp, end = 14.dp),
+        thickness = 1.dp,
+        color = VeldigoHomePalette.Border,
+    )
+}
+
+@Composable
+private fun VeldigoSettingsRow(
+    title: String,
+    @DrawableRes icon: Int,
+    subtitle: String? = null,
+    value: String? = null,
+    showAlert: Boolean = false,
+    iconTint: Color = VeldigoHomePalette.Mint,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 54.dp)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(start = 14.dp, top = 10.dp, bottom = 10.dp, end = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(21.dp),
+            tint = iconTint,
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = VeldigoHomePalette.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    color = VeldigoHomePalette.Muted,
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp,
+                    modifier = Modifier.padding(top = 3.dp),
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        if (value != null) {
+            Text(
+                text = value,
+                fontSize = 11.sp,
+                color = if (showAlert) Color(0xFFFFB38A) else VeldigoHomePalette.Muted,
+                maxLines = 1,
+            )
+        }
+        if (showAlert) {
+            Icon(
+                painter = painterResource(R.drawable.ic_attention_red_20),
+                contentDescription = stringResource(R.string.Veldigo_Wallets_Warning),
+                tint = Color(0xFFFFB38A),
+                modifier = Modifier.size(17.dp),
+            )
+        }
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = null,
+            tint = VeldigoHomePalette.Muted,
+            modifier = Modifier.size(16.dp),
+        )
+    }
+}
+
+/** Kept for other current UI users, including the About Veldigo page. */
 @Composable
 fun HsSettingCell(
     @StringRes title: Int,
@@ -391,141 +366,14 @@ fun HsSettingCell(
     value: String? = null,
     counterBadge: String? = null,
     showAlert: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-    RowUniversal(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        onClick = onClick
-    ) {
-        Icon(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = icon),
-            contentDescription = null,
-            tint = iconTint ?: ComposeAppTheme.colors.grey
-        )
-        body_leah(
-            text = stringResource(title),
-            maxLines = 1,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(Modifier.weight(1f))
-
-        if (counterBadge != null) {
-            BadgeText(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                text = counterBadge
-            )
-        } else if (value != null) {
-            subhead1_grey(
-                text = value,
-                maxLines = 1,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-
-        if (showAlert) {
-            Image(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.ic_attention_red_20),
-                contentDescription = null,
-            )
-            Spacer(Modifier.width(12.dp))
-        }
-        Image(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_right),
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
-private fun SettingsFooter(appVersion: String, companyWebPage: String) {
-    val context = LocalContext.current
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        caption_grey(
-            text = stringResource(
-                R.string.Settings_InfoTitleWithVersion,
-                appVersion
-            ).uppercase()
-        )
-        HsDivider(
-            modifier = Modifier
-                .width(100.dp)
-                .padding(top = 8.dp, bottom = 4.5.dp)
-            )
-        Text(
-            text = stringResource(R.string.Settings_InfoSubtitle),
-            style = ComposeAppTheme.typography.micro,
-            color = ComposeAppTheme.colors.grey,
-        )
-        Image(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .size(32.dp)
-                .clickable {
-                    LinkHelper.openLinkInAppBrowser(context, companyWebPage)
-                },
-            painter = painterResource(id = R.drawable.ic_company_logo),
-            contentDescription = null,
-        )
-        caption_grey(
-            modifier = Modifier.padding(top = 12.dp, bottom = 32.dp),
-            text = stringResource(R.string.Settings_CompanyName),
-        )
-    }
-}
-
-private fun shareAppLink(appLink: String, context: Context) {
-    val shareMessage = Translator.getString(R.string.SettingsShare_Text) + "\n" + appLink + "\n"
-    val shareIntent = Intent(Intent.ACTION_SEND)
-    shareIntent.type = "text/plain"
-    shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
-    context.startActivity(
-        Intent.createChooser(
-            shareIntent,
-            Translator.getString(R.string.SettingsShare_Title)
-        )
+    VeldigoSettingsRow(
+        title = stringResource(title),
+        icon = icon,
+        value = value ?: counterBadge,
+        showAlert = showAlert,
+        iconTint = iconTint ?: VeldigoHomePalette.Mint,
+        onClick = onClick,
     )
-}
-
-@Preview
-@Composable
-private fun previewSettingsScreen() {
-    ComposeAppTheme {
-        Column {
-            CellSingleLineLawrenceSection(
-                listOf({
-                    HsSettingCell(
-                        R.string.Settings_Faq,
-                        R.drawable.ic_faq_20,
-                        showAlert = true,
-                        onClick = { }
-                    )
-                }, {
-                    HsSettingCell(
-                        R.string.Guides_Title,
-                        R.drawable.ic_academy_20,
-                        onClick = { }
-                    )
-                })
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            CellSingleLineLawrenceSection(
-                listOf {
-                    HsSettingCell(
-                        R.string.Settings_WalletConnect,
-                        R.drawable.ic_wallet_connect_20,
-                        counterBadge = "13",
-                        onClick = { }
-                    )
-                }
-            )
-        }
-    }
 }

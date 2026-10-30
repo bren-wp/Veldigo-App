@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +44,10 @@ import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.core.stats.statTab
 import io.horizontalsystems.walletkit.modules.balance.ui.BalanceScreen
+import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
+import io.horizontalsystems.walletkit.modules.transactions.TransactionsPage
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
+import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
 import io.horizontalsystems.walletkit.modules.market.MarketScreen
 import io.horizontalsystems.walletkit.modules.multiswap.SwapScreen
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
@@ -116,7 +120,7 @@ private fun MainScreen(
         bottomBar = {
             Column(
                 modifier = Modifier
-                    .background(ComposeAppTheme.colors.blade)
+                    .background(VeldigoHomePalette.Background)
                     .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 if (uiState.torEnabled) {
@@ -124,9 +128,59 @@ private fun MainScreen(
                 }
                 NavigationBar(
                     modifier = Modifier.height(navigationBarHeight),
-                    containerColor = ComposeAppTheme.colors.blade,
+                    containerColor = VeldigoHomePalette.Background,
                 ) {
-                    uiState.mainNavItems.forEach { destination ->
+                    uiState.mainNavItems.sortedBy { destination ->
+                        when (destination.mainNavItem) {
+                            MainNavigation.Balance -> 0
+                            MainNavigation.Market -> 1
+                            MainNavigation.Swap -> 2
+                            MainNavigation.Settings -> 4
+                        }
+                    }.forEach { destination ->
+                        if (destination.mainNavItem == MainNavigation.Settings) {
+                            // The balance list is the Wallet tab; Assets opens real token
+                            // management. Both navigation actions remain behind the PIN gate.
+                            HsNavigationBarItem(
+                                selected = false,
+                                onClick = { navigation.slideFromRight(ManageWalletsPage) },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_manage_2_24),
+                                        contentDescription = stringResource(R.string.Veldigo_Tab_Assets),
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.Veldigo_Tab_Assets)) },
+                                colors = HsNavigationBarItemDefaults.colors(
+                                    selectedIconColor = VeldigoHomePalette.Mint,
+                                    unselectedIconColor = VeldigoHomePalette.Muted,
+                                    selectedTextColor = VeldigoHomePalette.Mint,
+                                    unselectedTextColor = VeldigoHomePalette.Muted,
+                                    indicatorColor = VeldigoHomePalette.Background,
+                                ),
+                            )
+                            HsNavigationBarItem(
+                                selected = false,
+                                onClick = {
+                                    navigation.slideFromRight(TransactionsPage)
+                                    stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Transactions))
+                                },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_circle_clock_24),
+                                        contentDescription = stringResource(R.string.Veldigo_Tab_Activity),
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.Veldigo_Tab_Activity)) },
+                                colors = HsNavigationBarItemDefaults.colors(
+                                    selectedIconColor = VeldigoHomePalette.Mint,
+                                    unselectedIconColor = VeldigoHomePalette.Muted,
+                                    selectedTextColor = VeldigoHomePalette.Mint,
+                                    unselectedTextColor = VeldigoHomePalette.Muted,
+                                    indicatorColor = VeldigoHomePalette.Background,
+                                ),
+                            )
+                        }
                         HsNavigationBarItem(
                             selected = destination.selected,
                             onClick = {
@@ -147,12 +201,22 @@ private fun MainScreen(
                             } else null,
                             enabled = destination.enabled,
                             colors = HsNavigationBarItemDefaults.colors(
-                                selectedIconColor = ComposeAppTheme.colors.jacob,
-                                unselectedIconColor = ComposeAppTheme.colors.grey,
+                                selectedIconColor = VeldigoHomePalette.Mint,
+                                unselectedIconColor = VeldigoHomePalette.Muted,
                                 indicatorColor = ComposeAppTheme.colors.transparent,
-                                selectedTextColor = ComposeAppTheme.colors.jacob,
-                                unselectedTextColor = ComposeAppTheme.colors.grey,
+                                selectedTextColor = VeldigoHomePalette.Mint,
+                                unselectedTextColor = VeldigoHomePalette.Muted,
                             ),
+                            label = {
+                                Text(
+                                    text = when (destination.mainNavItem) {
+                                        MainNavigation.Balance -> stringResource(R.string.Veldigo_Tab_Wallet)
+                                        MainNavigation.Market -> stringResource(R.string.Veldigo_Home_Markets)
+                                        MainNavigation.Swap -> stringResource(R.string.Swap)
+                                        MainNavigation.Settings -> stringResource(R.string.Settings_Title)
+                                    },
+                                )
+                            },
                             icon = {
                                 BadgedIcon(destination.badge) {
                                     Icon(
@@ -162,6 +226,7 @@ private fun MainScreen(
                                 }
                             },
                         )
+
                     }
                 }
             }

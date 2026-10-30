@@ -5,18 +5,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.ViewModelUiState
-import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
 import io.horizontalsystems.walletkit.core.stats.StatsManager
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
+/**
+ * Real, opt-in app-usage telemetry preference. This screen intentionally has
+ * no external VPN/promotion link or marketing service dependency.
+ */
 class PrivacyViewModel(
     private val statsManager: StatsManager,
-    private val appConfig: IAppConfigProvider,
 ) : ViewModelUiState<PrivacyUiState>() {
+
     private var uiStatsEnabled = statsManager.uiStatsEnabledFlow.value
-    private val currentYear: Int = Calendar.getInstance().get(Calendar.YEAR)
-    val nymVpnLink by lazy { appConfig.nymVpnLink }
 
     init {
         viewModelScope.launch {
@@ -27,10 +27,7 @@ class PrivacyViewModel(
         }
     }
 
-    override fun createState() = PrivacyUiState(
-        uiStatsEnabled = uiStatsEnabled,
-        currentYear = currentYear
-    )
+    override fun createState() = PrivacyUiState(uiStatsEnabled)
 
     fun toggleUiStats(enabled: Boolean) {
         statsManager.toggleUiStats(enabled)
@@ -38,14 +35,9 @@ class PrivacyViewModel(
 
     class Factory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PrivacyViewModel(App.statsManager, App.appConfigProvider) as T
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            PrivacyViewModel(App.statsManager) as T
     }
-
 }
 
-data class PrivacyUiState(
-    val uiStatsEnabled: Boolean,
-    val currentYear: Int
-)
+data class PrivacyUiState(val uiStatsEnabled: Boolean)

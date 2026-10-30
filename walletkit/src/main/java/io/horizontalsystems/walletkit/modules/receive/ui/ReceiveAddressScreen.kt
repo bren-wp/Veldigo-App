@@ -112,6 +112,7 @@ import java.math.BigDecimal
 fun ReceiveAddressScreen(
     title: String,
     uiState: ReceiveModule.AbstractUiState,
+    coinCode: String? = null,
     setAmount: (BigDecimal?) -> Unit,
     onErrorClick: () -> Unit = {},
     slot1: @Composable () -> Unit = {},
@@ -155,128 +156,16 @@ fun ReceiveAddressScreen(
                     }
 
                     ViewState.Success -> {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .verticalScroll(rememberScrollState()),
-                        ) {
-                            VSpacer(12.dp)
-                            uiState.alertText?.let {
-                                WarningTextView(it)
-                            }
-
-                            if (uiState.watchAccount) {
-                                TextImportantWarning(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    text = stringResource(R.string.Balance_Receive_WatchAddressAlert),
-                                )
-                            }
-
-                            VSpacer(12.dp)
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .border(1.dp, Color(0xFF244155), RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF112337)),
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            TextHelper.copyText(uiState.uri)
-                                            HudHelper.showSuccessMessage(
-                                                localView,
-                                                R.string.Hud_Text_Copied
-                                            )
-
-                                            stat(
-                                                page = StatPage.Receive,
-                                                event = StatEvent.Copy(StatEntity.ReceiveAddress)
-                                            )
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    VSpacer(32.dp)
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(ComposeAppTheme.colors.white)
-                                            .size(224.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        QrCodeImage(uiState.uri)
-                                    }
-                                    VSpacer(24.dp)
-                                    subhead2_leah(
-                                        modifier = Modifier.padding(horizontal = 46.dp),
-                                        text = uiState.address,
-                                        textAlign = TextAlign.Center,
-                                    )
-
-                                    val testNetBadge =
-                                        if (!uiState.mainNet) " (TestNet)" else ""
-                                    uiState.blockchainName?.let { blockchainName ->
-                                        VSpacer(12.dp)
-                                        subhead_grey(
-                                            modifier = Modifier.padding(horizontal = 46.dp),
-                                            text = stringResource(R.string.Balance_Network) + ": " + blockchainName + testNetBadge,
-                                            textAlign = TextAlign.Center,
-                                        )
-                                    }
-                                    uiState.addressFormat?.let { addressFormat ->
-                                        VSpacer(12.dp)
-                                        subhead_grey(
-                                            modifier = Modifier.padding(horizontal = 46.dp),
-                                            text = stringResource(R.string.Balance_Format) + ": " + addressFormat + testNetBadge,
-                                            textAlign = TextAlign.Center,
-                                        )
-                                    }
-                                    uiState.addressType?.let { addressType ->
-                                        VSpacer(12.dp)
-                                        subhead_grey(
-                                            modifier = Modifier.padding(horizontal = 46.dp),
-                                            text = stringResource(R.string.Balance_Receive_AddressType) + ": " + addressType + testNetBadge,
-                                            textAlign = TextAlign.Center,
-                                        )
-                                    }
-                                    VSpacer(32.dp)
-                                }
-                                val additionalItems = buildList {
-                                    uiState.amountString?.let { amount ->
-                                        add(ReceiveModule.AdditionalData.Amount(amount))
-                                    }
-                                }
-
-                                if (additionalItems.isNotEmpty()) {
-                                    AdditionalDataSection(
-                                        items = additionalItems,
-                                        onClearAmount = {
-                                            setAmount(null)
-
-                                            stat(
-                                                page = StatPage.Receive,
-                                                event = StatEvent.RemoveAmount
-                                            )
-                                        },
-                                    )
-                                }
-
-                                slot1.invoke()
-                            }
-
-                            VSpacer(24.dp)
-
-                            ActionButtonsRow(
-                                uri = uiState.uri,
-                                watchAccount = uiState.watchAccount,
-                                openAmountDialog = openAmountDialog,
-                            )
-
-                            VSpacer(32.dp)
-                        }
+                        VeldigoReceiveContent(
+                            uiState = uiState,
+                            coinCode = coinCode ?: title.substringAfterLast(' '),
+                            slot1 = slot1,
+                            onSetAmount = { openAmountDialog.value = true },
+                            onClearAmount = {
+                                setAmount(null)
+                                stat(page = StatPage.Receive, event = StatEvent.RemoveAmount)
+                            },
+                        )
                     }
                 }
             }

@@ -5,59 +5,39 @@ import io.horizontalsystems.walletkit.IPinComponent
 import io.horizontalsystems.walletkit.ISystemInfoManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.ViewModelUiState
-import io.horizontalsystems.walletkit.core.address.AddressCheckType
 import io.horizontalsystems.walletkit.core.managers.BalanceHiddenManager
-import io.horizontalsystems.walletkit.core.managers.PaidActionSettingsManager
 import io.horizontalsystems.walletkit.core.managers.SpamManager
-import io.horizontalsystems.subscriptions.core.IPaidAction
-import io.horizontalsystems.subscriptions.core.SecureSend
-import io.horizontalsystems.subscriptions.core.UserSubscriptionManager
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
+/**
+ * App-local wallet protection only. Premium, subscription, and paid "defense"
+ * state are not required by the self-custody Security Center.
+ */
 class SecuritySettingsViewModel(
-    systemInfoManager: ISystemInfoManager,
+    private val systemInfoManager: ISystemInfoManager,
     private val pinComponent: IPinComponent,
     private val balanceHiddenManager: BalanceHiddenManager,
     private val localStorage: ILocalStorage,
-    private val paidActionSettingsManager: PaidActionSettingsManager,
     private val spamManager: SpamManager,
 ) : ViewModelUiState<SecuritySettingsUiState>() {
-    val biometricSettingsVisible = systemInfoManager.biometricAuthSupported
+
+    val biometricSettingsVisible: Boolean
+        get() = systemInfoManager.biometricAuthSupported
 
     private var pinEnabled = pinComponent.isPinSet
     private var duressPinEnabled = pinComponent.isDuressPinSet()
     private var balanceAutoHideEnabled = balanceHiddenManager.balanceAutoHidden
-    private var defenseSystemActions = listOf<DefenseSystemAction>()
     private var hideSuspiciousTxs = spamManager.hideSuspiciousTx
 
     init {
+        // Enabling biometrics must happen on the separate Android
+        // BiometricPrompt page. This flow only reflects the persisted result.
         viewModelScope.launch {
-            pinComponent.pinSetFlow.collect {
-                pinEnabled = pinComponent.isPinSet
-                duressPinEnabled = pinComponent.isDuressPinSet()
-                emitState()
-            }
+            pinComponent.isBiometricAuthEnabledFlow.collect { emitState() }
         }
-
         viewModelScope.launch {
-            paidActionSettingsManager.enabledActionsFlow.collect {
-                refreshDefenseSystemActions()
-            }
+            pinComponent.pinSetFlow.collect { update() }
         }
-
-        viewModelScope.launch {
-            UserSubscriptionManager.activeSubscriptionStateFlow.collect {
-                refreshDefenseSystemActions()
-            }
-        }
-
-        viewModelScope.launch {
-            localStorage.enabledPaidActionsFlow.drop(1).collect {
-                refreshDefenseSystemActions()
-            }
-        }
-
         viewModelScope.launch {
             spamManager.hideSuspiciousTxStateFlow.collect {
                 hideSuspiciousTxs = it
@@ -66,33 +46,23 @@ class SecuritySettingsViewModel(
         }
     }
 
-    private fun refreshDefenseSystemActions() {
-        val enabledPaidActions = localStorage.enabledPaidActions
-        val anyDetectionEnabled = AddressCheckType.entries.any { it.name in enabledPaidActions }
-
-        defenseSystemActions = paidActionSettingsManager.toggleableActions.map { action ->
-            val enabled = when (action) {
-                SecureSend -> anyDetectionEnabled && UserSubscriptionManager.isActionAllowed(action)
-                else -> paidActionSettingsManager.isActionActive(action)
-            }
-            DefenseSystemAction(action, enabled)
-        }
-
-        emitState()
-    }
-
     override fun createState() = SecuritySettingsUiState(
         pinEnabled = pinEnabled,
-        biometricsEnabled = pinComponent.isBiometricAuthEnabled,
+        biometricsEnabled = SecurityCenterStateRules.biometricActive(
+            pinEnabled, pinComponent.isBiometricAuthEnabled,
+        ),
         duressPinEnabled = duressPinEnabled,
         balanceAutoHideEnabled = balanceAutoHideEnabled,
         hideSuspiciousTxs = hideSuspiciousTxs,
         autoLockIntervalName = localStorage.autoLockInterval.title,
-        defenseSystemActions = defenseSystemActions,
     )
 
-    fun enableBiometrics() {
-        pinComponent.isBiometricAuthEnabled = true
+    /** Re-read actual state on resume after PIN, biometric or OS configuration. */
+    fun update() {
+        pinEnabled = pinComponent.isPinSet
+        duressPinEnabled = pinComponent.isDuressPinSet()
+        balanceAutoHideEnabled = balanceHiddenManager.balanceAutoHidden
+        hideSuspiciousTxs = spamManager.hideSuspiciousTx
         emitState()
     }
 
@@ -104,26 +74,18 @@ class SecuritySettingsViewModel(
     fun disablePin() {
         pinComponent.disablePin()
         pinComponent.isBiometricAuthEnabled = false
-        emitState()
+        update()
     }
 
     fun disableDuressPin() {
         pinComponent.disableDuressPin()
-        emitState()
+        update()
     }
 
     fun onSetBalanceAutoHidden(enabled: Boolean) {
+        balanceHiddenManager.setBalanceAutoHidden(enabled)
         balanceAutoHideEnabled = enabled
         emitState()
-        balanceHiddenManager.setBalanceAutoHidden(enabled)
-    }
-
-    fun update() {
-        refreshDefenseSystemActions()
-    }
-
-    fun setActionEnabled(action: IPaidAction, enabled: Boolean) {
-        paidActionSettingsManager.setActionEnabled(action, enabled)
     }
 
     fun hideSuspiciousTxs(hidden: Boolean) {
@@ -140,7 +102,4 @@ data class SecuritySettingsUiState(
     val balanceAutoHideEnabled: Boolean,
     val hideSuspiciousTxs: Boolean,
     val autoLockIntervalName: Int,
-    val defenseSystemActions: List<DefenseSystemAction>
 )
-
-data class DefenseSystemAction(val action: IPaidAction, val enabled: Boolean)

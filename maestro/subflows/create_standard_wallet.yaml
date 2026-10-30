@@ -1,9 +1,11 @@
-# Creates a new standard wallet with the suggested name.
-# Starts from the intro of a freshly launched app, ends on the balance screen.
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+# Creates a real standard wallet and stops on its secure backup screen.
+# Seed words must NEVER be logged, asserted verbatim or copied to test reports.
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-- runFlow: pass_intro.yaml
-- tapOn: "New Wallet"
+- assertVisible: "Create a new wallet"
+- tapOn: "Create a new wallet"
 - runFlow: accept_terms.yaml
-- tapOn: "Standard"
+- assertVisible: "Create New Wallet"
+- tapOn: "Create a new wallet"
 - tapOn: "Create"
+- assertVisible: "Reveal recovery phrase"

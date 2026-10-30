@@ -9,7 +9,7 @@ object SecurityTorSettingsModule {
     class Factory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return SecurityTorSettingsViewModel(App.torKitManager, App.pinComponent) as T
+            return SecurityTorSettingsViewModel(App.torKitManager) as T
         }
     }
 

@@ -8,6 +8,7 @@ import io.horizontalsystems.walletkit.core.managers.MoneroNodeManager.NodePingRe
 import io.horizontalsystems.walletkit.uiv3.components.PingState
 import io.horizontalsystems.monerokit.NodePingResult as KitNodePingResult
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 class MoneroNetworkViewModel(
@@ -54,6 +55,9 @@ class MoneroNetworkViewModel(
         }
 
     fun onSelectNode(node: MoneroNode) {
+        // A selection dialog could outlive a switch back to Auto Select.
+        // Never override automatic selection from a stale manual action.
+        if (moneroNodeManager.autoSelectEnabled) return
         if (moneroNodeManager.currentNode == node) return
         moneroNodeManager.save(node)
         emitState()
@@ -66,6 +70,11 @@ class MoneroNetworkViewModel(
     }
 
     fun onRemoveCustomNode(node: MoneroNode) {
+        // Never remove an active source. A user must select another node first,
+        // including when the confirmation dialog was left open during a switch.
+        val current = moneroNodeManager.currentNode
+        val isCustom = moneroNodeManager.customNodes.any { it.host == node.host }
+        if (!MoneroNodeDisplayRules.canRemove(isCustom, current.host == node.host)) return
         moneroNodeManager.delete(node)
     }
 
@@ -74,12 +83,11 @@ class MoneroNetworkViewModel(
     }
 
     private fun pingNodes() {
+        pingJob?.cancel()
         val nodes = moneroNodeManager.allNodes
-
         pingStates = nodes.associate { it.serialized to PingState.Loading }
         emitState()
 
-        pingJob?.cancel()
         pingJob = viewModelScope.launch {
             pingStates = try {
                 val results = moneroNodeManager.pingNodes(nodes.map { it.serialized })
@@ -87,7 +95,9 @@ class MoneroNetworkViewModel(
                 nodes.associate { node ->
                     node.serialized to (results[node.serialized]?.let(::pingState) ?: PingState.Unreachable)
                 }
-            } catch (e: Exception) {
+            } catch (cancel: CancellationException) {
+                throw cancel
+            } catch (_: Exception) {
                 nodes.associate { it.serialized to PingState.Unreachable }
             }
             if (moneroNodeManager.autoSelectEnabled) {
@@ -113,6 +123,9 @@ class MoneroNetworkViewModel(
 
     private fun pingState(result: NodePingResult): PingState {
         if (!result.isValid || result.responseTime >= Double.MAX_VALUE) {
+            return PingState.Unreachable
+        }
+        if (!result.responseTime.isFinite() || result.responseTime < 0) {
             return PingState.Unreachable
         }
         val level = when {

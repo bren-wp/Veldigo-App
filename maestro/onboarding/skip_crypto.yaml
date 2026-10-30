@@ -1,0 +1,15 @@
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Create a new wallet"
+- swipe:
+    direction: LEFT
+- assertVisible: "Secure"
+- tapOn: "Next"
+- assertVisible: "All Your Crypto"
+- tapOn: "Skip"
+- assertVisible: "Wallet"
+- launchApp
+- assertVisible: "Wallet"
+- assertNotVisible: "All Your Crypto"

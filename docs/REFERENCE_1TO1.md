@@ -30,12 +30,39 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [x] Create-wallet choice description — **restyled**, key flows retained
 - [ ] Recovery phrase backup / verification — **visual parity and secure test pending**
 - [ ] PIN, biometric unlock — **visual parity and device QA pending**
-- [ ] Asset details / market charts — **visual parity pending**
-- [ ] Swap and route confirmation — **visual parity/provider QA pending**
-- [ ] Buy via fiat partner — **unavailable pending contract, jurisdiction and API**
-- [ ] Activity / transaction details — **visual parity pending**
-- [ ] NFT collection and market pages — **visual parity pending**
-- [ ] WalletConnect session manager — **visual parity/security QA pending**
+- [x] Asset details — **balance/Send/Receive retained; market charts removed**, native visual QA pending
+- [x] Activity / transaction history — **real history and mint/navy style implemented**, visual QA pending
+- [x] Transaction Details — **live single-asset summary, account isolation and chain-specific rows**, screenshot/pixel diff pending
+- [ ] Transaction Details — **native screenshots, full error/state coverage and pixel parity are NOT verified**
+- [x] Wallet Management — **real account list, name filter, account switch, add route and backup warnings implemented**, native pixel parity pending
+- [ ] Wallet Management — **device screenshots, screen-density calibration, accessibility and account-switch regression NOT verified**
+- [x] Add Wallet (screen 23) — **three real Create / Import / Watch-only routes and branded cards implemented**, screen QA documented
+- [ ] Add Wallet (screen 23) — **native screenshot/density parity, hardware and recovery flow tests NOT verified**
+- [x] Create Wallet Form (screen 24) — **real account creation, title/name, advanced BIP39 option, passphrase confirmation and existing backup route retained**, native visual QA pending
+- [ ] Create Wallet Form (screen 24) — **no exact-size standalone reference, emulator/physical pixel diff and recovery regression pending**
+- [x] Recovery Phrase Backup / Verification (screen 25) — **real saved words, responsive 2-column phone grid, Mint navigation and full ordered check retained**
+- [ ] Recovery Phrase Backup / Verification (screen 25) — **native pixel diff, phrase restoration vectors, screenshot blocking and device accessibility remain unverified**
+- [x] Security Setup / PIN / Biometrics (screen 26) — **navy/mint chooser, native PIN keypad, real security routes and OS biometric prompt preserved**, device QA pending
+- [ ] Security Setup / PIN / Biometrics (screen 26) — **unverified native screenshot diff, biometric device paths, lockout/privacy QA and cryptographic security review**
+- [x] Settings / Security Overview (screen 27) — **native navy/mint grouped wallet-only settings, live PIN/biometric statuses and real routes implemented**, source QA recorded
+- [ ] Settings / Security Overview (screen 27) — **Android screenshots, font/density overlay and on-device navigation/accessibility verification NOT performed**
+- [x] Security Center (screen 28) — **real PIN/biometric/duress/auth controls, auto-lock, privacy toggles and source-backed status implemented**, QA documentation committed
+- [ ] Security Center (screen 28) — **native screenshot overlays, OS biometric/PIN device checks, authorization regression and 1:1 pixel parity NOT verified**
+- [x] Privacy Settings (screen 29) — **real usage-data opt-in, actual Tor status, confirmed restart, no lock bypass, security entry and wallet-only navy/mint layout**, source QA recorded
+- [ ] Privacy Settings (screen 29) — **native screenshot/pixel overlay, Tor DNS/proxy leak and on-device relock/accessibility checks NOT performed**
+- [x] Network / Blockchain Settings (screen 30) — **real configured chain groups, source-backed RPC labels, search, local icons and EVM/chain navigation implemented**, QA documented
+- [ ] Network / Blockchain Settings (screen 30) — **native screenshot/pixel diff, real provider switch/reconnect, offline error and RPC/Tor leak audit NOT performed**
+- [x] EVM Network / RPC Providers (screen 31) — **real default/custom sources, selected provider, secret-redacted URL, confirmed custom-source removal and branded Add RPC form implemented**
+- [ ] EVM Network / RPC Providers (screen 31) — **native screenshot/pixel diff, chain-ID check, endpoint transport security and device integration NOT verified**
+- [x] Custom RPC Connection Validation (screen 32) — **read-only HTTPS eth_chainId probe, wrong-chain block, real unverified-consent state and Tor-aware no-probe rule implemented**, QA documented
+- [ ] Custom RPC Connection Validation (screen 32) — **real device network tests, complete chain coverage, WSS/onion transport identity, proxy/TLS audit and exact 1:1 screenshot parity NOT verified**
+- [x] Bitcoin-family synchronization source (screen 33) — **real supported restore-mode selection, native navy/mint local-only UI, rescan warning, save/discard confirmation and guarded persistence implemented**, source QA documented
+- [ ] Bitcoin-family synchronization source (screen 33) — **native emulator/physical screenshot overlay, source switch/full rescan, BTC/BCH/LTC/DASH/eCash network regression and exact pixel parity NOT verified**
+- [x] Bitcoin-family synchronization status (screen 34) — **live active-account adapters, real progress/blocks, Tor-aware waiting, selected-chain counters, Refresh and post-source-change navigation implemented**, source QA recorded
+- [ ] Bitcoin-family synchronization status (screen 34) — **Android CI, emulator pixel overlay, physical sync/rescan, offline/Tor/reorg validation and full 1:1 parity NOT verified**
+- [x] Monero Network / Node Settings (screen 35) — **real default/custom Monero nodes, measured latency, auto-selection, trust confirmation, local icons and protected removal implemented**, QA documented
+- [ ] Monero Network / Node Settings (screen 35) — **Android build/device verification, Monero auto-select + Tor reconnection, screenshot overlay and exact pixel parity NOT verified**
+- [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
 ## Screenshot validation protocol
@@ -47,4 +74,4 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 5. For money amounts, fees, recovery phrases and QR addresses, validate underlying **functional data** separately: a reference screenshot never authorizes fake values.
 6. Repeat comparisons for enabled/disabled/loading/error/confirmation and translated states.
 
-No full 21-screen pixel comparison or exhaustive device pass has been completed. v0.4 additionally styles the wallet action tile row, replaces receiving actions with full-width CTA buttons and removes the QR center overlay for scan reliability. Security center now hides unconfigured upstream premium actions. These are source-code changes, **not screenshot-based evidence of 1:1 completion**. v0.3 includes branded About/settings, live-data activity card restyling and system text-scale compliance. Only screenshots produced by an actual running Android build may be used to mark visual QA complete.
+No full wallet-only screen pixel comparison or exhaustive device pass has been completed. Transaction Details now follows the original `Veldigo Crypto Wallet UI Showcase.png` mockup (legacy panel 20, functional screen 21), but the flattened board is not calibrated native-resolution screenshot evidence. v0.4 additionally styles the wallet action tile row, replaces receiving actions with full-width CTA buttons and removes the QR center overlay for scan reliability. Security center now hides unconfigured upstream premium actions. These are source-code changes, **not screenshot-based evidence of 1:1 completion**. v0.3 includes branded About/settings, live-data activity card restyling and system text-scale compliance. Only screenshots produced by an actual running Android build may be used to mark visual QA complete.

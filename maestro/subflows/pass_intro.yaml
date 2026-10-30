@@ -1,9 +1,11 @@
 appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-# First page is the Veldigo reference welcome (no legacy Next button).
 - assertVisible: "Create a new wallet"
 - swipe:
     direction: LEFT
-- swipe:
-    direction: LEFT
-- tapOn: "Get started"
+- assertVisible: "Secure"
+- tapOn: "Next"
+- assertVisible: "All Your Crypto"
+- tapOn: "Next"
+- assertVisible: "Get Started"
+- tapOn: "Get Started"

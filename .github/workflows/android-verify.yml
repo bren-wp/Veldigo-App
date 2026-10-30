@@ -31,10 +31,204 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew :app:assembleBaseDebug --no-daemon --stacktrace
-      - name: Upload test APK
+      - name: Verify backup navigation does not serialize mnemonic secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SensitiveBackupRouteSerializationTest' --no-daemon --stacktrace
+      - name: Verify full recovery phrase confirmation logic
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryWordVerifierTest' --no-daemon --stacktrace
+      - name: Verify stale accounts cannot be marked backed up
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryBackupAccountGuardTest' --no-daemon --stacktrace
+      - name: Verify narrow-screen recovery grid rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupkey.RecoveryPhraseGridRulesTest' --no-daemon --stacktrace
+      - name: Verify biometric enrollment requires OS authentication
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.setup.BiometricSetupGateTest' --no-daemon --stacktrace
+      - name: Verify security setup route and PIN contract
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SecuritySetupRouteTest' --no-daemon --stacktrace
+      - name: Verify 6-digit PIN setup input bounds
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.pin.set.PinSetInputRulesTest' --no-daemon --stacktrace
+      - name: Verify Send Continue never bypasses form validation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.send.v2.VeldigoSendUiRulesTest' --no-daemon --stacktrace
+      - name: Verify receiving never copies or shares an absent address
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.receive.ui.VeldigoReceivePayloadRulesTest' --no-daemon --stacktrace
+      - name: Verify wallet-only deep link admission
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.main.WalletDeepLinkPolicyTest' --no-daemon --stacktrace
+      - name: Verify Transaction Details account isolation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.transactionInfo.TransactionInfoAccountAccessTest' --no-daemon --stacktrace
+      - name: Verify wallet list filters and backup warnings
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccounts.VeldigoWalletRulesTest' --no-daemon --stacktrace
+      - name: Verify Add Wallet return navigation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccounts.VeldigoAddWalletRouteTest' --no-daemon --stacktrace
+      - name: Verify Create Wallet display name normalization
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.createaccount.VeldigoWalletNameRulesTest' --no-daemon --stacktrace
+      - name: Verify wallet-only Settings status warnings
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.main.VeldigoSettingsStatusRulesTest' --no-daemon --stacktrace
+      - name: Verify Security Center PIN and biometric status rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.passcode.SecurityCenterStateRulesTest' --no-daemon --stacktrace
+      - name: Verify Security Center navigation contains no secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.SecurityCenterRouteTest' --no-daemon --stacktrace
+      - name: Verify Tor preference changes require confirmation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.privacy.tor.TorPreferenceChangeRulesTest' --no-daemon --stacktrace
+      - name: Verify real-chain network search
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.blockchainsettings.NetworkSettingsListRulesTest' --no-daemon --stacktrace
+      - name: Verify Bitcoin-family synchronization source eligibility
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcRestoreSelectionRulesTest' --no-daemon --stacktrace
+      - name: Verify live Bitcoin-family synchronization summary rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcSyncStatusRulesTest' --no-daemon --stacktrace
+      - name: Verify Monero node display redacts URL credentials and protects active nodes
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit-chain-monero:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.moneronetwork.MoneroNodeDisplayRulesTest' --no-daemon --stacktrace
+      - name: Verify Monero node screen excludes connection secrets and discontinued UI
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'PingBadge|urlForDisplay|\.password|\.username|\.serialized|WalletConnect_Unnamed|HSSwipeToReveal|rememberAsyncImagePainter|BuySubscription' walletkit-chain-monero/src/main/java/io/horizontalsystems/walletkit/modules/moneronetwork/MoneroNetworkPage.kt; then
+            echo 'Monero settings must use real ping and redacted node labels'
+            exit 1
+          fi
+      - name: Verify Bitcoin sync status is adapter-backed, never invented
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'fakeProgress|mockSync|demoNetwork|rememberAsyncImagePainter|rawErrorMessage|\.error\.message' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/btcblockchainsettings/{BtcSyncStatusPage,BtcSyncStatusViewModel,BtcSyncStatusRules}.kt; then
+            echo 'BTC sync screen must show only live adapter states without leaking errors'
+            exit 1
+          fi
+      - name: Verify Bitcoin-family UI uses no remote image requests or fake nodes
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'rememberAsyncImagePainter|Coil\.load|fakeNode|mockSource|demoNetwork|WalletConnect|BuySubscription' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/btcblockchainsettings/{BtcBlockchainSettingsPage,BtcBlockchainSettingsViewModel,BtcBlockchainSettingsService}.kt; then
+            echo 'BTC-family settings must be source-backed and use local resources'
+            exit 1
+          fi
+      - name: Verify RPC display redaction and selected-source deletion guard
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.RpcEndpointDisplayRulesTest' --no-daemon --stacktrace
+      - name: Verify secure RPC endpoint URL rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcEndpointValidationTest' --no-daemon --stacktrace
+      - name: Verify RPC mainnet chain identity rules
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcChainIdentityRulesTest' --no-daemon --stacktrace
+      - name: Verify JSON-RPC chain identity response parsing
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcChainIdResponseTest' --no-daemon --stacktrace
+      - name: Verify RPC save blocks wrong chain and requires unverified consent
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcConnectionUiRulesTest' --no-daemon --stacktrace
+      - name: Verify RPC probe does not bypass Tor or transport safeguards
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.RpcConnectionPrivacyTest' --no-daemon --stacktrace
+      - name: Verify RPC probe doesn't persist before validation or log secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'logger.*(url|auth)|println\(.*(url|auth)|followRedirects\(true\)|followSslRedirects\(true\)' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/evmnetwork/addrpc/{RpcConnectionProbe,AddRpcViewModel}.kt; then
+            echo 'Custom RPC probe may expose secrets or follow unsafe redirects'
+            exit 1
+          fi
+      - name: Verify EVM provider UI never exposes URL paths or upstream connection features
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'rememberAsyncImagePainter|WalletConnect_Unnamed|urlForDisplay|HSSwipeToReveal|MarketScreen|BuySubscription' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/evmnetwork/EvmNetworkPage.kt; then
+            echo 'EVM provider list leaks unsanitized sources or upstream UI'
+            exit 1
+          fi
+      - name: Verify Blockchain Settings has no mock balances or remote logo requests
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'rememberAsyncImagePainter|Coil\.load|fakeBalance|mockChain|demoNetwork|MarketScreen|WalletConnect' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/blockchainsettings/BlockchainSettingsPage.kt; then
+            echo 'Wallet-only network settings must use real chain settings and local assets'
+            exit 1
+          fi
+      - name: Verify Privacy Settings navigation contains no credentials
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.privacy.PrivacySettingsRouteTest' --no-daemon --stacktrace
+      - name: Verify Tor restart does not skip wallet PIN protection
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'keepUnlocked\(' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/privacy/tor/SecurityTorSettingsViewModel.kt; then
+            echo 'Tor restart must not bypass wallet lock'
+            exit 1
+          fi
+      - name: Verify Security Center has no unused paid defense actions
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'BuySubscription|UserSubscriptionManager|SecureSend|DefenseSystemAction|SectionPremium|PaidActionSettingsManager|WalletConnect' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/security/{SecuritySettingsPage.kt,passcode/SecuritySettingsViewModel.kt,passcode/SecurityPasscodeSettingsModule.kt}; then
+            echo 'Deprecated paid or dApp code in wallet-only Security Center'
+            exit 1
+          fi
+      - name: Verify Settings excludes unsupported market and dApp entry points
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'WalletConnect|WCListPage|DAppManager|SwapPage|MarketScreen|NftGalleryPage|BuyCryptoPage|SimulateFailSwap|BuySubscription' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/main/{MainSettingsScreen,MainSettingsViewModel,MainSettingsModule}.kt; then
+            echo 'Unsupported feature entry point remains in wallet-only Settings'
+            exit 1
+          fi
+      - name: Compile debug AAB
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :app:bundleBaseDebug --no-daemon --stacktrace
+      - name: Prepare test artifacts and SHA256 checksums
+        if: steps.source.outputs.present == 'true' && success()
+        run: |
+          mkdir -p build/veldigo-test
+          cp app/build/outputs/apk/base/debug/*.apk build/veldigo-test/
+          cp app/build/outputs/bundle/baseDebug/*.aab build/veldigo-test/
+          (cd build/veldigo-test && sha256sum ./*.apk ./*.aab > SHA256SUMS)
+          printf '%s\n' 'VELDIGO Wallet — unverified engineering preview' \
+            'Non-production test APK/AAB. Do not use with real assets.' \
+            'Screen pixel parity, all supported chains and key custody remain unaudited.' \
+            > build/veldigo-test/RELEASE_NOTES.txt
+      - name: Upload test APK, AAB and SHA256SUMS
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
         with:
-          name: veldigo-debug-apk
-          path: app/build/outputs/apk/base/debug/*.apk
+          name: veldigo-test-apk-aab
+          path: build/veldigo-test/*
           if-no-files-found: error
