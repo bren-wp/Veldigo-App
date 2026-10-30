@@ -39,6 +39,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.RecoveryWordVerifierTest' --no-daemon --stacktrace
+      - name: Verify biometric enrollment requires OS authentication
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.setup.BiometricSetupGateTest' --no-daemon --stacktrace
       - name: Verify security setup route and PIN contract
         if: steps.source.outputs.present == 'true'
         run: |
