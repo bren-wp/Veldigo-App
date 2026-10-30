@@ -137,6 +137,29 @@ private fun MainScreen(
                             MainNavigation.Settings -> 4
                         }
                     }.forEach { destination ->
+                        if (destination.mainNavItem == MainNavigation.Settings) {
+                            HsNavigationBarItem(
+                                selected = false,
+                                onClick = {
+                                    navigation.slideFromRight(TransactionsPage)
+                                    stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Transactions))
+                                },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_circle_clock_24),
+                                        contentDescription = stringResource(R.string.Veldigo_Home_History),
+                                    )
+                                },
+                                label = { Text(stringResource(R.string.Veldigo_Home_History)) },
+                                colors = HsNavigationBarItemDefaults.colors(
+                                    selectedIconColor = VeldigoHomePalette.Mint,
+                                    unselectedIconColor = VeldigoHomePalette.Muted,
+                                    selectedTextColor = VeldigoHomePalette.Mint,
+                                    unselectedTextColor = VeldigoHomePalette.Muted,
+                                    indicatorColor = VeldigoHomePalette.Background,
+                                ),
+                            )
+                        }
                         HsNavigationBarItem(
                             selected = destination.selected,
                             onClick = {
@@ -182,29 +205,7 @@ private fun MainScreen(
                                 }
                             },
                         )
-                        if (destination.mainNavItem == MainNavigation.Swap) {
-                            HsNavigationBarItem(
-                                selected = false,
-                                onClick = {
-                                    navigation.slideFromRight(TransactionsPage)
-                                    stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Transactions))
-                                },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_circle_clock_24),
-                                        contentDescription = stringResource(R.string.Veldigo_Home_History),
-                                    )
-                                },
-                                label = { Text(stringResource(R.string.Veldigo_Home_History)) },
-                                colors = HsNavigationBarItemDefaults.colors(
-                                    selectedIconColor = VeldigoHomePalette.Mint,
-                                    unselectedIconColor = VeldigoHomePalette.Muted,
-                                    selectedTextColor = VeldigoHomePalette.Mint,
-                                    unselectedTextColor = VeldigoHomePalette.Muted,
-                                    indicatorColor = VeldigoHomePalette.Background,
-                                ),
-                            )
-                        }
+
                     }
                 }
             }
