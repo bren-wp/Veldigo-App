@@ -23,9 +23,10 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - tapOn: "Next"
 
 # Fourth screen remains in the pager until its own reference-led UI pass.
-- assertVisible: "Freedom without borders"
-- assertVisible: "Get started"
-- tapOn: "Get started"
+- assertVisible: "Get Started"
+- assertVisible: "Get Started"
+- assertNotVisible: "Skip"
+- tapOn: "Get Started"
 
 # Intro completion persists after relaunch.
 - assertVisible: "Markets"
