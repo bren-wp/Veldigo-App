@@ -245,6 +245,7 @@ fun RecoveryPhraseVerifyScreen(navigation: HSNavigation, account: Account) {
                 }
                 }
             }
+            }
             if (state.hiddenWordItems.isNotEmpty()) {
                 Spacer(Modifier.height(18.dp))
                 Text(
