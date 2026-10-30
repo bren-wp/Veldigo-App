@@ -3,6 +3,8 @@ package io.horizontalsystems.walletkit.modules.settings.security.setup
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.heightIn
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.ui.draw.clip
 import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import androidx.compose.foundation.background
@@ -64,11 +66,21 @@ import kotlinx.serialization.Serializable
 data object SecuritySetupPage : HSPage(screenshotEnabled = false) {
     @Composable
     override fun GetContent(navigation: HSNavigation) {
+        // Re-read device and PIN prerequisites when returning from Android
+        // settings or the real SetPinPage; stale snapshots can misroute setup.
+        var biometricAvailable by remember { mutableStateOf(App.systemInfoManager.biometricAuthSupported) }
+        var deviceSecure by remember { mutableStateOf(!App.systemInfoManager.isSystemLockOff) }
+        var pinAlreadySet by remember { mutableStateOf(App.pinComponent.isPinSet) }
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            biometricAvailable = App.systemInfoManager.biometricAuthSupported
+            deviceSecure = !App.systemInfoManager.isSystemLockOff
+            pinAlreadySet = App.pinComponent.isPinSet
+        }
         SecuritySetupScreen(
             onBack = navigation::removeLastOrNull,
-            biometricAvailable = App.systemInfoManager.biometricAuthSupported,
-            deviceSecure = !App.systemInfoManager.isSystemLockOff,
-            pinAlreadySet = App.pinComponent.isPinSet,
+            biometricAvailable = biometricAvailable,
+            deviceSecure = deviceSecure,
+            pinAlreadySet = pinAlreadySet,
             onBiometric = { navigation.slideFromRight(EnableFingerprintPage(finishOnSuccess = true)) },
             onPin = {
                 if (App.pinComponent.isPinSet) {
