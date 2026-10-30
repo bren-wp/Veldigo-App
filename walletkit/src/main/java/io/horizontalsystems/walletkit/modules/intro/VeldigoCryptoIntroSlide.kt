@@ -31,7 +31,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -124,7 +123,7 @@ internal fun VeldigoCryptoIntroSlide(
             )
             Spacer(Modifier.height(if (compact) 18.dp else 28.dp))
 
-            VeldigoIntroProgress(completed = 2)
+            VeldigoIntroProgress(completed = 1)
 
             Spacer(Modifier.height(25.dp))
             Button(
