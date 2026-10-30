@@ -59,6 +59,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.main.WalletDeepLinkPolicyTest' --no-daemon --stacktrace
+      - name: Verify Transaction Details account isolation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.transactionInfo.TransactionInfoAccountAccessTest' --no-daemon --stacktrace
       - name: Compile debug AAB
         if: steps.source.outputs.present == 'true'
         run: |
