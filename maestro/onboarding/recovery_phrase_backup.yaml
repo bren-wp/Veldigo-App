@@ -12,5 +12,6 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - tapOn: "OK"
 - assertVisible: "I've written it down"
 - tapOn: "I've written it down"
-- assertVisible: "Select requested words from your wallet recovery phrase"
-# Deliberately do not solve the quiz or mark backup complete.
+- assertVisible: "Tap the words in the correct order."
+- assertVisible: "Confirm"
+# Deliberately do not read the secret chips, solve the quiz, or mark backup complete.
