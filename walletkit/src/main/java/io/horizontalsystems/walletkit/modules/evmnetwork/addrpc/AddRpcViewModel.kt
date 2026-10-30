@@ -11,10 +11,7 @@ import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
-import io.horizontalsystems.walletkit.core.utils.OnionNodeUrl
 import io.horizontalsystems.marketkit.models.Blockchain
-import java.net.MalformedURLException
-import java.net.URI
 
 class AddRpcViewModel(
     private val blockchain: Blockchain,
@@ -43,36 +40,44 @@ class AddRpcViewModel(
     }
 
     fun onAddClick() {
-        val sourceUri: URI
-
-        try {
-            sourceUri = URI(url)
-            val hasRequiredProtocol = listOf("https", "wss").contains(sourceUri.scheme) || OnionNodeUrl.isHttpOnion(sourceUri)
-            if (!hasRequiredProtocol) {
-                throw MalformedURLException()
-            }
-        } catch (e: Throwable) {
-            urlCaution = Caution(Translator.getString(R.string.AddEvmSyncSource_Error_InvalidUrl), Caution.Type.Error)
+        val sourceUri = RpcEndpointValidation.parse(url)
+        if (sourceUri == null) {
+            urlCaution = Caution(
+                Translator.getString(R.string.AddEvmSyncSource_Error_InvalidUrl),
+                Caution.Type.Error,
+            )
             syncState()
             return
         }
 
         val existingSources = evmSyncSourceManager.allSyncSources(blockchain.type)
-
-        if (existingSources.any { it.uri == sourceUri}) {
-            urlCaution = Caution(Translator.getString(R.string.AddEvmSyncSource_Warning_UrlExists), Caution.Type.Warning)
+        if (RpcEndpointValidation.isDuplicate(sourceUri, existingSources.flatMap { it.uris })) {
+            urlCaution = Caution(
+                Translator.getString(R.string.AddEvmSyncSource_Warning_UrlExists),
+                Caution.Type.Warning,
+            )
             syncState()
             return
         }
 
-        evmSyncSourceManager.saveSyncSource(blockchain.type, url, auth)
-
-        viewState = AddRpcViewState(null, true)
+        evmSyncSourceManager.saveSyncSource(blockchain.type, url, auth?.takeIf(String::isNotBlank))
+        // Never retain basic authentication text in the setup ViewModel after
+        // the existing manager persists it.
+        auth = null
+        url = ""
+        urlCaution = null
+        viewState = AddRpcViewState(closeScreen = true)
 
         stat(
             page = StatPage.BlockchainSettingsEvmAdd,
-            event = StatEvent.AddEvmSource(blockchain.uid)
+            event = StatEvent.AddEvmSource(blockchain.uid),
         )
+    }
+
+    override fun onCleared() {
+        url = ""
+        auth = null
+        super.onCleared()
     }
 
     private fun syncState() {
