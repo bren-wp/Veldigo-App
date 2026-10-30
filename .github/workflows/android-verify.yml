@@ -107,6 +107,17 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.blockchainsettings.NetworkSettingsListRulesTest' --no-daemon --stacktrace
+      - name: Verify Bitcoin-family synchronization source eligibility
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.btcblockchainsettings.BtcRestoreSelectionRulesTest' --no-daemon --stacktrace
+      - name: Verify Bitcoin-family UI uses no remote image requests or fake nodes
+        if: steps.source.outputs.present == 'true'
+        run: |
+          if grep -En 'rememberAsyncImagePainter|Coil\.load|fakeNode|mockSource|demoNetwork|WalletConnect|BuySubscription' walletkit/src/main/java/io/horizontalsystems/walletkit/modules/btcblockchainsettings/{BtcBlockchainSettingsPage,BtcBlockchainSettingsViewModel,BtcBlockchainSettingsService}.kt; then
+            echo 'BTC-family settings must be source-backed and use local resources'
+            exit 1
+          fi
       - name: Verify RPC display redaction and selected-source deletion guard
         if: steps.source.outputs.present == 'true'
         run: |
