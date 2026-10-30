@@ -7,5 +7,5 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 - tapOn: "Next"
 - assertVisible: "All Your Crypto"
 - tapOn: "Next"
-- assertVisible: "Freedom without borders"
-- tapOn: "Get started"
+- assertVisible: "Get Started"
+- tapOn: "Get Started"
