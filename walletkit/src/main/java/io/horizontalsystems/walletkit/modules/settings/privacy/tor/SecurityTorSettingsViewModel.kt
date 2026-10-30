@@ -51,8 +51,8 @@ class SecurityTorSettingsViewModel(
         if (requested) {
             torManager.setTorAsEnabled()
             torCheckEnabled = torManager.isTorEnabled
-            // Never call keepUnlocked(): the new process must enforce normal
-            // PIN/biometric authorization after a network-stack restart.
+            // Keep normal PIN/biometric authorization for the new process.
+            // Restarting the network stack must not suppress wallet locking.
             restartApp = true
         } else {
             torManager.setTorAsDisabled()
