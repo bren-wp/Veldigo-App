@@ -53,13 +53,13 @@ private val Teal = Color(0xFF41E6C7)
 private val Muted = Color(0xFFB5C6D7)
 
 /**
- * First page follows the user's 384 x 1024 welcome reference.
- * Following pages retain the existing slide content pending their own visual passes.
+ * Four-panel Veldigo reference: welcome, security, crypto and freedom.
+ * The fourth page keeps its existing content pending its dedicated visual pass.
  */
 @Composable
 fun IntroScreen(navigation: HSNavigation) {
     val model = viewModel<IntroViewModel>(factory = IntroModule.Factory())
-    val pager = rememberPagerState(initialPage = 0) { model.slides.size }
+    val pager = rememberPagerState(initialPage = 0) { model.slides.size + 1 }
     val scope = rememberCoroutineScope()
 
     HorizontalPager(
@@ -97,12 +97,17 @@ fun IntroScreen(navigation: HSNavigation) {
                 onNext = { scope.launch { pager.animateScrollToPage(2) } },
                 onSkip = model::onStartClicked,
             )
+        } else if (index == 2) {
+            VeldigoCryptoIntroSlide(
+                onNext = { scope.launch { pager.animateScrollToPage(3) } },
+                onSkip = model::onStartClicked,
+            )
         } else {
             FollowupIntroSlide(
                 index = index,
                 model = model,
                 onNext = {
-                    if (pager.currentPage == model.slides.lastIndex) {
+                    if (pager.currentPage == pager.pageCount - 1) {
                         model.onStartClicked()
                     } else {
                         scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
@@ -151,7 +156,7 @@ private fun FollowupIntroSlide(
             SpaceIllustration(slide = index, modifier = Modifier.weight(1f).fillMaxWidth())
             Spacer(Modifier.height(20.dp))
             Text(
-                text = stringResource(model.slides[index].title),
+                text = stringResource(model.slides[index - 1].title),
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -160,7 +165,7 @@ private fun FollowupIntroSlide(
             )
             Spacer(Modifier.height(14.dp))
             Text(
-                text = stringResource(model.slides[index].subtitle),
+                text = stringResource(model.slides[index - 1].subtitle),
                 color = Muted,
                 fontSize = 14.sp,
                 lineHeight = 21.sp,
@@ -172,7 +177,7 @@ private fun FollowupIntroSlide(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            repeat(model.slides.size) { indicator ->
+            repeat(model.slides.size + 1) { indicator ->
                 Spacer(
                     Modifier
                         .size(if (index == indicator) 9.dp else 6.dp)
@@ -191,7 +196,7 @@ private fun FollowupIntroSlide(
             colors = ButtonDefaults.buttonColors(containerColor = Teal, contentColor = Night),
         ) {
             Text(
-                text = if (index == model.slides.lastIndex) "Get started" else "Continue",
+                text = if (index == model.slides.size) "Get started" else "Continue",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
             )
