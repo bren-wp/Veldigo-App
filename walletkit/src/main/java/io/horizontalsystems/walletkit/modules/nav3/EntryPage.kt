@@ -19,7 +19,7 @@ data object EntryPage : HSPage(accessibleWhileLocked = true) {
             if (it) {
                 MainScreen(navigation, contentKey())
             } else {
-                IntroScreen()
+                IntroScreen(navigation)
             }
         }
     }

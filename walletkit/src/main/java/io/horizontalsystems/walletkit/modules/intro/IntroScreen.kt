@@ -40,27 +40,86 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.NavigationType
+import io.horizontalsystems.walletkit.core.stats.StatPage
+import io.horizontalsystems.walletkit.modules.createaccount.CreateAccountPage
+import io.horizontalsystems.walletkit.modules.importwallet.ImportWalletPage
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.settings.language.LanguageSettingsPage
 import kotlinx.coroutines.launch
 
-/**
- * Veldigo's original onboarding presentation. Wallet onboarding and crypto operations
- * remain owned by the upstream ViewModel / navigation flow.
- */
 private val Night = Color(0xFF071421)
 private val Teal = Color(0xFF41E6C7)
 private val Muted = Color(0xFFB5C6D7)
 
+/**
+ * First page follows the user's 384 x 1024 welcome reference.
+ * Following pages retain the existing slide content pending their own visual passes.
+ */
 @Composable
-fun IntroScreen() {
+fun IntroScreen(navigation: HSNavigation) {
     val model = viewModel<IntroViewModel>(factory = IntroModule.Factory())
     val pager = rememberPagerState(initialPage = 0) { model.slides.size }
     val scope = rememberCoroutineScope()
+
+    HorizontalPager(
+        state = pager,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Night)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+    ) { index ->
+        if (index == 0) {
+            VeldigoWelcomeScreen(
+                onCreateWallet = {
+                    navigation.navigateWithTermsAccepted(
+                        screen = CreateAccountPage(),
+                        navigationType = NavigationType.SlideFromRight,
+                        statPageFrom = StatPage.Balance,
+                        statPageTo = StatPage.NewWallet,
+                    )
+                    model.onStartClicked()
+                },
+                onImportWallet = {
+                    navigation.navigateWithTermsAccepted(
+                        screen = ImportWalletPage(),
+                        navigationType = NavigationType.SlideFromRight,
+                        statPageFrom = StatPage.Balance,
+                        statPageTo = StatPage.ImportWallet,
+                    )
+                    model.onStartClicked()
+                },
+                onLanguage = { navigation.slideFromRight(LanguageSettingsPage) },
+            )
+        } else {
+            FollowupIntroSlide(
+                index = index,
+                model = model,
+                onNext = {
+                    if (pager.currentPage == model.slides.lastIndex) {
+                        model.onStartClicked()
+                    } else {
+                        scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
+                    }
+                },
+                onSkip = model::onStartClicked,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FollowupIntroSlide(
+    index: Int,
+    model: IntroViewModel,
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Brush.verticalGradient(listOf(Night, Color(0xFF0B2031), Night)))
-            .statusBarsPadding()
-            .navigationBarsPadding()
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -79,80 +138,62 @@ fun IntroScreen() {
             )
         }
         Spacer(Modifier.height(18.dp))
-        HorizontalPager(
-            state = pager,
+        Column(
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-        ) { index ->
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                SpaceIllustration(
-                    slide = index,
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                )
-                Spacer(Modifier.height(20.dp))
-                Text(
-                    text = if (index == 0) "Your crypto.\nYour control."
-                           else stringResource(model.slides[index].title),
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 34.sp,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    text = if (index == 0)
-                        "Your assets. Your keys. Explore the world of crypto with confidence."
-                    else stringResource(model.slides[index].subtitle),
-                    color = Muted,
-                    fontSize = 14.sp,
-                    lineHeight = 21.sp,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(30.dp))
-            }
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            SpaceIllustration(slide = index, modifier = Modifier.weight(1f).fillMaxWidth())
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = stringResource(model.slides[index].title),
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 34.sp,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(14.dp))
+            Text(
+                text = stringResource(model.slides[index].subtitle),
+                color = Muted,
+                fontSize = 14.sp,
+                lineHeight = 21.sp,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(30.dp))
         }
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            repeat(model.slides.size) { index ->
+            repeat(model.slides.size) { indicator ->
                 Spacer(
                     Modifier
-                        .size(if (pager.currentPage == index) 9.dp else 6.dp)
+                        .size(if (index == indicator) 9.dp else 6.dp)
                         .background(
-                            if (pager.currentPage == index) Teal else Color(0xFF3E5969),
+                            if (index == indicator) Teal else Color(0xFF3E5969),
                             CircleShape,
-                        )
+                        ),
                 )
             }
         }
         Spacer(Modifier.height(24.dp))
         Button(
-            onClick = {
-                if (pager.currentPage == model.slides.lastIndex) {
-                    model.onStartClicked()
-                } else {
-                    scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
-                }
-            },
+            onClick = onNext,
             modifier = Modifier.fillMaxWidth().height(54.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Teal, contentColor = Night),
         ) {
             Text(
-                text = if (pager.currentPage == model.slides.lastIndex) "Get started" else "Continue",
+                text = if (index == model.slides.lastIndex) "Get started" else "Continue",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
             )
         }
         Spacer(Modifier.height(12.dp))
         OutlinedButton(
-            onClick = model::onStartClicked,
+            onClick = onSkip,
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(18.dp),
             border = BorderStroke(1.dp, Color(0xFF38546B)),

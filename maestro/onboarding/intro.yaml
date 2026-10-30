@@ -1,20 +1,21 @@
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-# First launch after a fresh install must show the intro
+# First launch: screenshot-driven Veldigo welcome page (slide 1).
 - launchApp:
     clearState: true
-- assertVisible: "Next"
-
-# Pass the intro (3 slides)
-- tapOn: "Next"
-- tapOn: "Next"
-- tapOn: "Next"
-
-# Passing the intro lands on the main screen
+- assertVisible: "Your control."
+- assertVisible: "Create a new wallet"
+- assertVisible: "Import existing wallet"
+# Swipe to slide 2 and slide 3, preserving the original walkthrough flow.
+- swipe:
+    direction: LEFT
+- swipe:
+    direction: LEFT
+- assertVisible: "Get started"
+- tapOn: "Get started"
 - assertVisible: "Markets"
-- assertNotVisible: "Next"
-
-# Relaunch: the intro must not be shown again
+- assertNotVisible: "Create a new wallet"
+# Intro must not reappear after completion and app restart.
 - launchApp
 - assertVisible: "Markets"
-- assertNotVisible: "Next"
+- assertNotVisible: "Create a new wallet"

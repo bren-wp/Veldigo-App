@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Veldigo_Welcome_Language">English</string>
+    <string name="Veldigo_Welcome_Title1">Your crypto.</string>
+    <string name="Veldigo_Welcome_Title2">Your control.</string>
+    <string name="Veldigo_Welcome_Description">A secure, non-custodial wallet for a borderless world. Manage, swap and grow your crypto — all in one place.</string>
+    <string name="Veldigo_Welcome_SelfCustody">Self-custody</string>
+    <string name="Veldigo_Welcome_HoldKeys">You hold the keys</string>
+    <string name="Veldigo_Welcome_MultiChain">Multi-chain</string>
+    <string name="Veldigo_Welcome_AllAssets">All your assets</string>
+    <string name="Veldigo_Welcome_BuiltForYou">Built for you</string>
+    <string name="Veldigo_Welcome_Simple">Simple. Powerful.</string>
+    <string name="Veldigo_Welcome_CreateWallet">Create a new wallet</string>
+    <string name="Veldigo_Welcome_ImportWallet">Import existing wallet</string>
+    <string name="Veldigo_Welcome_Legal">By continuing you agree to our Terms of Service and Privacy Policy.</string>
+</resources>
