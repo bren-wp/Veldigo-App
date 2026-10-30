@@ -39,6 +39,7 @@ import io.horizontalsystems.walletkit.hideKeyboard
 import io.horizontalsystems.walletkit.modules.keystore.KeyStoreActivity
 import io.horizontalsystems.walletkit.modules.main.MainActivityViewModel
 import io.horizontalsystems.walletkit.modules.main.MainActivityViewModel.Factory
+import io.horizontalsystems.walletkit.modules.main.WalletDeepLinkPolicy
 import io.horizontalsystems.walletkit.modules.main.MainScreenValidationError
 import io.horizontalsystems.walletkit.modules.pin.ui.PinUnlock
 
@@ -145,10 +146,7 @@ private fun IntentEffect(viewModel: MainActivityViewModel, navigation: HSNavigat
             viewModel.setIntent(it)
             // Only chain-native payment requests may navigate to Send.
             // Non-payment external links are ignored by MainViewModel.
-            if (it.data != null && it.data.toString().let { raw ->
-                    listOf("bitcoin:", "ethereum:", "toncoin:", "monero:", "tron:",
-                        "solana:", "zcash:", "litecoin:").any(raw::startsWith)
-                }) {
+            if (it.data?.toString()?.let(WalletDeepLinkPolicy::isNativePaymentRequest) == true) {
                 navigation.removeLastUntil(EntryPage::class, false)
             }
         }
