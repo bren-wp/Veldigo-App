@@ -136,7 +136,7 @@ internal fun VeldigoWelcomeScreen(
                     fontSize = 36.sp,
                     lineHeight = 42.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.8).sp,
+                    letterSpacing = (-0.8f).sp,
                 )
                 Text(
                     text = stringResource(R.string.Veldigo_Welcome_Title2),
@@ -144,7 +144,7 @@ internal fun VeldigoWelcomeScreen(
                     fontSize = 36.sp,
                     lineHeight = 42.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.8).sp,
+                    letterSpacing = (-0.8f).sp,
                 )
                 Spacer(Modifier.height(15.dp))
                 Text(
