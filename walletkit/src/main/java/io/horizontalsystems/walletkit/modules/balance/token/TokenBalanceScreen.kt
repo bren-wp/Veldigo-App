@@ -150,7 +150,7 @@ fun TokenBalanceScreen(
             .navigationBarsPadding(),
     ) {
         VeldigoAssetTopBar(
-            title = "${viewModel.wallet.coin.name} (${viewModel.wallet.coin.code})",
+            wallet = viewModel.wallet,
             onBack = navigation::removeLastOrNull,
         )
         val onClickReceive = {
