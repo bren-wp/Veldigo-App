@@ -14,7 +14,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 /**
- * Four-step reference sequence: Secure, All Your Crypto, Freedom, and completion.
+ * Reference has four dots: Secure lights the first, Crypto the first two.
  * The flattened concept uses mint for the current and previously visited dots.
  */
 @Composable
