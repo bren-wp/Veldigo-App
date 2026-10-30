@@ -34,6 +34,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [x] Activity / transaction history — **real history and mint/navy style implemented**, visual QA pending
 - [x] Transaction Details — **live single-asset summary, account isolation and chain-specific rows**, screenshot/pixel diff pending
 - [ ] Transaction Details — **native screenshots, full error/state coverage and pixel parity are NOT verified**
+- [x] Wallet Management — **real account list, name filter, account switch, add route and backup warnings implemented**, native pixel parity pending
+- [ ] Wallet Management — **device screenshots, screen-density calibration, accessibility and account-switch regression NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
