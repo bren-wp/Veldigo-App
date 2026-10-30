@@ -67,6 +67,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccounts.VeldigoWalletRulesTest' --no-daemon --stacktrace
+      - name: Verify Add Wallet return navigation
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.manageaccounts.VeldigoAddWalletRouteTest' --no-daemon --stacktrace
       - name: Compile debug AAB
         if: steps.source.outputs.present == 'true'
         run: |
