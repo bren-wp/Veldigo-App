@@ -1,9 +1,10 @@
-# Creates a new standard wallet with the suggested name.
-# Starts from the intro of a freshly launched app, ends on the balance screen.
-appId: ${APP_ID || 'io.horizontalsystems.bankwallet.dev'}
+# Creates a standard wallet using the existing key-generation pipeline.
+# Fresh install -> Veldigo welcome -> terms -> Create New Wallet chooser.
+appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 ---
-- runFlow: pass_intro.yaml
-- tapOn: "New Wallet"
+- assertVisible: "Create a new wallet"
+- tapOn: "Create a new wallet"
 - runFlow: accept_terms.yaml
-- tapOn: "Standard"
+- assertVisible: "Create New Wallet"
+- tapOn: "Create a new wallet"
 - tapOn: "Create"
