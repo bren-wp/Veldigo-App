@@ -158,4 +158,5 @@
     <string name="Veldigo_Wallets_All">All</string>
     <string name="Veldigo_Wallets_Search">Search wallets</string>
     <string name="Veldigo_Wallets_Active">Active wallet</string>
+    <string name="Veldigo_Wallets_Warning">Review wallet security</string>
 </resources>
