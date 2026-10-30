@@ -81,6 +81,7 @@ internal fun VeldigoSwapForm(
     quote: SwapProviderQuote?,
 ) {
     var explainSlippage by remember { mutableStateOf(false) }
+    val validQuote = quote?.takeIf(VeldigoSwapReferenceRules::quotedRateAvailable)
 
     Column(
         modifier = Modifier
@@ -188,10 +189,10 @@ internal fun VeldigoSwapForm(
 
         Spacer(Modifier.height(20.dp))
         Text(
-            text = if (VeldigoSwapReferenceRules.quotedRateAvailable(quote))
-                SwapPriceUIHelper(quote.tokenIn, quote.tokenOut, quote.amountIn, quote.amountOut).priceStr
+            text = if (validQuote != null)
+                SwapPriceUIHelper(validQuote.tokenIn, validQuote.tokenOut, validQuote.amountIn, validQuote.amountOut).priceStr
             else stringResource(R.string.Veldigo_Swap_NoRate),
-            color = if (VeldigoSwapReferenceRules.quotedRateAvailable(quote)) Color.White else muted,
+            color = if (validQuote != null) Color.White else muted,
             fontSize = 13.sp,
             lineHeight = 19.sp,
             textAlign = TextAlign.Center,
