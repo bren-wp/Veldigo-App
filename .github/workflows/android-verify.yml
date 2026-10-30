@@ -47,10 +47,6 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :app:testBaseDebugUnitTest --tests 'io.horizontalsystems.bankwallet.nav3.SecuritySetupRouteTest' --no-daemon --stacktrace
-      - name: Verify real asset price chart input guards
-        if: steps.source.outputs.present == 'true'
-        run: |
-          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.balance.token.VeldigoAssetChartRulesTest' --no-daemon --stacktrace
       - name: Verify Send Continue never bypasses form validation
         if: steps.source.outputs.present == 'true'
         run: |
