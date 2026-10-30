@@ -45,4 +45,17 @@
     <string name="Veldigo_Verify_Description">Tap the words in the correct order.</string>
     <string name="Veldigo_Verify_Confirm">Confirm</string>
     <string name="Veldigo_Verify_Progress">%1$d of %2$d words selected</string>
+    <string name="Veldigo_SecuritySetup_Title">Secure Your Wallet</string>
+    <string name="Veldigo_SecuritySetup_Description">Choose how you want to unlock Veldigo.</string>
+    <string name="Veldigo_SecuritySetup_Biometric">Biometric (Recommended)</string>
+    <string name="Veldigo_SecuritySetup_BiometricUnavailable">Biometric (Unavailable)</string>
+    <string name="Veldigo_SecuritySetup_BiometricDetails">Use fingerprint or face unlock</string>
+    <string name="Veldigo_SecuritySetup_Pin">PIN Code</string>
+    <string name="Veldigo_SecuritySetup_PinDetails">Set a 6-digit PIN</string>
+    <string name="Veldigo_SecuritySetup_PinAlreadySet">Manage your existing PIN</string>
+    <string name="Veldigo_SecuritySetup_Password">Password</string>
+    <string name="Veldigo_SecuritySetup_PasswordDetails">Custom password (not supported)</string>
+    <string name="Veldigo_SecuritySetup_NoticeTitle">Security option unavailable</string>
+    <string name="Veldigo_SecuritySetup_NoPassword">A custom password is not implemented in this wallet. Use the existing six-digit PIN or device-supported biometric authentication. Do not enter wallet secrets into a simulated password form.</string>
+    <string name="Veldigo_SecuritySetup_NoBiometrics">This device does not support the biometric authentication required by Veldigo. You can protect your wallet with the existing PIN setup.</string>
 </resources>
