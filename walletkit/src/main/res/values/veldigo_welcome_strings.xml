@@ -265,4 +265,19 @@
     <string name="Veldigo_EvmRpc_AuthHint">Optional credentials</string>
     <string name="Veldigo_EvmRpc_AuthSafety">Credentials are masked on screen but are still saved by the existing node configuration storage. Use a trusted endpoint.</string>
     <string name="Veldigo_EvmRpc_UntrustedWarning">A custom RPC is an external service. It can observe requests and may provide incorrect results. Network privacy and endpoint reliability need independent verification.</string>
+    <string name="Veldigo_RpcProbe_Heading">Connection verification</string>
+    <string name="Veldigo_RpcProbe_Hint">Test the selected RPC before saving. On supported HTTPS networks, we check the reported chain ID without sending your wallet address or recovery phrase.</string>
+    <string name="Veldigo_RpcProbe_Test">Test Connection</string>
+    <string name="Veldigo_RpcProbe_Testing">Testing connection…</string>
+    <string name="Veldigo_RpcProbe_Verified">The RPC responded with the expected network chain ID. This does not guarantee that the provider is trustworthy.</string>
+    <string name="Veldigo_RpcProbe_WrongChain">Wrong network! This endpoint reports a different chain ID and cannot be saved for this blockchain.</string>
+    <string name="Veldigo_RpcProbe_InvalidResponse">The RPC response is missing a valid chain ID. Network identity has not been verified.</string>
+    <string name="Veldigo_RpcProbe_Unreachable">Could not verify this endpoint. It may be offline, blocked, or unavailable.</string>
+    <string name="Veldigo_RpcProbe_Tor">Live testing was skipped while Tor is enabled to avoid exposing a direct connection outside the configured proxy.</string>
+    <string name="Veldigo_RpcProbe_Transport">This RPC protocol cannot be tested by the HTTPS checker. The address is not verified.</string>
+    <string name="Veldigo_RpcProbe_UnknownChain">The expected chain ID is not available for this network in the checker. The provider is not verified.</string>
+    <string name="Veldigo_RpcProbe_InvalidUrl">Enter a valid HTTPS, WSS, or allowed Tor .onion endpoint.</string>
+    <string name="Veldigo_RpcProbe_Auth">To test Basic Auth, enter credentials in username:password form. The provider is not verified.</string>
+    <string name="Veldigo_RpcProbe_ReportedId">Reported chain ID: %1$s</string>
+    <string name="Veldigo_RpcProbe_ProceedUnverified">I understand this RPC could connect to the wrong or an untrusted network. Save without verification.</string>
 </resources>
