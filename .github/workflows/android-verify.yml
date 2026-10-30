@@ -95,6 +95,10 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.passcode.SecurityCenterStateRulesTest' --no-daemon --stacktrace
+      - name: Verify Security Center navigation contains no secrets
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.settings.security.SecurityCenterRouteTest' --no-daemon --stacktrace
       - name: Verify Security Center has no unused paid defense actions
         if: steps.source.outputs.present == 'true'
         run: |
