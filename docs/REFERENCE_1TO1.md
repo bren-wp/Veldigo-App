@@ -44,6 +44,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Recovery Phrase Backup / Verification (screen 25) — **native pixel diff, phrase restoration vectors, screenshot blocking and device accessibility remain unverified**
 - [x] Security Setup / PIN / Biometrics (screen 26) — **navy/mint chooser, native PIN keypad, real security routes and OS biometric prompt preserved**, device QA pending
 - [ ] Security Setup / PIN / Biometrics (screen 26) — **unverified native screenshot diff, biometric device paths, lockout/privacy QA and cryptographic security review**
+- [x] Settings / Security Overview (screen 27) — **native navy/mint grouped wallet-only settings, live PIN/biometric statuses and real routes implemented**, source QA recorded
+- [ ] Settings / Security Overview (screen 27) — **Android screenshots, font/density overlay and on-device navigation/accessibility verification NOT performed**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
