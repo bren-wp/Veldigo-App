@@ -133,7 +133,8 @@ data class HiddenWordItem(
 /** Pure security-critical predicates, independently unit-tested without UI or Android state. */
 internal object RecoveryWordVerifier {
     fun availableOptionIndex(options: List<WordOption>, selected: WordOption): Int =
-        options.indexOfFirst {
+        if (!selected.enabled) -1
+        else options.indexOfFirst {
             it.sourceIndex == selected.sourceIndex && it.word == selected.word && it.enabled
         }
 
