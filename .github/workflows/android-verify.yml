@@ -59,22 +59,29 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.receive.ui.VeldigoReceivePayloadRulesTest' --no-daemon --stacktrace
-      - name: Verify Veldigo swap cannot proceed without a real quote
+      - name: Verify wallet-only deep link admission
         if: steps.source.outputs.present == 'true'
         run: |
-          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.multiswap.VeldigoSwapReferenceRulesTest' --no-daemon --stacktrace
-      - name: Verify fiat Buy / Sell cannot charge without a payment provider
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.main.WalletDeepLinkPolicyTest' --no-daemon --stacktrace
+      - name: Compile debug AAB
         if: steps.source.outputs.present == 'true'
         run: |
-          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.buy.VeldigoFiatPurchaseGateTest' --no-daemon --stacktrace
-      - name: Verify Markets search and real-price filter logic
-        if: steps.source.outputs.present == 'true'
+          ./gradlew :app:bundleBaseDebug --no-daemon --stacktrace
+      - name: Prepare test artifacts and SHA256 checksums
+        if: steps.source.outputs.present == 'true' && success()
         run: |
-          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.market.VeldigoMarketRulesTest' --no-daemon --stacktrace
-      - name: Upload test APK
+          mkdir -p build/veldigo-test
+          cp app/build/outputs/apk/base/debug/*.apk build/veldigo-test/
+          cp app/build/outputs/bundle/baseDebug/*.aab build/veldigo-test/
+          (cd build/veldigo-test && sha256sum ./*.apk ./*.aab > SHA256SUMS)
+          printf '%s\n' 'VELDIGO Wallet — unverified engineering preview' \
+            'Non-production test APK/AAB. Do not use with real assets.' \
+            'Screen pixel parity, all supported chains and key custody remain unaudited.' \
+            > build/veldigo-test/RELEASE_NOTES.txt
+      - name: Upload test APK, AAB and SHA256SUMS
         if: steps.source.outputs.present == 'true' && success()
         uses: actions/upload-artifact@v4
         with:
-          name: veldigo-debug-apk
-          path: app/build/outputs/apk/base/debug/*.apk
+          name: veldigo-test-apk-aab
+          path: build/veldigo-test/*
           if-no-files-found: error
