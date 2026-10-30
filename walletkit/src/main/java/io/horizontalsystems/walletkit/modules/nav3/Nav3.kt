@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.view.WindowManager
 import android.widget.Toast
+import kotlinx.coroutines.delay
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -357,6 +358,11 @@ private fun ToggleScreenshot(navigation: HSNavigation, showUnlock: Boolean) {
             if (showUnlock || currentScreen?.screenshotEnabled == false) {
                 activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
             } else {
+                // NavDisplay keeps the outgoing page visible for its pop animation.
+                // Keep FLAG_SECURE until those last frames (possibly containing seed
+                // words or a PIN) have disappeared. A new protected screen cancels
+                // this coroutine and leaves the flag set without a capture gap.
+                delay(550)
                 activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
             }
         }
