@@ -1,6 +1,7 @@
 package io.horizontalsystems.bankwallet.nav3
 
 import io.horizontalsystems.walletkit.modules.pin.PinModule
+import io.horizontalsystems.walletkit.modules.pin.SetPinPage
 import io.horizontalsystems.walletkit.modules.settings.security.setup.SecuritySetupPage
 import io.horizontalsystems.walletkit.modules.settings.security.setup.EnableFingerprintPage
 import kotlinx.serialization.json.Json
@@ -32,6 +33,17 @@ class SecuritySetupRouteTest {
         assertFalse(json.contains("pin", ignoreCase = true))
         assertFalse(json.contains("biometricToken", ignoreCase = true))
         assertFalse(json.contains("mnemonic", ignoreCase = true))
+    }
+
+    @Test
+    fun realPinSetupRouteIsProtectedAndNeverSerializesPlaintextDigits() {
+        val page = SetPinPage()
+        val encoded = Json.encodeToString(SetPinPage.serializer(), page)
+        assertFalse(page.screenshotEnabled)
+        assertFalse(encoded.contains("enteredPin", ignoreCase = true))
+        assertFalse(encoded.contains("submittedPin", ignoreCase = true))
+        assertFalse(encoded.contains("pinValue", ignoreCase = true))
+        assertEquals(page, Json.decodeFromString(SetPinPage.serializer(), encoded))
     }
 
     @Test
