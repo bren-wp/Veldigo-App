@@ -18,15 +18,17 @@ class AddRpcViewModel(
     private val evmSyncSourceManager: EvmSyncSourceManager
 ) : ViewModel() {
 
-    private var url = ""
-    private var auth: String? = null
+    var url by mutableStateOf("")
+        private set
+    var auth by mutableStateOf("")
+        private set
     private var urlCaution: Caution? = null
 
     var viewState by mutableStateOf(AddRpcViewState(null))
         private set
 
     fun onEnterBasicAuth(basicAuth: String) {
-        auth = basicAuth.trim()
+        auth = basicAuth.take(1024)
     }
 
     fun onEnterRpcUrl(enteredUrl: String) {
@@ -36,6 +38,9 @@ class AddRpcViewModel(
     }
 
     fun onScreenClose() {
+        url = ""
+        auth = ""
+        urlCaution = null
         viewState = AddRpcViewState()
     }
 
@@ -60,10 +65,10 @@ class AddRpcViewModel(
             return
         }
 
-        evmSyncSourceManager.saveSyncSource(blockchain.type, url, auth?.takeIf(String::isNotBlank))
+        evmSyncSourceManager.saveSyncSource(blockchain.type, url, auth.trim().takeIf(String::isNotBlank))
         // Never retain basic authentication text in the setup ViewModel after
         // the existing manager persists it.
-        auth = null
+        auth = ""
         url = ""
         urlCaution = null
         viewState = AddRpcViewState(closeScreen = true)
@@ -76,7 +81,7 @@ class AddRpcViewModel(
 
     override fun onCleared() {
         url = ""
-        auth = null
+        auth = ""
         super.onCleared()
     }
 
