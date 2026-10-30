@@ -14,14 +14,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 /**
- * Reference has four dots: Secure lights the first, Crypto the first two.
+ * Reference has four dots. The final panel visually restarts the sequence;
+ * semanticStep preserves the correct screen-reader progress.
  * The flattened concept uses mint for the current and previously visited dots.
  */
 @Composable
-internal fun VeldigoIntroProgress(completed: Int) {
+internal fun VeldigoIntroProgress(completed: Int, semanticStep: Int = completed + 1) {
     Row(
         modifier = Modifier.semantics(mergeDescendants = true) {
-            contentDescription = "Introduction step ${completed + 1} of 4"
+            contentDescription = "Introduction step $semanticStep of 4"
         },
         horizontalArrangement = Arrangement.spacedBy(9.dp),
         verticalAlignment = Alignment.CenterVertically,
