@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.modules.manageaccount.backupconfirmkey.BackupConfirmKeyPage
 import io.horizontalsystems.walletkit.modules.manageaccount.recoveryphrase.RecoveryPhraseModule
@@ -57,10 +59,18 @@ import kotlinx.serialization.Serializable
  * The navigation host enforces FLAG_SECURE for this page and the confirmation page.
  */
 @Serializable
-data class BackupKeyPage(val account: Account) : HSPage(screenshotEnabled = false) {
+data class BackupKeyPage(val accountId: String) : HSPage(screenshotEnabled = false) {
+    // Never serialize the Account (which contains the mnemonic) in the nav back stack.
+    constructor(account: Account) : this(account.id)
+
     @Composable
     override fun GetContent(navigation: HSNavigation) {
-        RecoveryPhraseScreen(navigation, account)
+        val account = App.accountManager.account(accountId)
+        if (account != null) {
+            RecoveryPhraseScreen(navigation, account)
+        } else {
+            LaunchedEffect(accountId) { navigation.removeLastOrNull() }
+        }
     }
 }
 
@@ -78,7 +88,7 @@ fun RecoveryPhraseScreen(navigation: HSNavigation, account: Account) {
 
     // Keep the words out of the composition on backgrounding. FLAG_SECURE in
     // BackupKeyPage also prevents screenshots/recents thumbnails.
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
         revealed = false
     }
 
