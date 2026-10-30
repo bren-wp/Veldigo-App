@@ -581,6 +581,7 @@ private fun SwapScreenInner(
                             onEnableTokenIn()
                         },
                         proceedEnabled = proceedEnabled,
+                        hasValidQuote = VeldigoSwapReferenceRules.quotedRateAvailable(quote),
                         onClickNext = onClickNext
                     )
                     VSpacer(height = bottomPadding)
@@ -598,6 +599,7 @@ private fun SwapActionButton(
     onActionStarted: () -> Unit,
     onEnableTokenIn: suspend () -> Unit,
     proceedEnabled: Boolean,
+    hasValidQuote: Boolean,
     onClickNext: () -> Unit
 ) {
     ButtonsGroupVertical {
@@ -714,7 +716,7 @@ private fun SwapActionButton(
             SwapStep.Proceed -> {
                 Button(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(54.dp),
-                    enabled = VeldigoSwapReferenceRules.canProceed(currentStep, !proceedEnabled),
+                    enabled = VeldigoSwapReferenceRules.canProceed(currentStep, !proceedEnabled, hasValidQuote),
                     onClick = onClickNext,
                     shape = RoundedCornerShape(11.dp),
                     colors = ButtonDefaults.buttonColors(
