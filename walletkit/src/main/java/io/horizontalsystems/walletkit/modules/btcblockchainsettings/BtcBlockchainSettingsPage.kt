@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,7 +87,12 @@ private fun BtcBlockchainSettingsScreen(
     }
 
     LaunchedEffect(viewModel.closeScreen) {
-        if (viewModel.closeScreen) navigation.removeLastOrNull()
+        if (viewModel.closeScreen) {
+            // After a committed source change, return to Network Settings
+            // then open LIVE adapter state. Do not claim sync is complete.
+            navigation.removeLastOrNull()
+            navigation.slideFromRight(BtcSyncStatusPage(viewModel.blockchain))
+        }
     }
 
     val onBack: () -> Unit = {
@@ -190,6 +196,29 @@ private fun BtcBlockchainSettingsScreen(
                         onClick = { viewModel.onSelectRestoreMode(source) },
                     )
                 }
+            }
+
+            OutlinedButton(
+                onClick = { navigation.slideFromRight(BtcSyncStatusPage(viewModel.blockchain)) },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = 17.dp)
+                    .heightIn(min = 50.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = VeldigoHomePalette.Mint,
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_refresh),
+                    contentDescription = null,
+                    modifier = Modifier.size(19.dp),
+                )
+                Spacer(Modifier.size(9.dp))
+                Text(
+                    text = stringResource(R.string.Veldigo_BtcStatus_View),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
 
             if (viewModel.saveButtonEnabled) {
