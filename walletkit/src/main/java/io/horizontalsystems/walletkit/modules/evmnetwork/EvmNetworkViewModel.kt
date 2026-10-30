@@ -16,7 +16,10 @@ class EvmNetworkViewModel(
     private val evmSyncSourceManager: EvmSyncSourceManager
 ) : ViewModel() {
 
-    private var currentSyncSource = evmSyncSourceManager.getSyncSource(blockchain.type)
+    // Some newly supported networks may have no configured/default RPC yet.
+    // An empty provider list must not crash network settings on first open.
+    private var currentSyncSource: EvmSyncSource? =
+        runCatching { evmSyncSourceManager.getSyncSource(blockchain.type) }.getOrNull()
 
     var viewState by mutableStateOf(ViewState(emptyList(), emptyList()))
         private set
@@ -41,7 +44,7 @@ class EvmNetworkViewModel(
     private fun viewItems(evmSyncSources: List<EvmSyncSource>): List<ViewItem> {
         currentSyncSource = evmSyncSourceManager.getSyncSource(blockchain.type)
         return evmSyncSources.map { evmSyncSource ->
-            val currentSyncSourceId = currentSyncSource.id
+            val currentSyncSourceId = currentSyncSource?.id
 
             ViewItem(
                 syncSource = evmSyncSource,
