@@ -138,4 +138,5 @@
     <string name="Veldigo_Markets_Price">Price</string>
     <string name="Veldigo_Markets_Change">24h%</string>
     <string name="Veldigo_Markets_NoResults">No matching coins in the current top 100. Use full market search to find additional assets.</string>
+    <string name="Veldigo_Markets_Change1d">1D%</string>
 </resources>
