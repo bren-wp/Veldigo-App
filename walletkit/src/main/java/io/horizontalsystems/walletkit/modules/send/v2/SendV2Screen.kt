@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
@@ -104,34 +108,54 @@ fun SendV2Screen(
         null
     }
 
+    val tabs = SendTab.entries.filter {
+        when (it) {
+            SendTab.Standard -> true
+            SendTab.Private -> uiState.privateSendSupported
+            SendTab.CrossPay -> purpose is SendV2Page.Purpose.Transfer
+        }
+    }
+
     HSScaffold(
         title = title ?: stringResource(R.string.Send_Title, wallet.coin.code),
         onBack = { navigation.removeLastOrNull() },
-        menuItems = if (hasSettings) {
-            listOf(
-                MenuItem(
+        menuItems = buildList {
+            if (hasSettings) {
+                add(MenuItem(
                     title = TranslatableString.ResString(R.string.SendEvmSettings_Title),
                     icon = R.drawable.manage_24,
                     onClick = {
                         chainPlugin?.sendSettingsPage(wallet, formViewModel?.uiState?.address?.hex)
                             ?.let { navigation.slideFromRight(it) }
                     },
-                )
-            )
-        } else {
-            listOf()
+                ))
+            }
+            // The reference's Standard form has no permanent tab strip. Keep
+            // Private / CrossPay accessible from the existing app-bar menu.
+            if (uiState.tab == SendTab.Standard) {
+                if (SendTab.Private in tabs) add(MenuItem(
+                    title = TranslatableString.ResString(R.string.Send_Tab_Private),
+                    icon = R.drawable.ic_incognito_24,
+                    onClick = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                        viewModel.onSelectTab(SendTab.Private)
+                    },
+                ))
+                if (SendTab.CrossPay in tabs) add(MenuItem(
+                    title = TranslatableString.ResString(R.string.Send_Tab_CrossPay),
+                    icon = R.drawable.ic_swap_circle_24,
+                    onClick = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                        viewModel.onSelectTab(SendTab.CrossPay)
+                    },
+                ))
+            }
         },
     ) {
-        val tabs = SendTab.entries.filter {
-            when (it) {
-                SendTab.Standard -> true
-                SendTab.Private -> uiState.privateSendSupported
-                SendTab.CrossPay -> purpose is SendV2Page.Purpose.Transfer
-            }
-        }
-
         Column(modifier = Modifier.fillMaxSize()) {
-            TabsFolder(
+            if (uiState.tab != SendTab.Standard) TabsFolder(
                 tabs = tabs.map { it.tabItem() },
                 selectedIndex = tabs.indexOf(uiState.tab).coerceAtLeast(0),
                 onSelect = {
@@ -147,7 +171,9 @@ fun SendV2Screen(
                     .fillMaxWidth()
                     .weight(1f)
                     .background(
-                        Brush.verticalGradient(
+                        if (uiState.tab == SendTab.Standard) Brush.verticalGradient(
+                            listOf(Color(0xFF030D0E), Color(0xFF061413), Color(0xFF030D0E))
+                        ) else Brush.verticalGradient(
                             listOf(Color(0xFF071421), Color(0xFF10283A), Color(0xFF071421))
                         )
                     )
