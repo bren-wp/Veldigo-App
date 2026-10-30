@@ -94,4 +94,12 @@
     <string name="Veldigo_Send_FeeOnReview">Calculated on the confirmation screen</string>
     <string name="Veldigo_Send_FeeSettings">Fee settings</string>
     <string name="Veldigo_Send_Continue">Continue</string>
+    <string name="Veldigo_Receive_Title">Receive %1$s</string>
+    <string name="Veldigo_Receive_YourAddress">Your %1$s Address</string>
+    <string name="Veldigo_Receive_QrDescription">QR code for your %1$s receiving address or payment request</string>
+    <string name="Veldigo_Receive_CopyAddress">Copy complete receiving address</string>
+    <string name="Veldigo_Receive_AddressUnavailable">Receiving address is unavailable. Check wallet synchronization.</string>
+    <string name="Veldigo_Receive_ShareAddress">Share Address</string>
+    <string name="Veldigo_Receive_ShareRequest">Share Payment Request</string>
+    <string name="Veldigo_Receive_RequestAmount">Requested amount: %1$s</string>
 </resources>
