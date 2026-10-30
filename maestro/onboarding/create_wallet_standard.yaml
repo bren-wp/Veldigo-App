@@ -10,4 +10,5 @@ appId: ${APP_ID || 'com.brendigo.veldigo.dev'}
 
 # Acknowledgement must NOT silently mark a backup verified.
 - tapOn: "I've written it down"
-- assertVisible: "Select requested words from your wallet recovery phrase"
+- assertVisible: "Tap the words in the correct order."
+- assertVisible: "Confirm"
