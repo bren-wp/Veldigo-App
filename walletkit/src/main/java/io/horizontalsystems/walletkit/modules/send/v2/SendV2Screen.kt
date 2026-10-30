@@ -269,6 +269,29 @@ private fun ColumnScope.SendFormTab(
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
+            if (!isPrivateSend) {
+                val feeSettingsPage = remember(
+                    wallet.token, uiState.address?.hex,
+                ) {
+                    ChainRegistry[wallet.token.blockchainType]
+                        ?.sendSettingsPage(wallet, uiState.address?.hex)
+                }
+                VeldigoStandardSendFields(
+                    wallet = wallet,
+                    state = uiState,
+                    focusRequester = focusRequester,
+                    onOpenRecipient = openAddress,
+                    onEnterAmount = viewModel::onEnterAmount,
+                    onEnterFiatAmount = viewModel::onEnterFiatAmount,
+                    onMax = {
+                        focusManager.clearFocus()
+                        viewModel.onEnterAmountPercentage(100)
+                    },
+                    onFeeSettings = feeSettingsPage?.let { settingsPage ->
+                        { navigation.slideFromRight(settingsPage) }
+                    },
+                )
+            } else {
             val step = uiState.step
             AvailableBalanceRow(
                 balanceToken = wallet.token,
@@ -317,6 +340,7 @@ private fun ColumnScope.SendFormTab(
                 if (!uiState.hideAddress) {
                     SectionArrow()
                 }
+            }
             }
             // Neither the chain's own field nor a memo can travel with a private send
             // deposit (its memo slot belongs to the provider's identifier), so they
