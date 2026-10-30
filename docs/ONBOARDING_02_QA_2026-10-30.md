@@ -15,7 +15,7 @@ Date: 2026-10-30
 | Illustration | three layered dark cards with prominent mint shield | locally drawn scalable Canvas; *not exact 3-D art* |
 | Headline | `Secure` bold white, centered | 30sp, center aligned |
 | Description | `Your assets, protected with industry-leading security.` | localized resource, centered 15sp / 22sp |
-| Pagination | three small dots, active mint position 2 | 3 indicators, accessibility announcement |
+| Pagination | four small dots, first one mint | shared four-dot `VeldigoIntroProgress(completed = 0)` |
 | Next | wide mint rounded CTA | 54dp button; pager to page index 2 |
 | Skip | small secondary action | invokes original `IntroViewModel.onStartClicked()` |
 
@@ -28,7 +28,7 @@ Date: 2026-10-30
 ## Engineering and safety constraints
 - UI work only, no changes to local wallet storage, mnemonic handling, signing, recovery, key derivation or blockchain RPC clients.
 - Real security claims require independent security audit. The design copy follows the user-supplied illustration, **not** a certification or security conclusion.
-- Skip persists the original onboarding-complete flag. Next advances to the existing third intro page.
+- Skip persists the original onboarding-complete flag. Next advances to the new third crypto intro page; the fourth Freedom page remains available.
 - Scroll fallback for compact heights; physical-device font scaling, landscape, display cutout, gesture navigation and TalkBack checks are still mandatory.
 - Reference artwork itself was not embedded in the app, and no AI image or screenshot masquerading as a real build was produced.
 
@@ -45,4 +45,4 @@ Date: 2026-10-30
 | Onboarding 2 marked **1:1 VERIFIED** | **NO** |
 | Safe to merge automatically | **NO**, review CI and visual gate first |
 
-Next screen: **Onboarding 3** after source and device QA on the second screen.
+Follow-up implemented on the same PR: **Onboarding 3**. See `docs/ONBOARDING_03_QA_2026-10-30.md`. Android/device visual QA remains pending.
