@@ -54,6 +54,8 @@ Primary reference: the user's navy/mint four-screen panel. Secondary reference: 
 - [ ] Network / Blockchain Settings (screen 30) — **native screenshot/pixel diff, real provider switch/reconnect, offline error and RPC/Tor leak audit NOT performed**
 - [x] EVM Network / RPC Providers (screen 31) — **real default/custom sources, selected provider, secret-redacted URL, confirmed custom-source removal and branded Add RPC form implemented**
 - [ ] EVM Network / RPC Providers (screen 31) — **native screenshot/pixel diff, chain-ID check, endpoint transport security and device integration NOT verified**
+- [x] Custom RPC Connection Validation (screen 32) — **read-only HTTPS eth_chainId probe, wrong-chain block, real unverified-consent state and Tor-aware no-probe rule implemented**, QA documented
+- [ ] Custom RPC Connection Validation (screen 32) — **real device network tests, complete chain coverage, WSS/onion transport identity, proxy/TLS audit and exact 1:1 screenshot parity NOT verified**
 - [ ] Legacy swaps/buy/markets/NFT/dApp/WalletConnect — **out of scope, backend and historical-session decommission audit pending**
 - [ ] Security settings, theme, about and help — **visual parity/content audit pending**
 
