@@ -66,4 +66,15 @@
     <string name="Veldigo_Fingerprint_DeviceLock">Turn on a secure device screen lock before enabling biometric unlock. Your wallet PIN is also required.</string>
     <string name="Veldigo_Fingerprint_Unavailable">Biometric authentication is unavailable or not enrolled on this device. Set up a supported fingerprint or face credential in Android settings, then try again.</string>
     <string name="Veldigo_Fingerprint_Failed">Android could not verify your identity. Biometric unlock remains disabled. You can retry or use your existing PIN.</string>
+    <string name="Veldigo_Home_TotalBalance">Total Balance</string>
+    <string name="Veldigo_Home_Hidden">Balance hidden</string>
+    <string name="Veldigo_Home_Buy">Buy</string>
+    <string name="Veldigo_Home_BuyUnavailable">Buying crypto is unavailable</string>
+    <string name="Veldigo_Home_BuyExplanation">This version does not provide a verified fiat-to-crypto purchase integration. No payment has been started. You can use supported send, receive and swap features.</string>
+    <string name="Veldigo_Home_Tokens">Tokens</string>
+    <string name="Veldigo_Home_Nfts">NFTs</string>
+    <string name="Veldigo_Home_NftUnavailable">NFT holdings are not yet connected to this portfolio view. This does not mean your account has no NFTs.</string>
+    <string name="Veldigo_Home_Home">Home</string>
+    <string name="Veldigo_Home_Markets">Markets</string>
+    <string name="Veldigo_Home_History">History</string>
 </resources>
