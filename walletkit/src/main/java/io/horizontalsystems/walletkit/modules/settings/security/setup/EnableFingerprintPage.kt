@@ -141,6 +141,9 @@ internal fun EnableFingerprintScreen(
                 ContextCompat.getMainExecutor(host),
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        // Ignore a late callback after the page was dismissed or a
+                        // previous request was cancelled during configuration change.
+                        if (!authenticating) return
                         authenticating = false
                         val accepted = BiometricSetupGate.mayEnableAfterResult(
                             deviceSecure = !App.systemInfoManager.isSystemLockOff,
