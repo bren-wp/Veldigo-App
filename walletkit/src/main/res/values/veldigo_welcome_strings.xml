@@ -246,4 +246,23 @@
     <string name="Veldigo_Networks_BtcLike">Bitcoin-family networks</string>
     <string name="Veldigo_Networks_Other">EVM &amp; other networks</string>
     <string name="Veldigo_Networks_None">No configurable blockchain networks are available.</string>
+    <string name="Veldigo_EvmRpc_Title">RPC Providers</string>
+    <string name="Veldigo_EvmRpc_SourceTitle">Network connection settings</string>
+    <string name="Veldigo_EvmRpc_Description">Select a provider used to synchronize this blockchain. The selected source is not a guarantee of a currently working connection.</string>
+    <string name="Veldigo_EvmRpc_Default">Available providers</string>
+    <string name="Veldigo_EvmRpc_Custom">Custom RPC providers</string>
+    <string name="Veldigo_EvmRpc_NoDefault">No default RPC providers configured.</string>
+    <string name="Veldigo_EvmRpc_NoCustom">No custom RPC providers added.</string>
+    <string name="Veldigo_EvmRpc_Safety">RPC providers can see requests and may return misleading blockchain data. Only use endpoints you trust; confirm transactions and balances independently.</string>
+    <string name="Veldigo_EvmRpc_Unnamed">Custom RPC</string>
+    <string name="Veldigo_EvmRpc_Selected">Selected provider</string>
+    <string name="Veldigo_EvmRpc_Remove">Remove custom RPC provider</string>
+    <string name="Veldigo_EvmRpc_DeleteTitle">Remove RPC provider?</string>
+    <string name="Veldigo_EvmRpc_DeleteMessage">Remove the custom provider “%1$s”? This does not delete the blockchain or your wallet.</string>
+    <string name="Veldigo_EvmRpc_AddDescription">Enter a secure RPC URL for this blockchain. Supported URL schemes are HTTPS and WSS, or HTTP for a valid Tor .onion host.</string>
+    <string name="Veldigo_EvmRpc_UrlHint">https://rpc.example.org</string>
+    <string name="Veldigo_EvmRpc_UrlSafety">Do not put usernames or passwords into the URL. Private API keys in URL paths or parameters are never displayed in the provider list.</string>
+    <string name="Veldigo_EvmRpc_AuthHint">Optional credentials</string>
+    <string name="Veldigo_EvmRpc_AuthSafety">Credentials are masked on screen but are still saved by the existing node configuration storage. Use a trusted endpoint.</string>
+    <string name="Veldigo_EvmRpc_UntrustedWarning">A custom RPC is an external service. It can observe requests and may provide incorrect results. Network privacy and endpoint reliability need independent verification.</string>
 </resources>
