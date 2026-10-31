@@ -17,6 +17,12 @@
 5. Run external Send navigation through a Compose `LaunchedEffect` rather than mutating the navigation stack during composition; this prevents repeated page pushes caused by recomposition.
 6. Restrict chain-native payment deep-link admission to a bounded length and reject control characters before invoking the chain URI parser; add regression tests. Actual address, network and fee validation remain required in send adapters.
 7. Require full `:walletkit:testDebugUnitTest` and `:app:testBaseDebugUnitTest` suites in the test-only preview publication workflow; any test failure blocks artifact publication.
+8. Replace the legacy Market read-only PIN exemption with unconditional wallet locking across all tabs, including persisted legacy Markets preferences; tests cover cold start, deferred/cancelled actions and throwing/cancelled navigation callbacks.
+9. Stop Android from exporting legacy WalletConnect, referral and Market widget entry points; keep necessary stored legacy session state until a safe revocation/migration path is verified.
+10. Remove the arbitrary Add Token action from Assets (keep existing enabled tokens); remove old Market/price settings from Appearance.
+11. Disable creating new custom EVM RPC endpoints, including the restored legacy AddRpcPage back-stack route, while preserving selection/deletion of existing stored sources. New chain transaction providers still need independent verification.
+12. Main navigation no longer renders Market or Swap; legacy persisted enum values safely fall back to Wallet.
+13. Add PR CI guards to prevent reinstating those entry points. Document the current Google Play non-custodial crypto wallet declaration and API target requirements in `docs/GOOGLE_PLAY_WALLET_COMPLIANCE_2026.md`.
 
 ## Security findings requiring further work (NOT FIXED here)
 
@@ -27,7 +33,7 @@
 | **High — possible silent unreadable account state** | `DatabaseConverters.decryptSecretString/decryptSecretList` catches decryption failures and returns null; `AccountsStorage.allAccounts` catches record mapping failures and drops the row from the returned list | Design non-destructive encrypted-data recovery/error surface and migrations; regression-test corruption, wrong keystore, updates and recovery before changing this path |
 | **High — upstream wallet-only feature retirement incomplete** | `settings.gradle.kts` still includes `dapp-core`, `dapp-wallet-connect` and subscription modules; `AppDatabase` still holds WalletConnect, NFT and swap tables | Audit live entry points and dependency graph, revoke legacy approvals/sessions safely, preserve account data and signing dependencies before removing modules |
 | **High — provider and chain quality unknown** | Blockchain adapters exist but network-specific transaction acceptance, balances and receipt verification are not documented as tested | Keep the support matrix conservative and ensure the UI does not advertise unverified functionality as production safe |
-| **Medium — old documentation drift** | README text still referred to PR #7 as draft and a previous preview as latest | Update status copy to match merged PR and current preview |
+| **Medium — app documentation and release compliance** | New financial-feature declaration and local privacy disclosures required for Google Play | Review country-specific non-custodial declaration, Data safety, privacy policy, target API and test-signing before release |
 
 ## Acceptance and release gates
 
