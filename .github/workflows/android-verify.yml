@@ -85,6 +85,8 @@ jobs:
           MANIFEST=app/src/main/AndroidManifest.xml
           ASSETS=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/managewallets/ManageWalletsPage.kt
           APPEARANCE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/appearance/AppearancePage.kt
+          MAIN_PAGE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/main/MainPage.kt
+          EVM_NETWORK=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/evmnetwork/EvmNetworkPage.kt
           if grep -E 'android:scheme="(wc|tc|unstoppable.money)"|android:pathPrefix="/referral"|MarketWidgetReceiver|MarketWidgetConfigurationActivity' "$MANIFEST"; then
             echo 'Legacy dApp, referral and market entry points must not be exported' >&2
             exit 1
@@ -95,6 +97,14 @@ jobs:
           fi
           if grep -E 'Appearance_MarketsTab|Appearance_HideMarketsTab|Appearance_PriceChangeInterval|openPriceChangeIntervalSelector' "$APPEARANCE"; then
             echo 'Market preferences must not be presented by wallet-only Appearance' >&2
+            exit 1
+          fi
+          if grep -E 'import .*MarketScreen|import .*SwapScreen|MarketScreen\\(|SwapScreen\\(' "$MAIN_PAGE"; then
+            echo 'Market and Swap must never render from wallet main navigation' >&2
+            exit 1
+          fi
+          if grep -E 'navigation.add\\(AddRpcPage|AddRpcScreen\\(' "$EVM_NETWORK"; then
+            echo 'New custom RPC entry must not be reachable in Network Settings' >&2
             exit 1
           fi
       - name: Verify wallet-only deep link admission
