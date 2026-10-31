@@ -26,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
-import io.horizontalsystems.walletkit.core.managers.RateAppManager
 import io.horizontalsystems.walletkit.helpers.HudHelper
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
@@ -51,13 +49,11 @@ import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
 import io.horizontalsystems.walletkit.modules.market.MarketScreen
 import io.horizontalsystems.walletkit.modules.multiswap.SwapScreen
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
-import io.horizontalsystems.walletkit.modules.rateapp.RateApp
 import io.horizontalsystems.walletkit.modules.releasenotes.ReleaseNotesPage
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceModule
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceScreen
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceViewModel
 import io.horizontalsystems.walletkit.modules.sendtokenselect.SendTokenSelectPage
-import io.horizontalsystems.walletkit.modules.settings.donate.WhyDonatePage
 import io.horizontalsystems.walletkit.modules.settings.main.SettingsScreen
 import io.horizontalsystems.walletkit.modules.tor.TorStatusView
 import io.horizontalsystems.walletkit.modules.transactions.TransactionsViewModel
@@ -143,7 +139,11 @@ private fun MainScreen(
                             // management. Both navigation actions remain behind the PIN gate.
                             HsNavigationBarItem(
                                 selected = false,
-                                onClick = { navigation.slideFromRight(ManageWalletsPage) },
+                                onClick = {
+                                    viewModel.openProtectedPage {
+                                        navigation.slideFromRight(ManageWalletsPage)
+                                    }
+                                },
                                 icon = {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_manage_2_24),
@@ -162,8 +162,10 @@ private fun MainScreen(
                             HsNavigationBarItem(
                                 selected = false,
                                 onClick = {
-                                    navigation.slideFromRight(TransactionsPage)
-                                    stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Transactions))
+                                    viewModel.openProtectedPage {
+                                        navigation.slideFromRight(TransactionsPage)
+                                        stat(page = StatPage.Balance, event = StatEvent.Open(StatPage.Transactions))
+                                    }
                                 },
                                 icon = {
                                     Icon(
@@ -266,24 +268,6 @@ private fun MainScreen(
             )
             viewModel.whatsNewShown()
         }
-    }
-
-    if (uiState.showDonationPage) {
-        LaunchedEffect(Unit) {
-            navigation.slideFromBottom(WhyDonatePage)
-            viewModel.donationShown()
-        }
-    }
-
-    if (uiState.showRateAppDialog) {
-        val context = LocalContext.current
-        RateApp(
-            onRateClick = {
-                RateAppManager.openPlayMarket(context)
-                viewModel.closeRateDialog()
-            },
-            onCancelClick = { viewModel.closeRateDialog() }
-        )
     }
 
     if (uiState.wcSupportState != null) {
