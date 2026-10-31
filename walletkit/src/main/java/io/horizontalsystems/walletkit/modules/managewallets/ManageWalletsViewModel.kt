@@ -31,9 +31,6 @@ class ManageWalletsViewModel(
     private var availableBlockchainTypes: List<BlockchainType>? =
         BlockchainType.supported.sortedBy { it.order }
 
-    val addTokenEnabled: Boolean
-        get() = service.accountType?.canAddTokens ?: false
-
     init {
         viewModelScope.launch {
             service.itemsFlow.collect {
