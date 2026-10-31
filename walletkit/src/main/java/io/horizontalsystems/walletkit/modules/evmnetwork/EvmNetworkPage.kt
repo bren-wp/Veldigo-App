@@ -50,7 +50,6 @@ import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.entities.EvmSyncSource
 import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
-import io.horizontalsystems.walletkit.modules.evmnetwork.addrpc.AddRpcScreen
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
 import io.horizontalsystems.marketkit.models.Blockchain
@@ -64,11 +63,14 @@ data class EvmNetworkPage(val blockchain: Blockchain) : HSPage(screenshotEnabled
     }
 }
 
+// Retain the serializable route for persisted navigation-state compatibility.
+// Restored legacy Add RPC routes display the existing provider list instead
+// of permitting new, unverified network endpoints.
 @Serializable
 data class AddRpcPage(val blockchain: Blockchain) : HSPage(screenshotEnabled = false) {
     @Composable
     override fun GetContent(navigation: HSNavigation) {
-        AddRpcScreen(navigation = navigation, blockchain = blockchain)
+        EvmNetworkScreen(navigation, blockchain)
     }
 }
 
