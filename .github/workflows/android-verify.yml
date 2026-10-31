@@ -67,6 +67,16 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.receive.ui.VeldigoReceivePayloadRulesTest' --no-daemon --stacktrace
+      - name: Verify private shortcuts require PIN and promotional overlays stay removed
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.pin.core.LockGateTest' --no-daemon --stacktrace
+          MAIN_PAGE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/main/MainPage.kt
+          test "$(grep -c 'viewModel.openProtectedPage' "$MAIN_PAGE")" -eq 2
+          if grep -En 'WhyDonatePage|RateApp\\(|showDonationPage|showRateAppDialog' "$MAIN_PAGE"; then
+            echo 'Promotional overlays must not appear on the wallet main screen' >&2
+            exit 1
+          fi
       - name: Verify wallet-only deep link admission
         if: steps.source.outputs.present == 'true'
         run: |
