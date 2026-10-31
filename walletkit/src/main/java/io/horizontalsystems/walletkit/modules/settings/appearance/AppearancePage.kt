@@ -89,9 +89,7 @@ fun AppearanceScreen(navigation: HSNavigation) {
     var selectedAppIcon by remember { mutableStateOf<AppIcon?>(null) }
 
     var openThemeSelector by rememberSaveable { mutableStateOf(false) }
-    var openLaunchPageSelector by rememberSaveable { mutableStateOf(false) }
     var openBalanceValueSelector by rememberSaveable { mutableStateOf(false) }
-    var openPriceChangeIntervalSelector by rememberSaveable { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -152,73 +150,6 @@ fun AppearanceScreen(navigation: HSNavigation) {
                     }
                 }
             )
-
-            VSpacer(24.dp)
-
-            HeaderText(text = stringResource(id = R.string.Appearance_MarketsTab))
-            CellUniversalLawrenceSection(
-                listOf(
-                    {
-                        SettingUniversalCell(
-                            title = R.string.Appearance_HideMarketsTab,
-                            subtitle = R.string.Appearance_HideMarketsTab_Tip,
-                        ) {
-                            HsSwitch(
-                                checked = uiState.marketsTabHidden,
-                                onCheckedChange = {
-                                    viewModel.onSetMarketTabsHidden(it)
-                                }
-                            )
-                        }
-                    },
-                    {
-                        SettingUniversalCell(
-                            title = R.string.Appearance_PriceChangeInterval,
-                            subtitle = R.string.Appearance_PriceChangeInterval_Tip,
-                            onClick = { openPriceChangeIntervalSelector = true }
-                        ) {
-                            subhead1_leah(
-                                text = uiState.priceChangeInterval.title.getString(),
-                                maxLines = 1,
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            )
-
-                            Image(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.ic_down_arrow_20),
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                )
-            )
-
-            AnimatedVisibility(visible = !uiState.marketsTabHidden) {
-                Column {
-                    VSpacer(32.dp)
-                    CellUniversalLawrenceSection(
-                        listOf {
-                            SettingUniversalCell(
-                                title = R.string.Settings_LaunchScreen,
-                                subtitle = R.string.Settings_LaunchScreen_Tip,
-                                onClick = { openLaunchPageSelector = true }
-                            ) {
-                                subhead1_leah(
-                                    text = uiState.selectedLaunchScreen.title.getString(),
-                                    maxLines = 1,
-                                    modifier = Modifier.padding(horizontal = 8.dp)
-                                )
-
-                                Image(
-                                    modifier = Modifier.size(20.dp),
-                                    painter = painterResource(id = R.drawable.ic_down_arrow_20),
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-                    )
-                }
-            }
 
             VSpacer(24.dp)
             HeaderText(text = stringResource(id = R.string.Appearance_BalanceTab))
@@ -326,16 +257,6 @@ fun AppearanceScreen(navigation: HSNavigation) {
                 onSelectItem = { viewModel.onEnterTheme(it) }
             )
         }
-        if (openLaunchPageSelector) {
-            MenuGroup(
-                title = stringResource(R.string.Settings_LaunchScreen),
-                items = uiState.launchScreenOptions.options.map {
-                    MenuItemX(it.title.getString(), it == uiState.launchScreenOptions.selected, it)
-                },
-                onDismissRequest = { openLaunchPageSelector = false },
-                onSelectItem = { viewModel.onEnterLaunchPage(it) }
-            )
-        }
         if (openBalanceValueSelector) {
             MenuGroup(
                 title = stringResource(R.string.Appearance_BalanceValue),
@@ -346,17 +267,6 @@ fun AppearanceScreen(navigation: HSNavigation) {
                 onSelectItem = { viewModel.onEnterBalanceViewType(it) }
             )
         }
-        if (openPriceChangeIntervalSelector) {
-            MenuGroup(
-                title = stringResource(R.string.Appearance_PriceChangeInterval),
-                items = uiState.priceChangeIntervalOptions.options.map {
-                    MenuItemX(it.title.getString(), it == uiState.priceChangeIntervalOptions.selected, it)
-                },
-                onDismissRequest = { openPriceChangeIntervalSelector = false },
-                onSelectItem = { viewModel.onSetPriceChangeInterval(it) }
-            )
-        }
-
         if (showBottomSheet) {
             BottomSheetContent(
                 onDismissRequest = {
