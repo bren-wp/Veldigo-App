@@ -9,14 +9,10 @@ import io.horizontalsystems.walletkit.core.IAccountManager
 import io.horizontalsystems.walletkit.core.IBackupManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.INetworkManager
-import io.horizontalsystems.walletkit.core.IRateAppManager
 import io.horizontalsystems.walletkit.core.ITermsManager
 import io.horizontalsystems.walletkit.core.ViewModelUiState
-import io.horizontalsystems.walletkit.core.managers.ActionCompletedDelegate
 import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
-import io.horizontalsystems.walletkit.core.managers.DonationShowManager
 import io.horizontalsystems.walletkit.core.managers.ReleaseNotesManager
-import io.horizontalsystems.walletkit.core.managers.WalletEventType
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
@@ -36,17 +32,14 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val pinComponent: IPinComponent,
-    rateAppManager: IRateAppManager,
     private val backupManager: IBackupManager,
     private val termsManager: ITermsManager,
     private val accountManager: IAccountManager,
     private val releaseNotesManager: ReleaseNotesManager,
-    private val donationShowManager: DonationShowManager,
     private val localStorage: ILocalStorage,
     wcSessionManager: WCSessionManager,
     private val wcManager: WCManager,
     private val networkManager: INetworkManager,
-    private val actionCompletedDelegate: ActionCompletedDelegate,
     private val lockGate: LockGate,
 ) : ViewModelUiState<MainModule.UiState>() {
 
@@ -83,9 +76,7 @@ class MainViewModel(
     private var selectedTabIndex = getTabIndexToOpen()
     private var deeplinkPage: DeeplinkPage? = null
     private var mainNavItems = navigationItems()
-    private var showRateAppDialog = false
     private var showWhatsNew = false
-    private var showDonationPage = false
     private var wcSupportState: WCManager.SupportState? = null
     private var torEnabled = localStorage.torEnabled
     private var openSendTokenSelect: OpenSendTokenSelect? = null
@@ -120,13 +111,6 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            rateAppManager.showRateAppFlow.collect {
-                showRateAppDialog = it
-                emitState()
-            }
-        }
-
-        viewModelScope.launch {
             backupManager.allBackedUpFlow.collect {
                 updateSettingsBadge()
             }
@@ -152,15 +136,6 @@ class MainViewModel(
             }
         }
 
-        viewModelScope.launch {
-            actionCompletedDelegate.walletEvents.collect { event ->
-                //ContactAddedToRecent event triggered after successful send transaction
-                if (event == WalletEventType.ContactAddedToRecent && donationShowManager.shouldShow()) {
-                    showDonationPage()
-                }
-            }
-        }
-
         updateSettingsBadge()
         updateTransactionsTabEnabled()
     }
@@ -177,9 +152,7 @@ class MainViewModel(
     override fun createState() = MainModule.UiState(
         deeplinkPage = deeplinkPage,
         mainNavItems = mainNavItems,
-        showRateAppDialog = showRateAppDialog,
         showWhatsNew = showWhatsNew,
-        showDonationPage = showDonationPage,
         wcSupportState = wcSupportState,
         torEnabled = torEnabled,
         openSend = openSendTokenSelect,
@@ -202,23 +175,20 @@ class MainViewModel(
         emitState()
     }
 
-    fun donationShown() {
-        donationShowManager.updateDonatePageShownDate()
-        showDonationPage = false
-        emitState()
-    }
-
-    fun closeRateDialog() {
-        showRateAppDialog = false
-        emitState()
-    }
-
     fun onResume() {
         viewModelScope.launch {
             if (!pinComponent.isLocked && releaseNotesManager.shouldShowChangeLog()) {
                 showWhatsNew()
             }
         }
+    }
+
+    /**
+     * Enforce the PIN gate for shortcut destinations outside the selected tab.
+     * A deferred action runs only after the user unlocks; cancelling drops it.
+     */
+    fun openProtectedPage(action: () -> Unit) {
+        lockGate.requireUnlocked(action)
     }
 
     fun onSelect(mainNavItem: MainNavigation) {
@@ -391,12 +361,6 @@ class MainViewModel(
     private suspend fun showWhatsNew() {
         delay(2000)
         showWhatsNew = true
-        emitState()
-    }
-
-    private suspend fun showDonationPage() {
-        delay(2000)
-        showDonationPage = true
         emitState()
     }
 
