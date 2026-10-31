@@ -272,3 +272,23 @@ jobs:
           name: veldigo-test-apk-aab
           path: build/veldigo-test/*
           if-no-files-found: error
+
+  # Preview publishing used to run unit suites only AFTER merge to main,
+  # so regressions were discovered too late. Mirror its test gate in PR CI.
+  preview-unit-gate:
+    name: Preview release unit-test gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - name: Run exactly the unit tests required before publishing a preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x ./gradlew
+          ./gradlew :walletkit:testDebugUnitTest :app:testBaseDebugUnitTest --no-daemon --stacktrace
