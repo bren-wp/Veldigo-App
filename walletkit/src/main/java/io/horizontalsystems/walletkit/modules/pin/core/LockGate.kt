@@ -1,7 +1,6 @@
 package io.horizontalsystems.walletkit.modules.pin.core
 
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -104,11 +103,10 @@ class LockGate(
     private fun runDeferred(block: () -> Unit) {
         try {
             block()
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
-            // A failing destination must not kill the lock-state collector.
-            Timber.e(e, "LockGate protected action failed")
+            // UI navigation callbacks are not trusted to keep the lock collector alive.
+            // Never include destinations, URIs or account data in a diagnostic log.
+            Timber.w("Protected wallet action could not open")
         }
     }
 
