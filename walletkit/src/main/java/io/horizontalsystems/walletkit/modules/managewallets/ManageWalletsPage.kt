@@ -23,7 +23,6 @@ import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
-import io.horizontalsystems.walletkit.modules.addtoken.AddTokenPage
 import io.horizontalsystems.walletkit.modules.configuredtoken.ConfiguredTokenInfoSheet
 import io.horizontalsystems.walletkit.modules.enablecoin.restoresettings.AccountPickerResult
 import io.horizontalsystems.walletkit.modules.enablecoin.restoresettings.RestoreSettingsViewModel
@@ -34,10 +33,8 @@ import io.horizontalsystems.walletkit.modules.restoreaccount.restoreblockchains.
 import io.horizontalsystems.walletkit.modules.restoreconfig.BirthdayHeightConfigPage
 import io.horizontalsystems.walletkit.modules.tokenselect.SelectChainTab
 import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
-import io.horizontalsystems.walletkit.ui.compose.TranslatableString
 import io.horizontalsystems.walletkit.ui.compose.components.HsDivider
 import io.horizontalsystems.walletkit.ui.compose.components.ListEmptyView
-import io.horizontalsystems.walletkit.ui.compose.components.MenuItem
 import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
 import io.horizontalsystems.walletkit.uiv3.components.HSScaffold
 import io.horizontalsystems.walletkit.uiv3.components.bottom.BottomSearchBar
@@ -125,23 +122,9 @@ private fun ManageWalletsScreen(
     HSScaffold(
         title = stringResource(id = R.string.ManageCoins_title),
         onBack = { navigation.removeLastOrNull() },
-        menuItems = if (viewModel.addTokenEnabled) {
-            listOf(
-                MenuItem(
-                    title = TranslatableString.ResString(R.string.ManageCoins_AddToken),
-                    icon = R.drawable.ic_add_24,
-                    onClick = {
-                        navigation.slideFromRight(AddTokenPage)
-
-                        stat(
-                            page = StatPage.CoinManager,
-                            event = StatEvent.Open(StatPage.AddToken)
-                        )
-                    }
-                ))
-        } else {
-            listOf()
-        },
+        // Users can enable known tokens from the verified catalog, not add arbitrary contracts.
+        // The underlying AddToken code is retained for legacy wallet-data compatibility until
+        // its other dependencies are audited; this screen never exposes that route.
     ) {
         Column {
             val tabItems: List<TabItem<SelectChainTab>> = uiState.tabs.map { chainTab ->
