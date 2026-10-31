@@ -107,6 +107,14 @@ class LockGateTest {
     }
 
     @Test
+    fun `cancelled navigation callback never disables the wallet PIN`() {
+        gate.requireUnlocked { throw kotlinx.coroutines.CancellationException("navigation cancelled") }
+        isLocked.value = false
+        isLocked.value = true
+        assertTrue(gate.showUnlock)
+    }
+
+    @Test
     fun `throwing protected callback does not kill PIN collector`() {
         gate.requireUnlocked { throw IllegalStateException("test") }
         isLocked.value = false
