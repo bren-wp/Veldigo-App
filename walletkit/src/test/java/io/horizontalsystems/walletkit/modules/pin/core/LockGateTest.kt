@@ -135,6 +135,26 @@ class LockGateTest {
     }
 
     @Test
+    fun `wallet-only shortcut opens only after PIN and cancelled shortcut stays closed`() {
+        gate.selectedTab = MainNavigation.Balance
+        val opened = mutableListOf<String>()
+
+        // These represent the Assets and Activity buttons, which bypass main-tab selection.
+        gate.requireUnlocked { opened.add("assets") }
+        assertTrue(opened.isEmpty())
+        assertTrue(gate.showUnlock)
+
+        gate.cancelUnlockRequest()
+        gate.requireUnlocked { opened.add("activity") }
+        assertTrue(opened.isEmpty())
+
+        isLocked.value = false
+
+        assertEquals(listOf("activity"), opened)
+        assertFalse(gate.unlockRequested)
+    }
+
+    @Test
     fun `newer request replaces a pending one`() {
         gate.selectedTab = MainNavigation.Market
         val runs = mutableListOf<String>()
