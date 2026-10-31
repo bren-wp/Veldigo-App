@@ -46,8 +46,6 @@ import io.horizontalsystems.walletkit.modules.balance.ui.VeldigoHomePalette
 import io.horizontalsystems.walletkit.modules.transactions.TransactionsPage
 import io.horizontalsystems.walletkit.modules.main.MainModule.MainNavigation
 import io.horizontalsystems.walletkit.modules.managewallets.ManageWalletsPage
-import io.horizontalsystems.walletkit.modules.market.MarketScreen
-import io.horizontalsystems.walletkit.modules.multiswap.SwapScreen
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.releasenotes.ReleaseNotesPage
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceModule
@@ -244,17 +242,11 @@ private fun MainScreen(
                 animationSpec = if (uiState.snapTabSwitch || isLocked) snap() else tween()
             ) { navItem ->
                 when (navItem) {
-                    MainNavigation.Market -> MarketScreen(navigation)
-                    MainNavigation.Balance -> BalanceScreen(navigation)
-                    MainNavigation.Swap -> SwapScreen(
-                        navigation = navigation,
-                        parentScreenContentKey = parentScreenContentKey,
-                        onClickClose = null,
-                        bottomPadding = navigationBarHeight,
-                        closeAfterSwap = false,
-                        autofocus = false
-                    )
-
+                    // Legacy Market/Swap enum values can still be present in persisted
+                    // navigation state. Never render removed product features for them.
+                    MainNavigation.Balance,
+                    MainNavigation.Market,
+                    MainNavigation.Swap -> BalanceScreen(navigation)
                     MainNavigation.Settings -> SettingsScreen(navigation)
                 }
             }
