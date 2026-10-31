@@ -21,6 +21,12 @@ internal object WalletDeepLinkPolicy {
         "litecoin:",
     )
 
+    // Untrusted Android intents must not feed huge or control-character payloads into
+    // the per-chain URI parser. This is an admission guard, not payment validation.
+    private const val MAX_PAYMENT_URI_LENGTH = 4096
+
     fun isNativePaymentRequest(value: String): Boolean =
-        paymentPrefixes.any(value::startsWith)
+        value.length in 1..MAX_PAYMENT_URI_LENGTH &&
+            value.none { it.code < 0x20 || it.code == 0x7f } &&
+            paymentPrefixes.any(value::startsWith)
 }
