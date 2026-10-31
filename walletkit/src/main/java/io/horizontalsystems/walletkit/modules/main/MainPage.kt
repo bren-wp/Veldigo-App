@@ -304,16 +304,20 @@ private fun MainScreen(
     }
 
     uiState.openSend?.let { openSend ->
-        navigation.slideFromRight(
-            SendTokenSelectPage(SendTokenSelectPage.Input(
-                openSend.blockchainTypes,
-                openSend.tokenTypes,
-                openSend.address,
-                openSend.amount,
-                openSend.memo,
-            ))
-        )
-        viewModel.onSendOpened()
+        // Navigation is a side effect; never execute it directly while Compose is rendering.
+        // A recomposition must not push a second Send selection page.
+        LaunchedEffect(openSend) {
+            navigation.slideFromRight(
+                SendTokenSelectPage(SendTokenSelectPage.Input(
+                    openSend.blockchainTypes,
+                    openSend.tokenTypes,
+                    openSend.address,
+                    openSend.amount,
+                    openSend.memo,
+                ))
+            )
+            viewModel.onSendOpened()
+        }
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
