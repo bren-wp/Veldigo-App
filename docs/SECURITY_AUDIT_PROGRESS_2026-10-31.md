@@ -14,6 +14,9 @@
 2. Main-screen rate-app prompts and donation overlays, including triggering subscriptions, were removed. Existing stored transactions, chain adapters, and wallet data remain unchanged.
 3. Unused main-screen manager constructor dependencies were removed without deleting shared managers that may still be consumed elsewhere.
 4. Add an explicit lock-gate regression test and run it in the PR's Android verification workflow. The same workflow checks that both shortcuts are protected and that the promotional overlays are absent.
+5. Run external Send navigation through a Compose `LaunchedEffect` rather than mutating the navigation stack during composition; this prevents repeated page pushes caused by recomposition.
+6. Restrict chain-native payment deep-link admission to a bounded length and reject control characters before invoking the chain URI parser; add regression tests. Actual address, network and fee validation remain required in send adapters.
+7. Require full `:walletkit:testDebugUnitTest` and `:app:testBaseDebugUnitTest` suites in the test-only preview publication workflow; any test failure blocks artifact publication.
 
 ## Security findings requiring further work (NOT FIXED here)
 
