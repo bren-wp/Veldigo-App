@@ -187,41 +187,6 @@ private fun EvmNetworkScreen(
                     VeldigoRpcDivider()
                 }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 60.dp)
-                        .clickable(role = Role.Button) {
-                            navigation.add(AddRpcPage(blockchain))
-                            stat(
-                                page = StatPage.BlockchainSettingsEvm,
-                                event = StatEvent.OpenBlockchainSettingsEvmAdd(blockchain.uid),
-                            )
-                        }
-                        .padding(horizontal = 15.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(13.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_plus),
-                        contentDescription = null,
-                        tint = VeldigoHomePalette.Mint,
-                        modifier = Modifier.size(22.dp),
-                    )
-                    Text(
-                        text = stringResource(R.string.EvmNetwork_AddNew),
-                        color = VeldigoHomePalette.Mint,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = null,
-                        tint = VeldigoHomePalette.Muted,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
             }
 
             Row(
