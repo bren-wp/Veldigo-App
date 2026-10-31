@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Retained for legacy explicit share targets until references are audited. -->
     <queries>
         <package android:name="org.telegram.messenger" />
     </queries>
@@ -22,28 +23,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppTheme.DayNight"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <receiver
-            android:name="io.horizontalsystems.walletkit.widgets.MarketWidgetReceiver"
-            android:exported="false">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/appwidget_provider_info" />
-        </receiver>
-
-        <activity
-            android:name="io.horizontalsystems.walletkit.widgets.MarketWidgetConfigurationActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
-
 
         <activity
             android:name=".modules.main.MainActivity"
@@ -67,42 +46,6 @@
                 <data android:scheme="solana" />
                 <data android:scheme="zcash" />
                 <data android:scheme="litecoin" />
-            </intent-filter>
-            <intent-filter android:label="@string/App_Name">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="tc" />
-                <data android:scheme="unstoppable.money" />
-            </intent-filter>
-            <intent-filter android:label="@string/App_Name">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="wc" />
-            </intent-filter>
-            <intent-filter android:label="@string/App_Name">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/DeeplinkScheme" />
-            </intent-filter>
-            <!-- App Links -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="${appLinksHost}" />
-                <data android:pathPrefix="/referral" />
             </intent-filter>
         </activity>
 

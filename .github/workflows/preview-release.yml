@@ -55,6 +55,13 @@ jobs:
           java-version: '17'
           cache: gradle
 
+      - name: Block preview publication unless wallet and app tests pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x ./gradlew
+          ./gradlew :walletkit:testDebugUnitTest :app:testBaseDebugUnitTest --no-daemon --stacktrace
+
       - name: Build debug/test-signed APK and AAB
         shell: bash
         run: |

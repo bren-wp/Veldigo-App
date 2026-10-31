@@ -73,13 +73,13 @@ Every token icon, amount, fee, receiving address and transaction history entry m
 
 Built for Android in **Kotlin and Jetpack Compose**, Veldigo retains a non-custodial architecture inherited from its MIT-licensed upstream project. Our design system prioritizes readable typography, thoughtful spacing, accessible controls, subtle outlines, and a recognisable **#41E6C7** mint accent.
 
-The draft wallet-only PR removes new Buy, Markets, Swap and NFT UI, excludes trading charts from asset details, restricts external deep links to chain-native payment requests and keeps the real send/receive infrastructure. The upstream legacy modules still require a dependency and session-migration audit. All existing blockchain operations continue to require per-network verification and approved service keys. See [the pixel-parity checklist](docs/REFERENCE_1TO1.md) and [production blockers](docs/SECURITY_RELEASE_GATES.md).
+The merged wallet-only PR #7 removes new Buy, Markets, Swap and NFT UI, excludes trading charts from asset details, restricts external deep links to chain-native payment requests and keeps the real send/receive infrastructure. A follow-up adds PIN gating for Assets/Activity shortcuts and removes main-screen donation/rating prompts. The upstream legacy modules still require a dependency and session-migration audit. All existing blockchain operations continue to require per-network verification and approved service keys. See [the pixel-parity checklist](docs/REFERENCE_1TO1.md) and [production blockers](docs/SECURITY_RELEASE_GATES.md).
 
 ## Downloads and current status
 
-The [Releases page](https://github.com/bren-wp/Veldigo-Wallet/releases) provides preview builds, including v0.4.0-preview.1 when CI succeeds, with SHA-256 checksums and source revision. These are **not production-signed** and must not hold real funds. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
+The [Releases page](https://github.com/bren-wp/Veldigo-Wallet/releases) provides **v0.4.0-preview.2** test-only APK/AAB artifacts with SHA-256 checksums and source revision. These are **not production-signed** and must not hold real funds. Preview APK/AAB artifacts may use **test signing** and are **not intended for real funds**.
 
-**Production readiness is pending.** A successful Android compilation does not establish that a financial application is safe. Before publishing as a wallet for real assets, independent security review, transaction validation by chain, real-device QA, provider credential replacement, release signing, and regulatory/platform checks are required. See [release gates](docs/SECURITY_RELEASE_GATES.md).
+**Production readiness is pending.** A successful Android compilation does not establish that a financial application is safe. Before publishing as a wallet for real assets, independent security review, transaction validation by chain, real-device QA, provider credential replacement, release signing, and regulatory/platform checks are required. See [release gates](docs/SECURITY_RELEASE_GATES.md) and the [October 31 security-audit progress and blockers](docs/SECURITY_AUDIT_PROGRESS_2026-10-31.md).
 
 ## Wallet safety
 

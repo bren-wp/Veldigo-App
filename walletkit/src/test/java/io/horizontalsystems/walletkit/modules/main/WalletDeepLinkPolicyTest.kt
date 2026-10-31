@@ -14,6 +14,15 @@ class WalletDeepLinkPolicyTest {
     }
 
     @Test
+    fun rejectsOversizedAndControlCharacterPaymentLinksBeforeParsing() {
+        assertFalse(WalletDeepLinkPolicy.isNativePaymentRequest("bitcoin:" + "x".repeat(4097)))
+        assertFalse(WalletDeepLinkPolicy.isNativePaymentRequest("bitcoin:destination\nnext"))
+        assertFalse(WalletDeepLinkPolicy.isNativePaymentRequest("ethereum:destination\rnext"))
+        assertFalse(WalletDeepLinkPolicy.isNativePaymentRequest("solana:destination\u0000next"))
+        assertTrue(WalletDeepLinkPolicy.isNativePaymentRequest("bitcoin:destination?amount=1.25"))
+    }
+
+    @Test
     fun rejectsMarketsReferralsAndDappConnectionLinks() {
         for (uri in listOf(
             "wc:2@1?bridge=example",

@@ -67,6 +67,46 @@ jobs:
         if: steps.source.outputs.present == 'true'
         run: |
           ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.receive.ui.VeldigoReceivePayloadRulesTest' --no-daemon --stacktrace
+      - name: Verify private shortcuts require PIN and promotional overlays stay removed
+        if: steps.source.outputs.present == 'true'
+        run: |
+          ./gradlew :walletkit:testDebugUnitTest --tests 'io.horizontalsystems.walletkit.modules.pin.core.LockGateTest' --no-daemon --stacktrace
+          MAIN_PAGE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/main/MainPage.kt
+          test "$(grep -c 'viewModel.openProtectedPage' "$MAIN_PAGE")" -eq 2
+          if grep -En 'WhyDonatePage|RateApp|showDonationPage|showRateAppDialog' "$MAIN_PAGE"; then
+            echo 'Promotional overlays must not appear on the wallet main screen' >&2
+            exit 1
+          fi
+      - name: Verify unsupported external links and custom-token entry points stay disabled
+        if: steps.source.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          MANIFEST=app/src/main/AndroidManifest.xml
+          ASSETS=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/managewallets/ManageWalletsPage.kt
+          APPEARANCE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/settings/appearance/AppearancePage.kt
+          MAIN_PAGE=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/main/MainPage.kt
+          EVM_NETWORK=walletkit/src/main/java/io/horizontalsystems/walletkit/modules/evmnetwork/EvmNetworkPage.kt
+          if grep -E 'android:scheme="(wc|tc|unstoppable.money)"|android:pathPrefix="/referral"|MarketWidgetReceiver|MarketWidgetConfigurationActivity' "$MANIFEST"; then
+            echo 'Legacy dApp, referral and market entry points must not be exported' >&2
+            exit 1
+          fi
+          if grep -E 'AddTokenPage|ManageCoins_AddToken' "$ASSETS"; then
+            echo 'Arbitrary custom token entry point must not be shown in Assets' >&2
+            exit 1
+          fi
+          if grep -E 'Appearance_MarketsTab|Appearance_HideMarketsTab|Appearance_PriceChangeInterval|openPriceChangeIntervalSelector' "$APPEARANCE"; then
+            echo 'Market preferences must not be presented by wallet-only Appearance' >&2
+            exit 1
+          fi
+          if grep -E 'import .*MarketScreen|import .*SwapScreen|MarketScreen\\(|SwapScreen\\(' "$MAIN_PAGE"; then
+            echo 'Market and Swap must never render from wallet main navigation' >&2
+            exit 1
+          fi
+          if grep -E 'navigation.add\\(AddRpcPage|AddRpcScreen\\(' "$EVM_NETWORK"; then
+            echo 'New custom RPC entry must not be reachable in Network Settings' >&2
+            exit 1
+          fi
       - name: Verify wallet-only deep link admission
         if: steps.source.outputs.present == 'true'
         run: |
