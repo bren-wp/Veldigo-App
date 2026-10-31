@@ -8,14 +8,10 @@ import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.IAccountManager
 import io.horizontalsystems.walletkit.core.IBackupManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
-import io.horizontalsystems.walletkit.core.INetworkManager
 import io.horizontalsystems.walletkit.core.ITermsManager
 import io.horizontalsystems.walletkit.core.ViewModelUiState
 import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
 import io.horizontalsystems.walletkit.core.managers.ReleaseNotesManager
-import io.horizontalsystems.walletkit.core.stats.StatEvent
-import io.horizontalsystems.walletkit.core.stats.StatPage
-import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.core.utils.AddressUriParser
 import io.horizontalsystems.walletkit.entities.AddressUri
 import io.horizontalsystems.walletkit.entities.LaunchPage
@@ -38,8 +34,6 @@ class MainViewModel(
     private val releaseNotesManager: ReleaseNotesManager,
     private val localStorage: ILocalStorage,
     wcSessionManager: WCSessionManager,
-    private val wcManager: WCManager,
-    private val networkManager: INetworkManager,
     private val lockGate: LockGate,
 ) : ViewModelUiState<MainModule.UiState>() {
 
