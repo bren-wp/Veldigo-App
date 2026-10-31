@@ -9,6 +9,11 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Retained for legacy explicit share targets until references are audited. -->
+    <queries>
+        <package android:name="org.telegram.messenger" />
+    </queries>
+
     <application
         android:name=".MainApp"
         android:allowBackup="false"
