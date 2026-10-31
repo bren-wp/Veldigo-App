@@ -1,27 +1,28 @@
-# VELDIGO v0.4.0-preview.2 — Android engineering preview
+# VELDIGO v0.4.0-preview.3 — Android engineering preview
 
-**TEST-ONLY PREVIEW. NOT PRODUCTION-READY. DO NOT STORE, SEND OR RECEIVE REAL FUNDS.**
+**TEST ONLY — NOT PRODUCTION READY. DO NOT STORE OR TRANSFER REAL FUNDS.**
 
-This preview includes the wallet-only UI work merged from PR #7 and the Android/Kotlin CI fixes.
+This preview incorporates the wallet-only security hardening merged in PR #8 and fixes the duplicate-tag release failure after that merge. It supersedes the previously published engineering `v0.4.0-preview.2` while keeping the old release and its assets intact.
 
-### Included in this test build
-- Main wallet navigation: Wallet, Assets, Activity and Settings; Send/Receive actions.
-- Updated onboarding, create/import/watch-only wallet routes and recovery phrase confirmation UI.
-- Updated PIN and biometric setup, Security Center, privacy and network settings screens.
-- Transactions list and detail screen account isolation; revised BTC-family synchronization and EVM RPC settings UI.
-- Android PR verification #358 passed at source commit `ba391907c5cefc5d2e1b5683986d77c870df4a1a`; this new version builds from its own release commit.
+### Changes in this preview
+- Wallet-only primary navigation: Wallet, Assets, Activity and Settings; old Market/Swap tabs no longer render.
+- PIN protects Assets/Activity shortcuts and *all* locked screens, including legacy Market preferences.
+- Removed visible donation/rating prompts, Market UI controls, arbitrary custom-token entry points and public dApp/WalletConnect/referral links.
+- New custom EVM RPC sources cannot be added from the app; existing saved network sources are preserved.
+- Bounded incoming chain payment URIs and deferred Send navigation prevent unexpected duplicate screens.
+- Regression coverage added for PIN unlock/cancel behavior and removed feature entry points.
+- The prerelease workflow now skips an already published version instead of failing an otherwise valid merge.
 
-### Attached files
-- `VELDIGO-v0.4.0-preview.2-TEST.apk`: Android debug/test-signed installation package (development application ID with `.dev` suffix).
-- `VELDIGO-v0.4.0-preview.2-TEST.aab`: Android debug/test-signed app bundle (not signed with the production Google Play upload key).
-- `SHA256SUMS.txt`: SHA-256 hashes of both files.
-- `BUILD_INFO.txt`: exact source commit and signing type.
+### Attachments
+- `VELDIGO-v0.4.0-preview.3-TEST.apk` — development-signed APK with `.dev` application ID suffix.
+- `VELDIGO-v0.4.0-preview.3-TEST.aab` — development-signed AAB, **not** ready for Google Play production.
+- `SHA256SUMS.txt` and `BUILD_INFO.txt` — checksums and source/signing provenance.
 
-### Critical pre-production work
-- Audit mnemonic/key storage, account switching, transaction signing, fee/address handling and every supported network.
-- Replace upstream-owned credentials and unused legacy integrations and independently verify transport/privacy boundaries.
-- Complete real-device backup/recovery, biometric/PIN, privacy, send/receive and per-chain test transfers on test networks.
-- Compare original-size device screenshots for visual parity; passing compilation does not establish pixel-perfect 1:1.
-- Perform production keystore signing, Play Console compliance and crash/ANR testing before releasing to real users.
+### Required before a real-money/Google Play release
+- Independent security review of encrypted account restoration, seed handling, signing and fee/network verification.
+- Real-device regression and complete testnet send/receive validation for every advertised chain.
+- Replace upstream service credentials and audit legacy module/session dependencies without deleting user wallet data.
+- Confirm app signing identity, Android policy/Financial features declaration, local data safety, privacy documents and crash/ANR quality.
+- Do not treat green CI as evidence that wallet funds are safe.
 
-Upstream MIT attribution remains in the repository. This is a test build, not a security certification.
+VELDIGO is a self-custody wallet, not an exchange. No real-money production readiness is claimed.
