@@ -34,8 +34,6 @@ object MainModule {
                 App.releaseNotesManager,
                 App.localStorage,
                 App.wcSessionManager,
-                App.wcManager,
-                App.networkManager,
                 App.lockGate,
             ) as T
         }
